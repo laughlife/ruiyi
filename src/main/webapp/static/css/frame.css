@@ -1,0 +1,44 @@
+body {
+    margin: 15px 15px 15px 15px;
+    background: #f2f2f2;
+}
+
+.layuimini-container {
+    border: 1px solid #f2f2f2;
+    border-radius: 5px;
+    background-color: #ffffff
+}
+
+.layuimini-main {
+    margin: 10px 10px 10px 10px;
+}
+
+legend {
+    display: block;
+    unicode-bidi: isolate;
+    padding-inline: 2px;
+}
+
+.layuimini-container .table-search-fieldset {
+    margin: 0;
+    border: 1px solid #e6e6e6;
+    padding: 10px 20px 5px 20px;
+    color: #6b6b6b;
+}
+
+.icon {
+    margin-right: 10px;
+    color: #1aa094;
+}
+
+.icon-cray {
+    color: #ffb800 !important;
+}
+
+.icon-blue {
+    color: #1e9fff !important;
+}
+
+.icon-tip {
+    color: #ff5722 !important;
+}

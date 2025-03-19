@@ -1,0 +1,19 @@
+#menu_left .fa-solid{
+    color: #8f94a1;
+    padding-right: 10px;
+    font-size: 18px;
+    position: relative;
+    top: 2px;
+}
+
+#menu_left .layui-this .fa-solid{
+    color: #fff !important;
+}
+
+#menu_left dd a{
+    color: #00b5f9;
+}
+
+#menu_left dd a:hover{
+    color: #fff !important;
+}

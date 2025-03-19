@@ -1,0 +1,129 @@
+package com.liwei.ruiyi.service.impl;
+
+import com.alibaba.fastjson2.JSONObject;
+import com.liwei.ruiyi.bo.TDeepseekLog;
+import com.liwei.ruiyi.dao.impl.TDeepseekLogDaoImpl;
+import com.liwei.ruiyi.model.SocketMessage;
+import com.liwei.ruiyi.service.DeepseekService;
+import com.liwei.ruiyi.socket.DeepseekSocket;
+import com.liwei.ruiyi.utils.DateUtils;
+import okhttp3.*;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Repository;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.io.IOException;
+import java.net.SocketException;
+import java.util.concurrent.TimeUnit;
+
+@Repository("deepseekService")
+public class DeepseekServiceImpl implements DeepseekService {
+
+    @Value("${deepseek.api.endpoint}")
+    private String API_ENDPOINT;
+    @Value("${deepseek.api.key}")
+    private String API_KEY;
+
+    private static String sid = "";
+
+    @Autowired
+    TDeepseekLogDaoImpl deepseekLogDao;
+
+    @Override
+    public void sendMessage(String uid, String prompt) {
+        this.sid = uid;
+
+        TDeepseekLog log = new TDeepseekLog();
+        log.setQuestion(prompt);
+        log.setQt(DateUtils.getSystemTime());
+
+        int insertId = deepseekLogDao.insert(log);
+
+        OkHttpClient client = new OkHttpClient.Builder()
+                .retryOnConnectionFailure(true)
+                .connectTimeout(3, TimeUnit.MINUTES)
+                .readTimeout(3, TimeUnit.MINUTES)
+                .writeTimeout(3, TimeUnit.MINUTES)
+                .build();
+
+        // chatgpt生成的调用接口，尝试一下：
+//        String json = "{ \"prompt\": \"" + prompt + "\", \"max_tokens\": 100 }";
+//
+//        RequestBody body = RequestBody.create(json, MediaType.get("application/json"));
+//        Request request = new Request.Builder()
+//                .url(API_ENDPOINT)
+//                .addHeader("Authorization", "Bearer " + API_KEY)
+//                .post(body)
+//                .build();
+
+//        try (Response response = client.newCall(request).execute()) {
+//            response.body().string();
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+
+        // 使用JSONObject构建规范的JSON请求体
+        JSONObject send = new JSONObject();
+        send.put("model", "deepseek-coder");
+
+        JSONObject message = new JSONObject();
+        message.put("role", "user");
+        message.put("content", prompt);
+        send.put("messages", new JSONObject[]{message});
+        send.put("temperature", 0.2);
+        RequestBody body = RequestBody.create(
+                send.toString(),
+                MediaType.parse("application/json")
+        );
+        sendRightMessage("服务器收到向deepseek发送的消息，消息内容如下：\"" + prompt + "\"");
+        sendRightMessage("等待deepseek回复消息，请稍后。");
+        Request request = new Request.Builder()
+                .url(API_ENDPOINT)
+                .addHeader("Authorization", "Bearer " + API_KEY)
+//                .addHeader("Content-Type", "application/json")
+                .post(body)
+                .build();
+        try (Response response = client.newCall(request).execute()) {
+            sendRightMessage(JSONObject.toJSONString(response));
+            String answer = response.body().string();
+            log.setAnswer(answer);
+            log.setAt(DateUtils.getSystemTime());
+            deepseekLogDao.update(log);
+            JSONObject json = JSONObject.parseObject(answer);
+            if (json.containsKey("choices")) {
+                JSONObject messageJson = json.getJSONArray("choices").getJSONObject(0).getJSONObject("message");
+                String deepseek_answer = messageJson.getString("content");
+                //分析返回的数据
+//                analyzeResponse(deepseek_answer);
+                sendLeftMessage(deepseek_answer);
+            }
+
+
+        } catch (SocketException e) {
+            sendRightMessage("服务器收到向deepseek发送的消息，消息内容如下：\"" + prompt + "\"");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void sendRightMessage(String message) {
+        if (StringUtils.isNotBlank(sid)) {
+            SocketMessage socketMessage = new SocketMessage(SocketMessage.TYPE_MESSAGE, message, DateUtils.getSystemTime());
+            DeepseekSocket.sendToAllClient(socketMessage, sid);
+        }
+    }
+
+    private void sendLeftMessage(String message) {
+        System.out.println("uuid: " + sid);
+        System.out.println("sendLeftMessage: " + message);
+        if (StringUtils.isNotBlank(sid)) {
+            SocketMessage socketMessage = new SocketMessage(SocketMessage.TYPE_ANSWER, message, DateUtils.getSystemTime());
+            DeepseekSocket.sendToAllClient(socketMessage, sid);
+        }
+
+    }
+
+}
