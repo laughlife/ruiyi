@@ -8,7 +8,4 @@ import org.springframework.stereotype.Service;
 public interface TDeepseekLogDao {
     int insert(TDeepseekLog entity);
     int update(TDeepseekLog entity);
-    int deleteById(Integer id);
-    TDeepseekLog selectById(Integer id);
-    List<TDeepseekLog> selectAll();
 }

@@ -6,6 +6,7 @@
             + request.getServerName() + ":" + request.getServerPort()
             + path + "/";
     request.setAttribute("path",path);
+    request.setAttribute("basePath",basePath);
     String dev = request.getParameter("dev");
     if (dev != null) {
         session.setAttribute("dev", dev);
@@ -133,15 +134,15 @@
                                 <dd class="layui-nav-itemed">
                                     <a href="javascript:;">图标</a>
                                     <dl class="layui-nav-child">
-                                        <dd><a lay-href="/page/logo/logo.jsp">layui</a></dd>
-                                        <dd><a lay-href="set/system/email.html">fontawesome6</a></dd>
+                                        <dd><a lay-href="/page/icon/icon.jsp">layui</a></dd>
+                                        <dd><a lay-href="/font/font_list">fontawesome6</a></dd>
                                     </dl>
                                 </dd>
                                 <dd class="layui-nav-itemed">
                                     <a href="javascript:;">我的设置</a>
                                     <dl class="layui-nav-child">
                                         <dd><a lay-href="set/user/info.html">基本资料</a></dd>
-                                        <dd><a lay-href="set/user/password.html">修改密码</a></dd>
+                                        <dd><a lay-href="${basePath}page/system/updatePwd.jsp">修改密码</a></dd>
                                     </dl>
                                 </dd>
                             </dl>
@@ -197,6 +198,32 @@
 
     $('body').on('click', '[data-refresh]', function () {
         $("#LAY_app_body").find("iframe")[0].contentWindow.location.reload();
+    });
+
+    $(document).ready(function (){
+        setInterval(function () {
+            //5分钟向后台请求一次，防止session过期
+            $.ajax({
+                url: "${basePath}system/refresh", // 保持Session 的后端接口
+                type: "post",
+                cache: false,
+                dataType: "json",
+                success: function (data) {
+                    if (!data.status) {
+                        layer.msg("登录已过期，请重新登录", {icon: 5});
+                        setTimeout(function () {
+                            window.location.href = "${basePath}index.jsp";
+                        }, 1000);
+                    }
+                },
+                error: function (data) {
+                    layer.msg("登录已过期，请重新登录", {icon: 5});
+                    setTimeout(function () {
+                        window.location.href = "${basePath}index.jsp";
+                    }, 1000);
+                }
+            });
+        }, 1000 * 60 * 5);
     });
 </script>
 

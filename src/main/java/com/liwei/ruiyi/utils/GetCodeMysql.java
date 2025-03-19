@@ -14,7 +14,8 @@ public class GetCodeMysql {
     private final String tableSpace = "ruiyi";
     private final String tableName = "t_deepseek_log";
     private static final String PACKAGE_PATH = "com.liwei.ruiyi";
-    private final String url = "jdbc:mysql://81.70.86.120:8866/ruiyi?characterEncoding=utf8&serverTimezone=UTC&rewriteBatchedStatements=true";
+//    private final String url = "jdbc:mysql://81.70.86.120:8866/ruiyi?characterEncoding=utf8&serverTimezone=UTC&rewriteBatchedStatements=true";
+    private final String url = "jdbc:mysql://localhost:3306/ruiyi?characterEncoding=utf8&serverTimezone=UTC&rewriteBatchedStatements=true";
     private final String driverName = "com.mysql.cj.jdbc.Driver";
     private final String userName = "root";
     private final String password = "Liv88625200@@";
@@ -31,10 +32,10 @@ public class GetCodeMysql {
              Statement stmt = conn.createStatement()) {
 
             List<Map<String, String>> columns = getTableColumns(stmt);
-            generateEntity(columns);
-            generateRowMapper(columns);
+//            generateEntity(columns);
+//            generateRowMapper(columns);
             generateDaoCode(tableName);
-            generateServiceCode(tableName);
+//            generateServiceCode(tableName);
         }
     }
 
@@ -81,7 +82,7 @@ public class GetCodeMysql {
         for (Map<String, String> column : columns) {
             String fieldType = mapSqlTypeToJavaType(column.get("type"));
             String comment = """
-                    private %s %s;
+                        private %s %s;
                     """.formatted(fieldType, toCamelCase(column.get("name")));
             sb.append(comment);
         }
@@ -92,7 +93,7 @@ public class GetCodeMysql {
 
     private void generateRowMapper(List<Map<String, String>> columns) {
         String className = toClassName(tableName);
-        String filePath = getFilePath("bo.mapper", className + "RowMapper.java");
+        String filePath = getFilePath("bo.mapper", className + "Mapper.java");
 
         String mapperContent = """
                 package %s.bo.mapper;
@@ -113,7 +114,7 @@ public class GetCodeMysql {
             String fieldName = toCamelCase(column.get("name"));
             String fieldType = mapSqlTypeToJavaType(column.get("type"));
             String setMethod = """
-                    obj.set%s(rs.get%s("%s"));
+                            obj.set%s(rs.get%s("%s"));
                     """.formatted(capitalize(fieldName), getResultSetMethod(fieldType), column.get("name"));
             sb.append(setMethod);
         }
@@ -224,7 +225,7 @@ public class GetCodeMysql {
 
     private String mapSqlTypeToJavaType(String sqlType) {
         return switch (sqlType) {
-            case "varchar", "text", "char", "enum", "json", "date", "datetime", "timestamp" -> "String";
+            case "varchar", "text", "char", "enum", "json", "date", "datetime", "timestamp","mediumtext" -> "String";
             case "int", "integer" -> "Integer";
             case "bigint" -> "Long";
             case "tinyint" -> "Boolean";

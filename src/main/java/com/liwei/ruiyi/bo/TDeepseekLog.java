@@ -4,7 +4,7 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.util.*;
 
-@Data @NoArgsConstructor @AllArgsConstructor
+@Data
 public class TDeepseekLog {
     private Integer id;
     private String question;

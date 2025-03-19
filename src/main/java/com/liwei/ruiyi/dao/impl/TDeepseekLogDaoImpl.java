@@ -47,21 +47,5 @@ public class TDeepseekLogDaoImpl implements TDeepseekLogDao {
         return jdbc.update(sql, args);
     }
 
-    @Override
-    public int deleteById(Integer id) {
-        // todo 未实现，也未删除
-        return 0;
-    }
 
-    @Override
-    public TDeepseekLog selectById(Integer id) {
-        // todo 未实现，也未删除
-        return null;
-    }
-
-    @Override
-    public List<TDeepseekLog> selectAll() {
-        // todo 未实现，也未删除
-        return null;
-    }
 }

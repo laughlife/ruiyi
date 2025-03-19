@@ -14,10 +14,6 @@ public class TAdminDaoImpl implements TAdminDao {
     @Autowired
     private JdbcTemplate jdbc;
 
-    public JdbcTemplate getJdbc() {
-        return jdbc;
-    }
-
     @Override
     public TAdmin queryAdminMessage(String username, String password) {
         String sql = "select * from t_admin where username = ? and password = ?";

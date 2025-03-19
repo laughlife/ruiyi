@@ -2,9 +2,10 @@ package com.liwei.ruiyi.bo.mapper;
 
 import com.liwei.ruiyi.bo.TDeepseekLog;
 import org.springframework.jdbc.core.RowMapper;
+
 import java.sql.*;
 
-public class TDeepseekLogRowMapper implements RowMapper<TDeepseekLog> {
+public class TDeepseekLogMapper implements RowMapper<TDeepseekLog> {
     @Override
     public TDeepseekLog mapRow(ResultSet rs, int rowNum) throws SQLException {
         TDeepseekLog obj = new TDeepseekLog();

@@ -22,6 +22,6 @@ public class FontController {
     public String fontList(){
         List<TFont> fontList = fontService.getAllFont();
         request.setAttribute("fontList",fontList);
-        return "fontawesome";
+        return "page/icon/fontawesome";
     }
 }
