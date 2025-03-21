@@ -13,7 +13,7 @@ public class ScheduledTask {
 
     private static final Logger logger = LoggerFactory.getLogger(ScheduledTask.class);
 
-
+    @Autowired
     LingxingService lingxingService;
 
     @Scheduled(fixedRate = 1000 * 10 * 100) // 每10分钟执行一次任务检测

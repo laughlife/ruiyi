@@ -29,6 +29,7 @@
                     <div class="layui-btn-container">
                         <button class="layui-btn" lay-on="getIp">获取本地IP</button>
                         <button class="layui-btn" lay-on="checkToken">检查Token信息</button>
+                        <button class="layui-btn" lay-on="refreshMarketplace">获取市场列表</button>
                     </div>
                 </div>
             </div>
@@ -62,7 +63,6 @@
                 $.ajax({
                     url: "${basePath}lingxing/getIp",
                     type: "POST",
-                    data: {},
                     dataType: "json",
                     success: function (data) {
                         if(data.status) {
@@ -75,7 +75,18 @@
                 $.ajax({
                     url: "${basePath}lingxing/checkToken",
                     type: "POST",
-                    data: {},
+                    dataType: "json",
+                    success: function (data) {
+                        if(data.status) {
+                            layer.msg(data.msg);
+                        }
+                    }
+                });
+            },
+            "refreshMarketplace":function(){
+                $.ajax({
+                    url: "${basePath}marketplace/refreshMarketplace",
+                    type: "POST",
                     dataType: "json",
                     success: function (data) {
                         if(data.status) {

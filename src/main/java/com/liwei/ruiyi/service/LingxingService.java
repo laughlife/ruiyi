@@ -1,5 +1,6 @@
 package com.liwei.ruiyi.service;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.liwei.ruiyi.bo.TAdmin;
 import org.springframework.stereotype.Service;
 
@@ -10,4 +11,6 @@ public interface LingxingService {
 
     //获取或刷新token
     boolean getOrRefreshToken();
+
+    JSONObject get(String url, JSONObject args);
 }

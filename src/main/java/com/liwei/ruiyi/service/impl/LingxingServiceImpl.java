@@ -72,6 +72,7 @@ public class LingxingServiceImpl implements LingxingService {
         if (count == 0) {
             return fetchAndStoreToken();
         }
+        //Marketplace
         TLxToken token = lxTokenDao.getToken();
         long currentTime = System.currentTimeMillis();
         if (currentTime < token.getExpiresTime() - 20 * 60 * 1000) {
@@ -103,9 +104,9 @@ public class LingxingServiceImpl implements LingxingService {
         String sign = ApiSign.sign(queryParam, appId);
 
 
-        Map<String,Object> body = new HashMap<>();
-        body.put("appId",appId);
-        body.put("refreshToken",token.getRefreshToken());
+//        Map<String,Object> body = new HashMap<>();
+//        body.put("appId",appId);
+//        body.put("refreshToken",token.getRefreshToken());
 
 
         RequestBody formBody = new MultipartBody.Builder()
@@ -215,5 +216,50 @@ public class LingxingServiceImpl implements LingxingService {
             return null;
         }
         return token;
+    }
+
+    @Override
+    public JSONObject get(String url, JSONObject args) {
+        String fullUrl = apiUrl + url;
+        TLxToken token = lxTokenDao.getToken();
+
+        Map<String, Object> queryParam = new HashMap<>();
+        String timestamp = System.currentTimeMillis() / 1000 + "";
+        queryParam.put("timestamp", timestamp);
+        queryParam.put("access_token", token.getAccessToken());
+        queryParam.put("app_key", appId);
+//        queryParam.putAll(args);
+
+        String sign = ApiSign.sign(queryParam, appId);
+        queryParam.put("sign", sign);
+
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(fullUrl).newBuilder();
+        for (Map.Entry<String, Object> entry : queryParam.entrySet()) {
+            urlBuilder.addQueryParameter(entry.getKey(), entry.getValue().toString());
+        }
+        HttpUrl httpUrl = urlBuilder.build();
+
+        // 构造请求
+        Request request = new Request.Builder()
+                .url(httpUrl)
+                .get()
+                .header("Content-Type", "application/json")
+                .build();
+        JSONObject resultJson = new JSONObject();
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("请求失败: " + response);
+            }
+            ResponseBody responseBody = response.body();
+            if (responseBody != null) {
+                String result = responseBody.string();
+                resultJson = JSONObject.parseObject(result);
+            } else {
+                System.out.println("响应为空");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return resultJson;
     }
 }
