@@ -25,8 +25,10 @@ public class TLxTokenDaoImpl implements TLxTokenDao {
     }
 
     @Override
-    public int updateToken(TLxToken token) {
-        return 0;
+    public boolean updateToken(TLxToken token) {
+        String sql = "update t_lx_token set access_token = ?,refresh_token = ?,save_time = ?,expires_time = ?";
+        Object[] args = {token.getAccessToken(), token.getRefreshToken(), token.getSaveTime(), token.getExpiresTime()};
+        return jdbc.update(sql, args) > 0;
     }
 
     @Override

@@ -24,7 +24,6 @@ public class LingxingServiceImpl implements LingxingService {
 
     private String appId = ReadProUtils.ReadProperties("lingxing.api.appid");
     private String appSecret = ReadProUtils.ReadProperties("lingxing.api.appsecret");
-
     private String getIpUrl = ReadProUtils.ReadProperties("getIpUrl");
     private String apiUrl = ReadProUtils.ReadProperties("apiUrl");
 
@@ -65,27 +64,21 @@ public class LingxingServiceImpl implements LingxingService {
     @Override
     public boolean getOrRefreshToken() {
         int count = lxTokenDao.getTokenCount();
-        if (count > 0) {
-            TLxToken token = lxTokenDao.getToken();
-            long currentTime = System.currentTimeMillis();
-            long expiresTime = token.getExpiresTime();
-            if (currentTime < expiresTime-60*1000*5) {
-                return true;
-            } else {
-                //刷新token
-                TLxToken newToken = refreshNetToken(token);
-            }
-        } else {
-            //获取token
-            TLxToken token = getTokenByNet();
-            if (token == null) {
-                return false;
-            } else {
-                return lxTokenDao.insertToken(token) > 0;
-            }
-
+        if (count == 0) {
+            return fetchAndStoreToken();
         }
-        return false;
+        TLxToken token = lxTokenDao.getToken();
+        long currentTime = System.currentTimeMillis();
+        if (currentTime < token.getExpiresTime() - 20 * 60 * 1000) {
+            return true; // Token 仍然有效
+        }
+        TLxToken newToken = (currentTime < token.getExpiresTime()) ? refreshNetToken(token) : getTokenByNet();
+        return newToken != null && lxTokenDao.updateToken(newToken);
+    }
+
+    private boolean fetchAndStoreToken() {
+        TLxToken token = getTokenByNet();
+        return token != null && lxTokenDao.insertToken(token) > 0;
     }
 
     private TLxToken refreshNetToken(TLxToken token) {
@@ -98,18 +91,21 @@ public class LingxingServiceImpl implements LingxingService {
         queryParam.put("timestamp", timestamp);
         queryParam.put("access_token", token.getAccessToken());
         queryParam.put("app_key", appId);
+        String sign = ApiSign.sign(queryParam, appId);
+
 
         Map<String,Object> body = new HashMap<>();
         body.put("appId",appId);
         body.put("refreshToken",token.getRefreshToken());
 
-        String sign = ApiSign.sign(queryParam, appId);
 
         RequestBody formBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("appId", appId)
                 .addFormDataPart("refreshToken", token.getRefreshToken())
                 .addFormDataPart("timestamp", timestamp)
+                .addFormDataPart("access_token", token.getAccessToken())
+                .addFormDataPart("app_key", appId)
                 .addFormDataPart("sign", sign)
                 .build();
         // 构造请求
@@ -135,20 +131,22 @@ public class LingxingServiceImpl implements LingxingService {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        System.out.println("resultJson:"+resultJson);
         //获取token
         String code = resultJson.getString("code");
         if ("200".equals(code)) {
             JSONObject data = resultJson.getJSONObject("data");
+            System.out.println("data:"+data);
             String accessToken = data.getString("access_token");
             String refreshToken = data.getString("refresh_token");
             int expireTime = data.getIntValue("expires_in");
 
-            token.setAccessToken(accessToken);
-            token.setRefreshToken(refreshToken);
+            newToken.setAccessToken(accessToken);
+            newToken.setRefreshToken(refreshToken);
             long currentTime = System.currentTimeMillis();
             long expiresTime = currentTime + expireTime * 1000;
-            token.setSaveTime(currentTime);
-            token.setExpiresTime(expiresTime);
+            newToken.setSaveTime(currentTime);
+            newToken.setExpiresTime(expiresTime);
             //存储token
         } else {
             return null;
