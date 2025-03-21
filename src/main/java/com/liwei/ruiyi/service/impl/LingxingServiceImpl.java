@@ -10,17 +10,22 @@ import com.liwei.ruiyi.sign.ApiSign;
 import com.liwei.ruiyi.utils.ReadProUtils;
 import okhttp3.*;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import com.liwei.ruiyi.utils.CheckUtils;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Repository("lingxingService")
 public class LingxingServiceImpl implements LingxingService {
+    private static final Logger logger = LoggerFactory.getLogger(LingxingServiceImpl.class);
 
     private String appId = ReadProUtils.ReadProperties("lingxing.api.appid");
     private String appSecret = ReadProUtils.ReadProperties("lingxing.api.appsecret");
@@ -70,6 +75,9 @@ public class LingxingServiceImpl implements LingxingService {
         TLxToken token = lxTokenDao.getToken();
         long currentTime = System.currentTimeMillis();
         if (currentTime < token.getExpiresTime() - 20 * 60 * 1000) {
+            Date date = new Date(token.getExpiresTime());
+            String format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
+            logger.info("token处于有效期，到期时间为:{}", format);
             return true; // Token 仍然有效
         }
         TLxToken newToken = (currentTime < token.getExpiresTime()) ? refreshNetToken(token) : getTokenByNet();
@@ -82,6 +90,7 @@ public class LingxingServiceImpl implements LingxingService {
     }
 
     private TLxToken refreshNetToken(TLxToken token) {
+        logger.info("token信息续约");
         TLxToken newToken = new TLxToken();
         String fullUrl = apiUrl + LingxingConfig.refreshTokenPath;
 
@@ -156,6 +165,7 @@ public class LingxingServiceImpl implements LingxingService {
 
 
     private TLxToken getTokenByNet() {
+        logger.info("获取新的token信息");
         TLxToken token = new TLxToken();
         String fullUrl = apiUrl + LingxingConfig.getTokenPath;
         RequestBody formBody = new MultipartBody.Builder()

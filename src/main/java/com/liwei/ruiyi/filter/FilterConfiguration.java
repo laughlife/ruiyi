@@ -13,4 +13,5 @@ public class FilterConfiguration {
         registrationBean.addUrlPatterns("/*");
         return registrationBean;
     }
+
 }
