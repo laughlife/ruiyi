@@ -6,6 +6,7 @@ import com.liwei.ruiyi.bo.TLxToken;
 import com.liwei.ruiyi.config.LingxingConfig;
 import com.liwei.ruiyi.dao.TLxTokenDao;
 import com.liwei.ruiyi.service.LingxingService;
+import com.liwei.ruiyi.sign.ApiSign;
 import com.liwei.ruiyi.utils.ReadProUtils;
 import okhttp3.*;
 import org.apache.commons.lang3.StringUtils;
@@ -14,13 +15,14 @@ import org.springframework.stereotype.Repository;
 import com.liwei.ruiyi.utils.CheckUtils;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Repository("lingxingService")
 public class LingxingServiceImpl implements LingxingService {
 
-    private String appid = ReadProUtils.ReadProperties("lingxing.api.appid");
+    private String appId = ReadProUtils.ReadProperties("lingxing.api.appid");
     private String appSecret = ReadProUtils.ReadProperties("lingxing.api.appsecret");
 
     private String getIpUrl = ReadProUtils.ReadProperties("getIpUrl");
@@ -62,10 +64,17 @@ public class LingxingServiceImpl implements LingxingService {
 
     @Override
     public boolean getOrRefreshToken() {
-
         int count = lxTokenDao.getTokenCount();
         if (count > 0) {
             TLxToken token = lxTokenDao.getToken();
+            long currentTime = System.currentTimeMillis();
+            long expiresTime = token.getExpiresTime();
+            if (currentTime < expiresTime-60*1000*5) {
+                return true;
+            } else {
+                //刷新token
+                TLxToken newToken = refreshNetToken(token);
+            }
         } else {
             //获取token
             TLxToken token = getTokenByNet();
@@ -79,13 +88,81 @@ public class LingxingServiceImpl implements LingxingService {
         return false;
     }
 
+    private TLxToken refreshNetToken(TLxToken token) {
+        TLxToken newToken = new TLxToken();
+        String fullUrl = apiUrl + LingxingConfig.refreshTokenPath;
+
+
+        Map<String, Object> queryParam = new HashMap<>();
+        String timestamp = System.currentTimeMillis() / 1000 + "";
+        queryParam.put("timestamp", timestamp);
+        queryParam.put("access_token", token.getAccessToken());
+        queryParam.put("app_key", appId);
+
+        Map<String,Object> body = new HashMap<>();
+        body.put("appId",appId);
+        body.put("refreshToken",token.getRefreshToken());
+
+        String sign = ApiSign.sign(queryParam, appId);
+
+        RequestBody formBody = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("appId", appId)
+                .addFormDataPart("refreshToken", token.getRefreshToken())
+                .addFormDataPart("timestamp", timestamp)
+                .addFormDataPart("sign", sign)
+                .build();
+        // 构造请求
+        Request request = new Request.Builder()
+                .url(fullUrl)
+                .post(formBody)
+                .header("Content-Type", "multipart/form-data")
+                .build();
+
+        // 发送请求并处理响应
+        JSONObject resultJson = new JSONObject();
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("请求失败: " + response);
+            }
+            ResponseBody responseBody = response.body();
+            if (responseBody != null) {
+                String result = responseBody.string();
+                resultJson = JSONObject.parseObject(result);
+            } else {
+                System.out.println("响应为空");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //获取token
+        String code = resultJson.getString("code");
+        if ("200".equals(code)) {
+            JSONObject data = resultJson.getJSONObject("data");
+            String accessToken = data.getString("access_token");
+            String refreshToken = data.getString("refresh_token");
+            int expireTime = data.getIntValue("expires_in");
+
+            token.setAccessToken(accessToken);
+            token.setRefreshToken(refreshToken);
+            long currentTime = System.currentTimeMillis();
+            long expiresTime = currentTime + expireTime * 1000;
+            token.setSaveTime(currentTime);
+            token.setExpiresTime(expiresTime);
+            //存储token
+        } else {
+            return null;
+        }
+        return newToken;
+    }
+
 
     private TLxToken getTokenByNet() {
         TLxToken token = new TLxToken();
         String fullUrl = apiUrl + LingxingConfig.getTokenPath;
         RequestBody formBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                .addFormDataPart("appId", appid)
+                .addFormDataPart("appId", appId)
                 .addFormDataPart("appSecret", appSecret)
                 .build();
         // 构造请求

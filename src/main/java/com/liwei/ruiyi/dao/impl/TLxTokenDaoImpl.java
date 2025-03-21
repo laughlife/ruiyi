@@ -1,6 +1,7 @@
 package com.liwei.ruiyi.dao.impl;
 
 import com.liwei.ruiyi.bo.TLxToken;
+import com.liwei.ruiyi.bo.mapper.TLxTokenMapper;
 import com.liwei.ruiyi.dao.TLxTokenDao;
 import org.springframework.stereotype.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,11 @@ public class TLxTokenDaoImpl implements TLxTokenDao {
 
     @Override
     public TLxToken getToken() {
+        String sql = "select * from t_lx_token";
+        List<TLxToken> list = jdbc.query(sql,new TLxTokenMapper());
+        if (list.size() > 0) {
+            return list.get(0);
+        }
         return null;
     }
 

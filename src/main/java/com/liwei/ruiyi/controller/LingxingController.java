@@ -42,7 +42,7 @@ public class LingxingController {
         JSONObject rj = new JSONObject();
         boolean refreshStatus = lingxingService.getOrRefreshToken();
         rj.put("status", refreshStatus);
-        rj.put("msg", "方法执行成功");
+        rj.put("msg", "token刷新成功");
         return rj.toJSONString();
     }
 
