@@ -7,14 +7,12 @@ import com.liwei.ruiyi.model.SocketMessage;
 import com.liwei.ruiyi.service.DeepseekService;
 import com.liwei.ruiyi.socket.DeepseekSocket;
 import com.liwei.ruiyi.utils.DateUtils;
+import com.liwei.ruiyi.utils.ReadProUtils;
 import okhttp3.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.io.IOException;
 import java.net.SocketException;
 import java.util.concurrent.TimeUnit;
@@ -22,10 +20,8 @@ import java.util.concurrent.TimeUnit;
 @Repository("deepseekService")
 public class DeepseekServiceImpl implements DeepseekService {
 
-    @Value("${deepseek.api.endpoint}")
-    private String API_ENDPOINT;
-    @Value("${deepseek.api.key}")
-    private String API_KEY;
+    private String DEEPSEEK_API_ENDPOINT = ReadProUtils.ReadProperties("deepseek.api.endpoint");
+    private String DEEPSEEK_API_KEY = ReadProUtils.ReadProperties("deepseek.api.key");
 
     private static String sid = "";
 
@@ -81,8 +77,8 @@ public class DeepseekServiceImpl implements DeepseekService {
         sendRightMessage("服务器收到向deepseek发送的消息，消息内容如下：\"" + prompt + "\"");
         sendRightMessage("等待deepseek回复消息，请稍后。");
         Request request = new Request.Builder()
-                .url(API_ENDPOINT)
-                .addHeader("Authorization", "Bearer " + API_KEY)
+                .url(DEEPSEEK_API_ENDPOINT)
+                .addHeader("Authorization", "Bearer " + DEEPSEEK_API_KEY)
 //                .addHeader("Content-Type", "application/json")
                 .post(body)
                 .build();

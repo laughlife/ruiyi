@@ -40,13 +40,11 @@
                         <i class="layui-icon layui-icon-website"></i>
                     </a>
                 </li>
-                <%--<li class="layui-nav-item" lay-unselect>
-                    <a href="javascript:;" layadmin-event="refresh" title="刷新">
-                        <i class="layui-icon layui-icon-refresh-3"></i>
-                    </a>
-                </li>--%>
                 <li class="layui-nav-item" lay-unselect>
-                    <a href="javascript:void(0);" data-refresh="刷新" title="刷新">
+                    <%--<a href="javascript:void(0);" data-refresh="刷新" title="刷新">
+                        <i class="layui-icon layui-icon-refresh-3"></i>
+                    </a>--%>
+                    <a href="javascript:;" layadmin-event="refresh" title="刷新">
                         <i class="layui-icon layui-icon-refresh-3"></i>
                     </a>
                 </li>
@@ -82,7 +80,7 @@
                 </li>
                 <li class="layui-nav-item" lay-unselect>
                     <a href="javascript:;">
-                        <cite>贤心</cite>
+                        <cite>超级管理员</cite>
                     </a>
                     <dl class="layui-nav-child">
                         <dd><a lay-href="set/user/info.html">基本资料</a></dd>
@@ -120,7 +118,7 @@
                             </dd>
 
                             <dd data-name="console">
-                                <a lay-href="home/homepage2.html">主页二</a>
+                                <a lay-href="${basePath}lingxing/goSettingPage">功能区</a>
                             </dd>
                         </dl>
                     </li>
@@ -179,7 +177,7 @@
         <!-- 主体内容 -->
         <div class="layui-body" id="LAY_app_body">
             <div class="layadmin-tabsbody-item layui-show">
-                <iframe src="${base}/page/deepseek/home.jsp" frameborder="0" class="layadmin-iframe"></iframe>
+                <iframe src="${basePath}lingxing/goSettingPage" frameborder="0" class="layadmin-iframe"></iframe>
             </div>
         </div>
 
@@ -191,13 +189,17 @@
 <script src="${base}/static/layui/layui.js"></script>
 <script>
     layui.config({
-        base: '/static/layui/' //静态资源所在路径
+        base: '/static/layui/'
     }).extend({
-        index: 'lib/index' //主入口模块
+        index: 'lib/index'
     }).use('index');
 
-    $('body').on('click', '[data-refresh]', function () {
-        $("#LAY_app_body").find("iframe")[0].contentWindow.location.reload();
+    // $('body').on('click', '[data-refresh]', function () {
+    //     $("#LAY_app_body").find("iframe")[0].contentWindow.location.reload();
+    // });
+
+    layui.use(function(){
+
     });
 
     $(document).ready(function (){

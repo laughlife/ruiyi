@@ -12,7 +12,7 @@ import java.util.*;
 
 public class GetCodeMysql {
     private final String tableSpace = "ruiyi";
-    private final String tableName = "t_deepseek_log";
+    private final String tableName = "t_lx_token";
     private static final String PACKAGE_PATH = "com.liwei.ruiyi";
 //    private final String url = "jdbc:mysql://81.70.86.120:8866/ruiyi?characterEncoding=utf8&serverTimezone=UTC&rewriteBatchedStatements=true";
     private final String url = "jdbc:mysql://localhost:3306/ruiyi?characterEncoding=utf8&serverTimezone=UTC&rewriteBatchedStatements=true";

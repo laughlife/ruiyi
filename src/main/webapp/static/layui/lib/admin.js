@@ -194,9 +194,7 @@ function(e) {
             i = a("." + b).length;
             P.tabsPage.index >= i && (P.tabsPage.index = i - 1);
             var t = P.tabsBody(P.tabsPage.index).find(e);
-			// console.log(t.html());
-			return false;
-            t[0].contentWindow.location.reload(!0)
+            t[0].contentWindow.location.href = t[0].contentWindow.location.href + '?timestamp=' + Date.now();
         },
         serach: function(e) {
             e.off("keypress").on("keypress",

@@ -22,13 +22,16 @@ public class ReadProUtils {
 	 * @param configName 配置文件名字
 	 * @return
 	 */
-	public static String ReadProperties(String key, String configName) {
+	public static String ReadProperties(String key, String... configName) {
 		String value = "";
-		if (StringUtils.isEmpty(configName)) {
-			configName = "conf.properties";
+		String configNameStr = "";
+		if (configName == null || configName.length == 0 || StringUtils.isEmpty(configName[0])) {
+			configNameStr = "conf.properties";
+		} else {
+			configNameStr = configName[0];
 		}
 		try {
-			Resource resource = new ClassPathResource(configName);
+			Resource resource = new ClassPathResource(configNameStr);
 			Properties props = PropertiesLoaderUtils.loadProperties(resource);
 			value = props.getProperty(key);
 			props.clear();

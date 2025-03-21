@@ -29,6 +29,7 @@ public class LoginFilter implements Filter {
             response.sendRedirect(request.getContextPath() + "/index.jsp");
         }
     }
+
     private boolean isUrlAllowed(String url) {
         String regex = "^/(static|login|index\\.jsp)(/|$)";
         Pattern pattern = Pattern.compile(regex);
