@@ -44,15 +44,22 @@
                         <button class="layui-btn" lay-on="seller_list">同步亚马逊店铺列表</button>
                     </div>
                 </div>
-                <div class="layui-card-header">汇率上传</div>
+                <div class="layui-card-header">汇率上传，数据来源在：https://www.safe.gov.cn/safe/rmbhlzjj/index.html</div>
                 <div class="layui-card-body">
                     <div class="layui-upload-drag" style="display: block;" id="currency_upload">
                         <i class="layui-icon layui-icon-upload"></i>
                         <div>点击上传，或将文件拖拽到此处</div>
                         <div id="currency_upload_preview">
-                            <hr> <img src="${basePath}images/logo.ico" alt="上传成功后渲染" style="max-width: 60px;max-height: 60px;">
+                            <hr> <img src="${basePath}images/logo.ico" alt="上传成功后渲染" style="max-width: 50px;max-height: 50px;">
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <div class="layui-card">
+                <div class="layui-card-header">订单数据</div>
+                <div class="layui-card-body">
+
                 </div>
             </div>
         </div>

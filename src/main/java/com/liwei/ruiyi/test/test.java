@@ -1,5 +1,7 @@
 package com.liwei.ruiyi.test;
 
+import com.liwei.ruiyi.utils.StringUtils;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -10,5 +12,8 @@ public class test {
         System.out.println(time);
 
         System.out.println(time.substring(1));
+
+        System.out.println(StringUtils.getRandomString().length());
+        //商品信息
     }
 }
