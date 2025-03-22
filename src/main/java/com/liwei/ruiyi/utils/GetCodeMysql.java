@@ -12,7 +12,7 @@ import java.util.*;
 
 public class GetCodeMysql {
     private final String tableSpace = "ruiyi";
-    private final String tableName = "t_seller";
+    private final String tableName = "t_exchange_rate";
     private static final String PACKAGE_PATH = "com.liwei.ruiyi";
 //    private final String url = "jdbc:mysql://81.70.86.120:8866/ruiyi?characterEncoding=utf8&serverTimezone=UTC&rewriteBatchedStatements=true";
     private final String url = "jdbc:mysql://localhost:3306/ruiyi?characterEncoding=utf8&serverTimezone=UTC&rewriteBatchedStatements=true";
@@ -32,9 +32,10 @@ public class GetCodeMysql {
              Statement stmt = conn.createStatement()) {
 
             List<Map<String, String>> columns = getTableColumns(stmt);
-            generateEntity(columns);
-            generateRowMapper(columns);
-            generateDaoCode(tableName);
+//            generateEntity(columns);
+//            generateRowMapper(columns);
+//            String tableName = "t_currency";
+//            generateDaoCode(tableName);
 //            generateServiceCode(tableName);
         }
     }
@@ -136,24 +137,20 @@ public class GetCodeMysql {
         String daoContent = """
                 package %s.dao;
                 
-                import %s.bo.%s;
-                import java.util.List;
                 import org.springframework.stereotype.Service;
                 
                 @Service
                 public interface %sDao {
                 }
-                """.formatted(PACKAGE_PATH, PACKAGE_PATH, className, className, className, className, className, className);
+                """.formatted(PACKAGE_PATH, className);
 
         String daoImplContent = """
                 package %s.dao.impl;
                 
-                import %s.bo.%s;
                 import %s.dao.%sDao;
                 import org.springframework.stereotype.Repository;
                 import org.springframework.beans.factory.annotation.Autowired;
                 import org.springframework.jdbc.core.JdbcTemplate;
-                import java.util.List;
                 
                 @Repository("%sDao")
                 public class %sDaoImpl implements %sDao {
@@ -164,7 +161,8 @@ public class GetCodeMysql {
                         return jdbc;
                     }
                 }
-                """.formatted(PACKAGE_PATH, PACKAGE_PATH, className, PACKAGE_PATH, className, className.toLowerCase(), className, className, className, className, className, className);
+                """.formatted(PACKAGE_PATH, PACKAGE_PATH, className, className.substring(1).toLowerCase(),
+                className, className);
 
         writeFile(daoFilePath, daoContent);
         writeFile(daoImplFilePath, daoImplContent);
@@ -172,25 +170,22 @@ public class GetCodeMysql {
 
     private void generateServiceCode(String tableName) {
         String className = toClassName(tableName);
-        String serviceFilePath = getFilePath("service", className + "Service.java");
-        String serviceImplFilePath = getFilePath("service.impl", className + "ServiceImpl.java");
+        String serviceFilePath = getFilePath("service", className.substring(1) + "Service.java");
+        String serviceImplFilePath = getFilePath("service.impl", className.substring(1) + "ServiceImpl.java");
 
         String serviceContent = """
                 package %s.service;
                 
-                import %s.bo.%s;
                 import org.springframework.stereotype.Service;
-                import java.util.List;
                 
                 @Service
                 public interface %sService {
                 }
-                """.formatted(PACKAGE_PATH, PACKAGE_PATH, className, className, className, className, className, className);
+                """.formatted(PACKAGE_PATH, className.substring(1));
 
         String serviceImplContent = """
                 package %s.service.impl;
                 
-                import %s.bo.%s;
                 import %s.service.%sService;
                 import %s.dao.%sDao;
                 import org.springframework.beans.factory.annotation.Autowired;
@@ -202,7 +197,9 @@ public class GetCodeMysql {
                     @Autowired
                     private %sDao %sDao;
                 }
-                """.formatted(PACKAGE_PATH, PACKAGE_PATH, className, PACKAGE_PATH, className, PACKAGE_PATH, className, className.toLowerCase(), className, className, className, toCamelCase(className), className, toCamelCase(className), className, toCamelCase(className), className, toCamelCase(className), className, toCamelCase(className), className, toCamelCase(className));
+                """.formatted(PACKAGE_PATH, PACKAGE_PATH, className.substring(1), PACKAGE_PATH, className,
+                className.substring(1).toLowerCase(), className.substring(1), className.substring(1),
+                className, className.substring(1).toLowerCase());
 
         writeFile(serviceFilePath, serviceContent);
         writeFile(serviceImplFilePath, serviceImplContent);

@@ -44,6 +44,16 @@
                         <button class="layui-btn" lay-on="seller_list">同步亚马逊店铺列表</button>
                     </div>
                 </div>
+                <div class="layui-card-header">汇率上传</div>
+                <div class="layui-card-body">
+                    <div class="layui-upload-drag" style="display: block;" id="currency_upload">
+                        <i class="layui-icon layui-icon-upload"></i>
+                        <div>点击上传，或将文件拖拽到此处</div>
+                        <div id="currency_upload_preview">
+                            <hr> <img src="${basePath}images/logo.ico" alt="上传成功后渲染" style="max-width: 60px;max-height: 60px;">
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -69,6 +79,21 @@
         var layer = layui.layer;
         var util = layui.util;
         var $ = layui.jquery;
+        var upload = layui.upload;
+
+        upload.render({
+            elem: '#currency_upload',
+            accept: 'file',
+            exts: 'xlsx|xls',
+            url: '${basePath}currency/uploadCurrency',
+            data: {
+                'id':'xxx'
+            },
+            done: function(res){
+                layer.msg(res.msg);
+                $('#currency_upload_preview').find('img').attr('src', '${basePath}images/excel.png');
+            }
+        });
 
         util.on('lay-on', {
             "getIp": function () {
