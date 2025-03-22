@@ -1,6 +1,7 @@
 package com.liwei.ruiyi.dao.impl;
 
 import com.liwei.ruiyi.bo.TMarketplace;
+import com.liwei.ruiyi.bo.mapper.TMarketplaceMapper;
 import com.liwei.ruiyi.dao.TMarketplaceDao;
 import org.springframework.stereotype.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,5 +30,11 @@ public class TMarketplaceDaoImpl implements TMarketplaceDao {
             Object[] args = {m.getMid(),m.getRegion(),m.getAwsRegion(),m.getCountry(),m.getCode(),m.getMarketplaceId()};
             jdbc.update(sql, args);
         }
+    }
+
+    @Override
+    public List<TMarketplace> findAll() {
+        String sql = "select * from t_marketplace";
+        return jdbc.query(sql, new TMarketplaceMapper());
     }
 }

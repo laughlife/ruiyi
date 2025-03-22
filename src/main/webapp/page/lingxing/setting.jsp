@@ -24,12 +24,18 @@
     <div class="layui-row layui-col-space15">
         <div class="layui-col-md6">
             <div class="layui-card">
-                <div class="layui-card-header">领星数据接口区域</div>
+                <div class="layui-card-header">基础数据</div>
                 <div class="layui-card-body">
                     <div class="layui-btn-container">
                         <button class="layui-btn" lay-on="getIp">获取本地IP</button>
                         <button class="layui-btn" lay-on="checkToken">检查Token信息</button>
+                    </div>
+                </div>
+                <div class="layui-card-header">市场数据</div>
+                <div class="layui-card-body">
+                    <div class="layui-btn-container">
                         <button class="layui-btn" lay-on="refreshMarketplace">获取市场列表</button>
+                        <button class="layui-btn" lay-on="marketplace_list">同步国家下地区列表</button>
                     </div>
                 </div>
             </div>
@@ -86,6 +92,18 @@
             "refreshMarketplace":function(){
                 $.ajax({
                     url: "${basePath}marketplace/refreshMarketplace",
+                    type: "POST",
+                    dataType: "json",
+                    success: function (data) {
+                        if(data.status) {
+                            layer.msg(data.msg);
+                        }
+                    }
+                });
+            },
+            "marketplace_list":function(){
+                $.ajax({
+                    url: "${basePath}marketplace/marketplace_list",
                     type: "POST",
                     dataType: "json",
                     success: function (data) {

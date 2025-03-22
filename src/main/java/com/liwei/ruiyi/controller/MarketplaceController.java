@@ -19,13 +19,24 @@ public class MarketplaceController {
     @RequestMapping("/refreshMarketplace")
     @ResponseBody
     public String refreshMarketplace() {
-        //获取本地IP
+        //查询得到亚马逊所有市场列表数据
         JSONObject rj = new JSONObject();
-
         boolean refreshStatus = marketplaceService.refreshMarketplace();
-
         rj.put("status", refreshStatus);
         rj.put("msg", refreshStatus?"市场表刷新成功":"市场表刷新失败");
         return rj.toJSONString();
     }
+
+    @RequestMapping("/marketplace_list")
+    @ResponseBody
+    public String marketplaceList() {
+        //查询得到亚马逊对应国家的地区列表数据
+        JSONObject rj = new JSONObject();
+        boolean checkStatus = marketplaceService.checkAllMarketplaceWorldState();
+        rj.put("status", checkStatus);
+        rj.put("msg", checkStatus?"市场表刷新成功":"市场表刷新失败");
+        return rj.toJSONString();
+    }
+
+
 }

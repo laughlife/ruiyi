@@ -228,7 +228,7 @@ public class LingxingServiceImpl implements LingxingService {
         queryParam.put("timestamp", timestamp);
         queryParam.put("access_token", token.getAccessToken());
         queryParam.put("app_key", appId);
-//        queryParam.putAll(args);
+        queryParam.putAll(args);
 
         String sign = ApiSign.sign(queryParam, appId);
         queryParam.put("sign", sign);

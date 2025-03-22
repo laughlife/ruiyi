@@ -7,4 +7,6 @@ import org.springframework.stereotype.Service;
 @Service
 public interface TMarketplaceDao {
     void saveOrUpdate(TMarketplace m);
+
+    List<TMarketplace> findAll();
 }
