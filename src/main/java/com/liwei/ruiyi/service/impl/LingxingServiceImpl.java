@@ -141,12 +141,12 @@ public class LingxingServiceImpl implements LingxingService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("resultJson:"+resultJson);
+        System.out.println("resultJson:" + resultJson);
         //获取token
         String code = resultJson.getString("code");
         if ("200".equals(code)) {
             JSONObject data = resultJson.getJSONObject("data");
-            System.out.println("data:"+data);
+            System.out.println("data:" + data);
             String accessToken = data.getString("access_token");
             String refreshToken = data.getString("refresh_token");
             int expireTime = data.getIntValue("expires_in");
@@ -228,7 +228,9 @@ public class LingxingServiceImpl implements LingxingService {
         queryParam.put("timestamp", timestamp);
         queryParam.put("access_token", token.getAccessToken());
         queryParam.put("app_key", appId);
-        queryParam.putAll(args);
+        if (args != null && !args.isEmpty()) {
+            queryParam.putAll(args);
+        }
 
         String sign = ApiSign.sign(queryParam, appId);
         queryParam.put("sign", sign);

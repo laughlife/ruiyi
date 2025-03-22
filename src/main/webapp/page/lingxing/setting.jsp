@@ -24,7 +24,7 @@
     <div class="layui-row layui-col-space15">
         <div class="layui-col-md6">
             <div class="layui-card">
-                <div class="layui-card-header">基础数据</div>
+                <div class="layui-card-header">接口数据</div>
                 <div class="layui-card-body">
                     <div class="layui-btn-container">
                         <button class="layui-btn" lay-on="getIp">获取本地IP</button>
@@ -34,8 +34,14 @@
                 <div class="layui-card-header">市场数据</div>
                 <div class="layui-card-body">
                     <div class="layui-btn-container">
-                        <button class="layui-btn" lay-on="refreshMarketplace">获取市场列表</button>
+                        <button class="layui-btn" lay-on="refreshMarketplace">同步市场列表</button>
                         <button class="layui-btn" lay-on="marketplace_list">同步国家下地区列表</button>
+                    </div>
+                </div>
+                <div class="layui-card-header">店铺数据</div>
+                <div class="layui-card-body">
+                    <div class="layui-btn-container">
+                        <button class="layui-btn" lay-on="seller_list">同步亚马逊店铺列表</button>
                     </div>
                 </div>
             </div>
@@ -104,6 +110,18 @@
             "marketplace_list":function(){
                 $.ajax({
                     url: "${basePath}marketplace/marketplace_list",
+                    type: "POST",
+                    dataType: "json",
+                    success: function (data) {
+                        if(data.status) {
+                            layer.msg(data.msg);
+                        }
+                    }
+                });
+            },
+            "seller_list":function (){
+                $.ajax({
+                    url: "${basePath}seller/seller_list",
                     type: "POST",
                     dataType: "json",
                     success: function (data) {
