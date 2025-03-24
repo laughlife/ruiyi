@@ -7,4 +7,6 @@ import org.springframework.stereotype.Service;
 @Service
 public interface TSellerDao {
     void saveOrUpdate(TSeller seller);
+
+    List<TSeller> queryAllSellers();
 }

@@ -26,7 +26,6 @@ public class SellerServiceImpl implements SellerService {
         JSONObject data = lingxingService.get(LingxingConfig.seller_list, null);
         if (data != null) {
             //刷新市场表
-            System.out.println(data.toString());
             if (data.getString("code").equals("0")) {
                 JSONArray sellerList = data.getJSONArray("data");
                 for (Object obj : sellerList) {
@@ -47,7 +46,6 @@ public class SellerServiceImpl implements SellerService {
                 }
             } else {
                 returnStatus = false;
-                System.out.println(data.toString());
             }
         }
         return returnStatus;

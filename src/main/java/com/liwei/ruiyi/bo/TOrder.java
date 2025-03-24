@@ -38,4 +38,10 @@ public class TOrder {
     private String earliestShipDateUtc;
     private String gmtModified;
     private String gmtModifiedUtc;
+    private String phone;
+    private String name;
+    private String address;
+    private String buyerEmail;
+    private String buyerName;
+    private String hideTime;
 }

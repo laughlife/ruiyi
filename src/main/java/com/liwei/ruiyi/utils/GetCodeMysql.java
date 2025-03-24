@@ -32,11 +32,11 @@ public class GetCodeMysql {
              Statement stmt = conn.createStatement()) {
 
             List<Map<String, String>> columns = getTableColumns(stmt);
-//            generateEntity(columns);
-//            generateRowMapper(columns);
-            String tableName = "t_order";
-            generateDaoCode(tableName);
-            generateServiceCode(tableName);
+            generateEntity(columns);
+            generateRowMapper(columns);
+//            String tableName = "t_order";
+//            generateDaoCode(tableName);
+//            generateServiceCode(tableName);
         }
     }
 

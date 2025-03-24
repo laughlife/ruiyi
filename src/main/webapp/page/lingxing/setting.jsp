@@ -59,7 +59,22 @@
             <div class="layui-card">
                 <div class="layui-card-header">订单数据</div>
                 <div class="layui-card-body">
-
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <div class="layui-inline" id="laydate-rangeLinked">
+                                <div class="layui-input-inline">
+                                    <input type="text" autocomplete="off" id="laydate-start" class="layui-input" placeholder="开始日期">
+                                </div>
+                                <div class="layui-form-mid">-</div>
+                                <div class="layui-input-inline">
+                                    <input type="text" autocomplete="off" id="laydate-end" class="layui-input" placeholder="结束日期">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <button class="layui-btn" lay-on="order_list">同步订单信息</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -87,7 +102,9 @@
         var util = layui.util;
         var $ = layui.jquery;
         var upload = layui.upload;
+        var laydate = layui.laydate;
 
+        //文件上传
         upload.render({
             elem: '#currency_upload',
             accept: 'file',
@@ -102,6 +119,15 @@
             }
         });
 
+        //日期范围
+        // 日期范围 - 左右面板联动选择模式
+        laydate.render({
+            elem: '#laydate-rangeLinked',
+            range: ['#laydate-start', '#laydate-end'],
+            rangeLinked: true
+        });
+
+        //点击事件
         util.on('lay-on', {
             "getIp": function () {
                 $.ajax({
@@ -157,6 +183,29 @@
                     type: "POST",
                     dataType: "json",
                     success: function (data) {
+                        if(data.status) {
+                            layer.msg(data.msg);
+                        }
+                    }
+                });
+            },
+            "order_list":function(){
+                var start = $('#laydate-start').val();
+                var end = $('#laydate-end').val();
+                var loadIndex = layer.msg('数据正在加载中，请勿操作！', {
+                    icon: 16,
+                    shade: 0.01
+                });
+                $.ajax({
+                    url: "${basePath}order/queryOrders",
+                    type: "POST",
+                    data: {
+                        'start_date': start,
+                        'end_date': end
+                    },
+                    dataType: "json",
+                    success: function (data) {
+                        layer.close(loadIndex);
                         if(data.status) {
                             layer.msg(data.msg);
                         }

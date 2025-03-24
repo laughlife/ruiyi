@@ -13,4 +13,5 @@ public class TOrderItem {
     private String sellerSku;
     private String localSku;
     private String localName;
+    private String orderStatus;
 }

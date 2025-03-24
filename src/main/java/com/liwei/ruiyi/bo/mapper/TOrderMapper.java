@@ -40,6 +40,12 @@ public class TOrderMapper implements RowMapper<TOrder> {
         obj.setEarliestShipDateUtc(rs.getString("earliest_ship_date_utc"));
         obj.setGmtModified(rs.getString("gmt_modified"));
         obj.setGmtModifiedUtc(rs.getString("gmt_modified_utc"));
+        obj.setPhone(rs.getString("phone"));
+        obj.setName(rs.getString("name"));
+        obj.setAddress(rs.getString("address"));
+        obj.setBuyerEmail(rs.getString("buyer_email"));
+        obj.setBuyerName(rs.getString("buyer_name"));
+        obj.setHideTime(rs.getString("hide_time"));
         return obj;
     }
 }

@@ -1,6 +1,7 @@
 package com.liwei.ruiyi.service.impl;
 
 
+import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.liwei.ruiyi.bo.TLxToken;
 import com.liwei.ruiyi.config.LingxingConfig;
@@ -17,10 +18,13 @@ import org.springframework.stereotype.Repository;
 import com.liwei.ruiyi.utils.CheckUtils;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 @Repository("lingxingService")
@@ -82,6 +86,7 @@ public class LingxingServiceImpl implements LingxingService {
             return true; // Token 仍然有效
         }
         TLxToken newToken = (currentTime < token.getExpiresTime()) ? refreshNetToken(token) : getTokenByNet();
+        logger.info("更新token信息");
         return newToken != null && lxTokenDao.updateToken(newToken);
     }
 
@@ -95,19 +100,12 @@ public class LingxingServiceImpl implements LingxingService {
         TLxToken newToken = new TLxToken();
         String fullUrl = apiUrl + LingxingConfig.refreshTokenPath;
 
-
         Map<String, Object> queryParam = new HashMap<>();
         String timestamp = System.currentTimeMillis() / 1000 + "";
         queryParam.put("timestamp", timestamp);
         queryParam.put("access_token", token.getAccessToken());
         queryParam.put("app_key", appId);
         String sign = ApiSign.sign(queryParam, appId);
-
-
-//        Map<String,Object> body = new HashMap<>();
-//        body.put("appId",appId);
-//        body.put("refreshToken",token.getRefreshToken());
-
 
         RequestBody formBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
@@ -220,6 +218,7 @@ public class LingxingServiceImpl implements LingxingService {
 
     @Override
     public JSONObject get(String url, JSONObject args) {
+        logger.info("向领星发送GET请求url:{}", url);
         String fullUrl = apiUrl + url;
         TLxToken token = lxTokenDao.getToken();
 
@@ -247,6 +246,69 @@ public class LingxingServiceImpl implements LingxingService {
                 .get()
                 .header("Content-Type", "application/json")
                 .build();
+        JSONObject resultJson = new JSONObject();
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("请求失败: " + response);
+            }
+            ResponseBody responseBody = response.body();
+            if (responseBody != null) {
+                String result = responseBody.string();
+                resultJson = JSONObject.parseObject(result);
+            } else {
+                System.out.println("响应为空");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return resultJson;
+    }
+
+    @Override
+    public JSONObject post(String url, JSONObject args) {
+        logger.info("向领星发送POST请求url:{}", url);
+        String fullUrl = apiUrl + url;
+        TLxToken token = lxTokenDao.getToken();
+
+        // 1. 构建 Query 参数（对应领星的 .queryParams(queryParam)）
+        Map<String, String> queryParams = new HashMap<>();
+        String timestamp = String.valueOf(System.currentTimeMillis() / 1000);
+        queryParams.put("timestamp", timestamp);
+        queryParams.put("access_token", token.getAccessToken());
+        queryParams.put("app_key", appId);
+
+        // 2. 构建 Body 参数（对应领星的 .json(...)）
+        Map<String, Object> bodyParams = new HashMap<>();
+        // 将用户传入的 args 转为 Map（假设 args 包含 sid/start_date/end_date 等字段）
+        bodyParams.putAll(args);
+
+        // 3. 生成签名（合并 Query 和 Body 参数）
+        Map<String, Object> signParams = new HashMap<>();
+        signParams.putAll(queryParams);
+        signParams.putAll(bodyParams);
+        String sign = ApiSign.sign(signParams, appId);
+        queryParams.put("sign", sign); // 签名放入 Query 参数
+
+        // 4. 构建带 Query 参数的完整 URL
+        HttpUrl.Builder urlBuilder = Objects.requireNonNull(HttpUrl.parse(fullUrl)).newBuilder();
+        for (Map.Entry<String, String> entry : queryParams.entrySet()) {
+            urlBuilder.addQueryParameter(entry.getKey(), entry.getValue());
+        }
+        String finalUrl = urlBuilder.build().toString();
+
+        // 5. 构建 JSON 请求体
+        RequestBody body = RequestBody.create(
+                JSON.toJSONString(bodyParams),
+                MediaType.parse("application/json; charset=utf-8")
+        );
+
+        // 6. 构造请求
+        Request request = new Request.Builder()
+                .url(finalUrl)
+                .post(body)
+                .header("Content-Type", "application/json") // 明确声明 JSON 类型
+                .build();
+        // 发送请求并处理响应
         JSONObject resultJson = new JSONObject();
         try (Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful()) {

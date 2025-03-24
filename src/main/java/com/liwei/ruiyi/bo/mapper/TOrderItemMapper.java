@@ -15,6 +15,7 @@ public class TOrderItemMapper implements RowMapper<TOrderItem> {
         obj.setSellerSku(rs.getString("seller_sku"));
         obj.setLocalSku(rs.getString("local_sku"));
         obj.setLocalName(rs.getString("local_name"));
+        obj.setOrderStatus(rs.getString("order_status"));
         return obj;
     }
 }

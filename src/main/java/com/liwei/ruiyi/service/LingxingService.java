@@ -13,4 +13,6 @@ public interface LingxingService {
     boolean getOrRefreshToken();
 
     JSONObject get(String url, JSONObject args);
+
+    JSONObject post(String url, JSONObject args);
 }

@@ -1,6 +1,7 @@
 package com.liwei.ruiyi.dao.impl;
 
 import com.liwei.ruiyi.bo.TSeller;
+import com.liwei.ruiyi.bo.mapper.TSellerMapper;
 import com.liwei.ruiyi.dao.TSellerDao;
 import org.springframework.stereotype.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,5 +40,11 @@ public class TSellerDaoImpl implements TSellerDao {
                     seller.getStatus()};
             jdbc.update(sql, args);
         }
+    }
+
+    @Override
+    public List<TSeller> queryAllSellers() {
+        String sql = "select * from t_seller limit 0,3";
+        return jdbc.query(sql,new TSellerMapper());
     }
 }
