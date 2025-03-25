@@ -4,19 +4,14 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.liwei.ruiyi.dao.TOrderDao;
-import com.liwei.ruiyi.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository("orderDao")
@@ -43,7 +38,7 @@ public class TOrderDaoImpl implements TOrderDao {
         order.put("purchase_date", ISOTimeToSystemTime(order.getString("purchase_date")));
         order.put("earliest_ship_date", ISOTimeToSystemTime(order.getString("earliest_ship_date")));
         order.put("posted_date_utc", ISOTimeToSystemTime(order.getString("posted_date_utc")));
-
+        order.put("latest_ship_date", ISOTimeToSystemTime(order.getString("latest_ship_date")));
         String checkSql = "SELECT COUNT(0) FROM t_order WHERE amazon_order_id = ?";
         int count = jdbc.queryForObject(checkSql, new Object[]{order.getString("amazon_order_id")}, Integer.class);
 
@@ -61,15 +56,35 @@ public class TOrderDaoImpl implements TOrderDao {
 
     }
 
-    private String ISOTimeToSystemTime(String purchaseDate) {
-        if (purchaseDate == null) {
+    private String ISOTimeToSystemTime(String isoDateTime) {
+        if (isoDateTime == null || isoDateTime.isEmpty()) {
             return null;
         }
-        Instant instant = Instant.parse(purchaseDate);
-        LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
-        // 将 LocalDateTime 格式化为 MySQL 支持的 datetime 格式
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        return localDateTime.format(formatter);
+        // 尝试解析为ISO 8601 UTC格式
+        SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        isoFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        try {
+            Date date = isoFormat.parse(isoDateTime);
+            // 转换为系统时区的时间格式
+            SimpleDateFormat mysqlFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            return mysqlFormat.format(date);
+        } catch (ParseException e) {
+            // 尝试解析为目标格式
+            SimpleDateFormat mysqlFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            mysqlFormat.setLenient(false); // 严格模式，避免自动纠正错误日期
+            try {
+                Date date = mysqlFormat.parse(isoDateTime);
+                // 检查原字符串是否与格式化后的严格匹配，确保格式正确（如前导零）
+                String formatted = mysqlFormat.format(date);
+                if (formatted.equals(isoDateTime)) {
+                    return isoDateTime;
+                } else {
+                    return null;
+                }
+            } catch (ParseException ex) {
+                return null;
+            }
+        }
     }
 
     @Override
@@ -82,6 +97,17 @@ public class TOrderDaoImpl implements TOrderDao {
             JSONObject item = items.getJSONObject(i);
             Integer id = item.getInteger("id");
             item.put("order_id", orderId);
+            JSONArray pids = item.getJSONArray("promotion_ids");
+            if (pids != null && pids.size() > 0) {
+                item.put("promotion_ids", pids.toJSONString());
+            }else{
+                item.put("promotion_ids", null);
+            }
+            item.put("scheduled_delivery_start_date", ISOTimeToSystemTime(item.getString("scheduled_delivery_start_date")));
+            item.put("scheduled_delivery_end_date", ISOTimeToSystemTime(item.getString("scheduled_delivery_end_date")));
+            item.put("price_designation",c(item.getString("price_designation")));
+            item.put("other_amount",c(item.getString("other_amount")));
+
             int count = jdbc.queryForObject(sql, new Object[]{id}, Integer.class);
             if (count > 0) {
                 // 生成 UPDATE 语句
@@ -95,6 +121,9 @@ public class TOrderDaoImpl implements TOrderDao {
                 jdbc.update(insertSql, getValues(item));
             }
         }
+    }
+    public String c(String val){
+        return StringUtils.isNotBlank(val)?val:null;
     }
 
     @Override

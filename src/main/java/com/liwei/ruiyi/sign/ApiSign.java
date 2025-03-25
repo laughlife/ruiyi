@@ -27,7 +27,6 @@ public class ApiSign {
         }
         // md5加密
         String md5Hex = DigestUtils.md5Hex(paramValue.getBytes(StandardCharsets.UTF_8)).toUpperCase();
-        logger.info("params append: {},md5Hex:{}", paramValue, md5Hex);
         return AesUtil.encryptEcb(md5Hex, appSecret);
     }
 }

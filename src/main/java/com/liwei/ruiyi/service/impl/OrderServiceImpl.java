@@ -12,6 +12,7 @@ import com.liwei.ruiyi.service.SellerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import java.util.List;
+import java.util.Map;
 
 @Repository("orderService")
 public class OrderServiceImpl implements OrderService {
@@ -29,6 +30,7 @@ public class OrderServiceImpl implements OrderService {
     public boolean queryOrdersByDate(String startDate, String endDate) {
         List<TSeller> sellers = sellerDao.queryAllSellers();
         boolean result = true;
+        int count = 0;
         for (TSeller seller : sellers) {
             JSONObject args = new JSONObject();
             /**
@@ -52,6 +54,8 @@ public class OrderServiceImpl implements OrderService {
             JSONObject data = lingxingService.post(LingxingConfig.query_orders, args);
             if (data != null && data.getInteger("code") == 0) {
                 JSONArray array = data.getJSONArray("data");
+                count += data.getInteger("total");
+
                 if (array.size() > 0) {
                     for (int i = 0; i < array.size(); i++) {
                         JSONObject order = array.getJSONObject(i);
@@ -67,6 +71,7 @@ public class OrderServiceImpl implements OrderService {
                 break;
             }
         }
+        System.out.println("订单数量："+count);
         return result;
     }
 
