@@ -49,12 +49,12 @@ public class OrderServiceImpl implements OrderService {
             args.put("offset",0);
             args.put("length",5000);
             args.put("sort_desc_by_date_type",0);
-            args.put("fulfillment_channel",1);
+            args.put("fulfillment_channel",2);
 
-            JSONObject data = lingxingService.post(LingxingConfig.query_orders, args);
-            if (data != null && data.getInteger("code") == 0) {
-                JSONArray array = data.getJSONArray("data");
-                count += data.getInteger("total");
+            JSONObject data1 = lingxingService.post(LingxingConfig.query_orders, args);
+            if (data1 != null && data1.getInteger("code") == 0) {
+                JSONArray array = data1.getJSONArray("data");
+                count += data1.getInteger("total");
 
                 if (array.size() > 0) {
                     for (int i = 0; i < array.size(); i++) {
@@ -62,8 +62,28 @@ public class OrderServiceImpl implements OrderService {
                         orderDao.saveOrUpdateOrders(order);
                     }
                 }
-            }else if(data != null && data.getInteger("code") != 0){
-                System.err.println("OrderServiceImpl: Line 65    message:"+data.toString());
+            }else if(data1 != null && data1.getInteger("code") != 0){
+                System.err.println("OrderServiceImpl: Line 66    message:"+data1.toString());
+                result = false;
+                break;
+            }else{
+                result = false;
+                break;
+            }
+
+            JSONObject data2 = lingxingService.post(LingxingConfig.query_orders, args);
+            if (data2 != null && data2.getInteger("code") == 0) {
+                JSONArray array = data2.getJSONArray("data");
+                count += data2.getInteger("total");
+
+                if (array.size() > 0) {
+                    for (int i = 0; i < array.size(); i++) {
+                        JSONObject order = array.getJSONObject(i);
+                        orderDao.saveOrUpdateOrders(order);
+                    }
+                }
+            }else if(data2 != null && data2.getInteger("code") != 0){
+                System.err.println("OrderServiceImpl: Line 86    message:"+data2.toString());
                 result = false;
                 break;
             }else{
@@ -101,7 +121,6 @@ public class OrderServiceImpl implements OrderService {
             }else{
                 return false;
             }
-            break;
         }
         return false;
     }

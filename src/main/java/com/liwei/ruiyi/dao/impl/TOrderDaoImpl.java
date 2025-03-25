@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -39,19 +40,30 @@ public class TOrderDaoImpl implements TOrderDao {
         order.put("earliest_ship_date", ISOTimeToSystemTime(order.getString("earliest_ship_date")));
         order.put("posted_date_utc", ISOTimeToSystemTime(order.getString("posted_date_utc")));
         order.put("latest_ship_date", ISOTimeToSystemTime(order.getString("latest_ship_date")));
+        order.put("earliest_delivery_date", ISOTimeToSystemTime(order.getString("earliest_delivery_date")));
+        order.put("latest_delivery_date", ISOTimeToSystemTime(order.getString("latest_delivery_date")));
+
         String checkSql = "SELECT COUNT(0) FROM t_order WHERE amazon_order_id = ?";
         int count = jdbc.queryForObject(checkSql, new Object[]{order.getString("amazon_order_id")}, Integer.class);
 
         if (count > 0) {
             // 生成 UPDATE 语句
             String updateSql = generateUpdateSQL(order, "t_order", "amazon_order_id");
-            order.put("amazon_order_id",amazon_order_id);
+            order.put("amazon_order_id", amazon_order_id);
             Object[] updateValues = getUpdateValues(order, "amazon_order_id");
-            jdbc.update(updateSql, updateValues);
+            try {
+                jdbc.update(updateSql, updateValues);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         } else {
             // 生成 INSERT 语句
-            String insertSql = generateInsertSQL(order, "t_order");
-            jdbc.update(insertSql, getValues(order));
+            String insertSql = generateInsertSQL(order, "t_order","amazon_order_id");
+            try {
+                jdbc.update(insertSql, getValues(order));
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
 
     }
@@ -100,13 +112,13 @@ public class TOrderDaoImpl implements TOrderDao {
             JSONArray pids = item.getJSONArray("promotion_ids");
             if (pids != null && pids.size() > 0) {
                 item.put("promotion_ids", pids.toJSONString());
-            }else{
+            } else {
                 item.put("promotion_ids", null);
             }
             item.put("scheduled_delivery_start_date", ISOTimeToSystemTime(item.getString("scheduled_delivery_start_date")));
             item.put("scheduled_delivery_end_date", ISOTimeToSystemTime(item.getString("scheduled_delivery_end_date")));
-            item.put("price_designation",c(item.getString("price_designation")));
-            item.put("other_amount",c(item.getString("other_amount")));
+            item.put("price_designation", c(item.getString("price_designation")));
+            item.put("other_amount", c(item.getString("other_amount")));
 
             int count = jdbc.queryForObject(sql, new Object[]{id}, Integer.class);
             if (count > 0) {
@@ -114,16 +126,25 @@ public class TOrderDaoImpl implements TOrderDao {
                 String updateSql = generateUpdateSQL(item, "t_order_item", "id");
                 item.put("id", id);
                 Object[] updateValues = getUpdateValues(item, "id");
-                jdbc.update(updateSql, updateValues);
+                try{
+                    jdbc.update(updateSql, updateValues);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
             } else {
                 // 生成 INSERT 语句
-                String insertSql = generateInsertSQL(item, "t_order_item");
-                jdbc.update(insertSql, getValues(item));
+                String insertSql = generateInsertSQL(item, "t_order_item", "id");
+                try{
+                    jdbc.update(insertSql, getValues(item));
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
             }
         }
     }
-    public String c(String val){
-        return StringUtils.isNotBlank(val)?val:null;
+
+    public String c(String val) {
+        return StringUtils.isNotBlank(val) ? val : null;
     }
 
     @Override
@@ -141,13 +162,20 @@ public class TOrderDaoImpl implements TOrderDao {
     }
 
     // 生成 INSERT 语句
-    // 生成 INSERT 语句
-    private String generateInsertSQL(JSONObject order, String tableName) {
+    private String generateInsertSQL(JSONObject order, String tableName,String primary) {
         Set<String> keys = order.keySet();
         String columns = String.join(", ", keys);
         String placeholders = String.join(", ", keys.stream().map(k -> "?").toArray(String[]::new));
 
-        return "INSERT INTO " + tableName + " (" + columns + ") VALUES (" + placeholders + ")";
+        // 生成 ON DUPLICATE KEY UPDATE 子句
+        String updateClause = keys.stream()
+                .filter(key -> !primary.equals(key))  // 排除主键字段（假设主键为 id）
+                .map(key -> key + " = VALUES(" + key + ")")  // 格式化为 `column = VALUES(column)`
+                .collect(Collectors.joining(", "));
+
+        return "INSERT INTO " + tableName
+                + " (" + columns + ") VALUES (" + placeholders + ")"
+                + (updateClause.isEmpty() ? "" : " ON DUPLICATE KEY UPDATE " + updateClause);
     }
 
     // 生成 UPDATE 语句

@@ -38,9 +38,9 @@ public class LingxingServiceImpl implements LingxingService {
 
     OkHttpClient client = new OkHttpClient.Builder()
             .retryOnConnectionFailure(true)
-            .connectTimeout(10, TimeUnit.SECONDS)
-            .readTimeout(10, TimeUnit.SECONDS)
-            .writeTimeout(10, TimeUnit.SECONDS)
+            .connectTimeout(2, TimeUnit.MINUTES)
+            .readTimeout(2, TimeUnit.MINUTES)
+            .writeTimeout(2, TimeUnit.MINUTES)
             .build();
 
     @Autowired

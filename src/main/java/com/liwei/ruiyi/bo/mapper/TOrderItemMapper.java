@@ -52,7 +52,7 @@ public class TOrderItemMapper implements RowMapper<TOrderItem> {
         obj.setConditionSubtypeId(rs.getString("condition_subtype_id"));
         obj.setScheduledDeliveryStartDate(rs.getString("scheduled_delivery_start_date"));
         obj.setScheduledDeliveryEndDate(rs.getString("scheduled_delivery_end_date"));
-        obj.setPriceDesignation(rs.getBigDecimal("price_designation"));
+        obj.setPriceDesignation(rs.getString("price_designation"));
         obj.setCgPrice(rs.getBigDecimal("cg_price"));
         obj.setFeeName(rs.getString("fee_name"));
         obj.setCgTransportCosts(rs.getBigDecimal("cg_transport_costs"));

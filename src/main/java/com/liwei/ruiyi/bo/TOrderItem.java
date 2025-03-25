@@ -50,7 +50,7 @@ public class TOrderItem {
     private String conditionSubtypeId;
     private String scheduledDeliveryStartDate;
     private String scheduledDeliveryEndDate;
-    private BigDecimal priceDesignation;
+    private String priceDesignation;
     private BigDecimal cgPrice;
     private String feeName;
     private BigDecimal cgTransportCosts;
