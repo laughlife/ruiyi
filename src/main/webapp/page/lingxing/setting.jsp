@@ -15,7 +15,8 @@
     <title>所有功能</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <link rel="stylesheet" href="${basePath}static/layui/css/layui.css" media="all">
     <script src="${basePath}static/layui/layui.js"></script>
 </head>
@@ -44,13 +45,16 @@
                         <button class="layui-btn" lay-on="seller_list">同步亚马逊店铺列表</button>
                     </div>
                 </div>
-                <div class="layui-card-header">汇率上传，数据来源在：https://www.safe.gov.cn/safe/rmbhlzjj/index.html</div>
+                <div class="layui-card-header">汇率上传，数据来源在：https://www.safe.gov.cn/safe/rmbhlzjj/index.html
+                </div>
                 <div class="layui-card-body">
                     <div class="layui-upload-drag" style="display: block;" id="currency_upload">
                         <i class="layui-icon layui-icon-upload"></i>
                         <div>点击上传，或将文件拖拽到此处</div>
                         <div id="currency_upload_preview">
-                            <hr> <img src="${basePath}images/logo.ico" alt="上传成功后渲染" style="max-width: 50px;max-height: 50px;">
+                            <hr>
+                            <img src="${basePath}images/logo.ico" alt="上传成功后渲染"
+                                 style="max-width: 50px;max-height: 50px;">
                         </div>
                     </div>
                 </div>
@@ -63,16 +67,21 @@
                         <div class="layui-inline">
                             <div class="layui-inline" id="laydate-rangeLinked">
                                 <div class="layui-input-inline">
-                                    <input type="text" autocomplete="off" id="laydate-start" class="layui-input" placeholder="开始日期">
+                                    <input type="text" autocomplete="off" id="laydate-start" class="layui-input"
+                                           placeholder="开始日期">
                                 </div>
                                 <div class="layui-form-mid">-</div>
                                 <div class="layui-input-inline">
-                                    <input type="text" autocomplete="off" id="laydate-end" class="layui-input" placeholder="结束日期">
+                                    <input type="text" autocomplete="off" id="laydate-end" class="layui-input"
+                                           placeholder="结束日期">
                                 </div>
                             </div>
                         </div>
                         <div class="layui-inline">
                             <button class="layui-btn" lay-on="order_list">同步订单信息</button>
+                        </div>
+                        <div class="layui-inline">
+                            <button class="layui-btn" lay-on="order_details">订单明细</button>
                         </div>
                     </div>
                 </div>
@@ -111,9 +120,9 @@
             exts: 'xlsx|xls',
             url: '${basePath}currency/uploadCurrency',
             data: {
-                'id':'xxx'
+                'id': 'xxx'
             },
-            done: function(res){
+            done: function (res) {
                 layer.msg(res.msg);
                 $('#currency_upload_preview').find('img').attr('src', '${basePath}images/excel.png');
             }
@@ -135,66 +144,67 @@
                     type: "POST",
                     dataType: "json",
                     success: function (data) {
-                        if(data.status) {
+                        if (data.status) {
                             layer.msg(data.msg);
                         }
                     }
                 });
             },
-            "checkToken":function(){
+            "checkToken": function () {
                 $.ajax({
                     url: "${basePath}lingxing/checkToken",
                     type: "POST",
                     dataType: "json",
                     success: function (data) {
-                        if(data.status) {
+                        if (data.status) {
                             layer.msg(data.msg);
                         }
                     }
                 });
             },
-            "refreshMarketplace":function(){
+            "refreshMarketplace": function () {
                 $.ajax({
                     url: "${basePath}marketplace/refreshMarketplace",
                     type: "POST",
                     dataType: "json",
                     success: function (data) {
-                        if(data.status) {
+                        if (data.status) {
                             layer.msg(data.msg);
                         }
                     }
                 });
             },
-            "marketplace_list":function(){
+            "marketplace_list": function () {
                 $.ajax({
                     url: "${basePath}marketplace/marketplace_list",
                     type: "POST",
                     dataType: "json",
                     success: function (data) {
-                        if(data.status) {
+                        if (data.status) {
                             layer.msg(data.msg);
                         }
                     }
                 });
             },
-            "seller_list":function (){
+            "seller_list": function () {
                 $.ajax({
                     url: "${basePath}seller/seller_list",
                     type: "POST",
                     dataType: "json",
                     success: function (data) {
-                        if(data.status) {
+                        if (data.status) {
                             layer.msg(data.msg);
                         }
                     }
                 });
             },
-            "order_list":function(){
+            "order_list": function () {
                 var start = $('#laydate-start').val();
                 var end = $('#laydate-end').val();
                 var loadIndex = layer.msg('数据正在加载中，请勿操作！', {
                     icon: 16,
-                    shade: 0.01
+                    shade: 0.3,
+                    time: 0
                 });
                 $.ajax({
                     url: "${basePath}order/queryOrders",
@@ -206,7 +216,31 @@
                     dataType: "json",
                     success: function (data) {
                         layer.close(loadIndex);
-                        if(data.status) {
+                        if (data.status) {
+                            layer.msg(data.msg);
+                        }
+                    }
+                });
+            },
+            "order_details":function(){
+                var start = $('#laydate-start').val();
+                var end = $('#laydate-end').val();
+                var loadIndex = layer.msg('数据正在加载中，请勿操作！', {
+                    icon: 16,
+                    shade: 0.3,
+                    time: 0
+                });
+                $.ajax({
+                    url: "${basePath}order/orderDetails",
+                    type: "POST",
+                    data: {
+                        'start_date': start,
+                        'end_date': end
+                    },
+                    dataType: "json",
+                    success: function (data) {
+                        layer.close(loadIndex);
+                        if (data.status) {
                             layer.msg(data.msg);
                         }
                     }

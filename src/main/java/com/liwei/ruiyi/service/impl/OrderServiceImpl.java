@@ -55,10 +55,7 @@ public class OrderServiceImpl implements OrderService {
                 if (array.size() > 0) {
                     for (int i = 0; i < array.size(); i++) {
                         JSONObject order = array.getJSONObject(i);
-                        String orderId = order.getString("amazon_order_id");
-                        JSONArray items = order.getJSONArray("item_list");
                         orderDao.saveOrUpdateOrders(order);
-                        orderDao.saveOrUpdateOrderItems(orderId, items);
                     }
                 }
             }else if(data != null && data.getInteger("code") != 0){
@@ -71,5 +68,36 @@ public class OrderServiceImpl implements OrderService {
             }
         }
         return result;
+    }
+
+    @Override
+    public boolean queryOrderDetailsByDate(String startDate, String endDate) {
+        // 首先返回200条数据为一组的订单号集合
+        // 然后拿到订单号集合，分别查询订单详情
+        List<String> orderIds = orderDao.queryOrderIdsByDate(startDate, endDate);
+        for(String ids:orderIds){
+            JSONObject args = new JSONObject();
+            args.put("order_id",ids);
+            JSONObject data = lingxingService.post(LingxingConfig.order_detail, args);
+            if (data != null && data.getInteger("code") == 0) {
+                JSONArray array = data.getJSONArray("data");
+                if (array.size() > 0) {
+                    for (int i = 0; i < array.size(); i++) {
+                        JSONObject order = array.getJSONObject(i);
+                        String orderId = order.getString("amazon_order_id");
+                        JSONArray items = order.getJSONArray("item_list");
+                        orderDao.saveOrUpdateOrders(order);
+                        orderDao.saveOrUpdateOrderItems(orderId, items);
+                    }
+                }
+            }else if(data != null && data.getInteger("code") != 0){
+                System.err.println("OrderServiceImpl: Line 65    message:"+data.toString());
+                return false;
+            }else{
+                return false;
+            }
+            break;
+        }
+        return false;
     }
 }

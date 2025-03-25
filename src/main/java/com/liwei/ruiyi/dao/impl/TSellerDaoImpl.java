@@ -44,7 +44,7 @@ public class TSellerDaoImpl implements TSellerDao {
 
     @Override
     public List<TSeller> queryAllSellers() {
-        String sql = "select * from t_seller limit 0,3";
+        String sql = "select * from t_seller";
         return jdbc.query(sql,new TSellerMapper());
     }
 }

@@ -13,4 +13,6 @@ public interface TOrderDao {
     void saveOrUpdateOrders(JSONObject order);
 
     void saveOrUpdateOrderItems(String orderId, JSONArray items);
+
+    List<String> queryOrderIdsByDate(String startDate, String endDate);
 }

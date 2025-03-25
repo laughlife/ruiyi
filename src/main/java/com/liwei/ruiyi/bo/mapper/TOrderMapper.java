@@ -46,6 +46,34 @@ public class TOrderMapper implements RowMapper<TOrder> {
         obj.setBuyerEmail(rs.getString("buyer_email"));
         obj.setBuyerName(rs.getString("buyer_name"));
         obj.setHideTime(rs.getString("hide_time"));
+        obj.setCity(rs.getString("city"));
+        obj.setDistrict(rs.getString("district"));
+        obj.setCountry(rs.getString("country"));
+        obj.setCurrency(rs.getString("currency"));
+        obj.setIcon(rs.getString("icon"));
+        obj.setIsBusinessOrder(rs.getInt("is_business_order"));
+        obj.setIsPrime(rs.getInt("is_prime"));
+        obj.setIsPremiumOrder(rs.getInt("is_premium_order"));
+        obj.setIsPromotion(rs.getInt("is_promotion"));
+        obj.setTaxesIncluded(rs.getInt("taxes_included"));
+        obj.setShipServiceLevel(rs.getString("ship_service_level"));
+        obj.setShipmentServiceLevelCategory(rs.getString("shipment_service_level_category"));
+        obj.setTaxClassifications(rs.getString("tax_classifications"));
+        obj.setPurchaseOrderNumber(rs.getString("purchase_order_number"));
+        obj.setPaymentMethod(rs.getString("payment_method"));
+        obj.setCbaDisplayableShippingLabel(rs.getString("cba_displayable_shipping_label"));
+        obj.setOrderType(rs.getString("order_type"));
+        obj.setLatestShipDate(rs.getString("latest_ship_date"));
+        obj.setEarliestDeliveryDate(rs.getString("earliest_delivery_date"));
+        obj.setLatestDeliveryDate(rs.getString("latest_delivery_date"));
+        obj.setNumberOfItemsShipped(rs.getInt("number_of_items_shipped"));
+        obj.setNumberOfItemsUnshipped(rs.getInt("number_of_items_unshipped"));
+        obj.setStateOrRegion(rs.getString("state_or_region"));
+        obj.setCountryCode(rs.getString("country_code"));
+        obj.setAddressLine1(rs.getString("address_line1"));
+        obj.setAddressLine2(rs.getString("address_line2"));
+        obj.setAddressLine3(rs.getString("address_line3"));
+        obj.setShippingAddress(rs.getString("shipping_address"));
         return obj;
     }
 }

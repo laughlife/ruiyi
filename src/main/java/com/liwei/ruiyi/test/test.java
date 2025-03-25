@@ -11,5 +11,6 @@ public class test {
         String time = sdf.format(new Date(1742783982890L));
         System.out.println(time);
         //商品信息
+        System.out.println("buyer_customized_info".length());
     }
 }

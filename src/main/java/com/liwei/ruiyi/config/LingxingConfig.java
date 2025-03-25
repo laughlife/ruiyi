@@ -13,7 +13,7 @@ public class LingxingConfig {
     public static String seller_list = "/erp/sc/data/seller/lists";
     //查询得到亚马逊订单列表 POST
     public static String query_orders = "/erp/sc/data/mws/orders";
-
-
+    //查询亚马逊订单详情 POST
+    public static String order_detail = "/erp/sc/data/mws/orderDetail";
 
 }

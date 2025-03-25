@@ -38,4 +38,17 @@ public class OrderController {
         return rj.toJSONString();
     }
 
+    @RequestMapping("/orderDetails")
+    @ResponseBody
+    public String orderDetails(String start_date, String end_date) {
+        JSONObject rj = new JSONObject();
+        start_date = start_date + " 00:00:00";
+        end_date = end_date + " 23:59:59";
+        boolean queryStatus = orderService.queryOrderDetailsByDate(start_date, end_date);
+        rj.put("status", queryStatus);
+        String msg = "订单数据同步成功，时间范围：" + start_date + "至" + end_date;
+        rj.put("msg", queryStatus?msg:"订单数据同步失败");
+        return rj.toJSONString();
+    }
+
 }

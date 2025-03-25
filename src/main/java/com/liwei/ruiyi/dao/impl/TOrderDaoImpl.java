@@ -80,8 +80,7 @@ public class TOrderDaoImpl implements TOrderDao {
         String sql = "SELECT COUNT(0) FROM t_order_item WHERE id = ?";
         for (int i = 0; i < items.size(); i++) {
             JSONObject item = items.getJSONObject(i);
-            String id = item.getString("asin") + orderId;
-            item.put("id", id);
+            Integer id = item.getInteger("id");
             item.put("order_id", orderId);
             int count = jdbc.queryForObject(sql, new Object[]{id}, Integer.class);
             if (count > 0) {
@@ -96,6 +95,20 @@ public class TOrderDaoImpl implements TOrderDao {
                 jdbc.update(insertSql, getValues(item));
             }
         }
+    }
+
+    @Override
+    public List<String> queryOrderIdsByDate(String startDate, String endDate) {
+        String sql = "SELECT amazon_order_id FROM t_order WHERE purchase_date BETWEEN ? AND ?";
+        List<String> orderIds = jdbc.queryForList(sql, String.class, startDate, endDate);
+        List<String> returnList = new java.util.ArrayList<>();
+        for (int i = 0; i < orderIds.size(); i += 200) {
+            int endIndex = Math.min(i + 200, orderIds.size());
+            List<String> batch = orderIds.subList(i, endIndex);
+            String concatenated = String.join(",", batch);
+            returnList.add(concatenated);
+        }
+        return returnList;
     }
 
     // 生成 INSERT 语句
