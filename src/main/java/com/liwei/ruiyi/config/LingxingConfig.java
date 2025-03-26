@@ -16,4 +16,9 @@ public class LingxingConfig {
     //查询亚马逊订单详情 POST
     public static String order_detail = "/erp/sc/data/mws/orderDetail";
 
+    //查询店铺利润日报表
+    public static String profit_report = "/bd/profit/report/open/report/seller/list";
+
+
+
 }

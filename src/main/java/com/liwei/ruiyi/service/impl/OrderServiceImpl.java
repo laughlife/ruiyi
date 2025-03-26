@@ -4,18 +4,26 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.liwei.ruiyi.bo.TSeller;
 import com.liwei.ruiyi.config.LingxingConfig;
+import com.liwei.ruiyi.dao.TProfitDayDao;
 import com.liwei.ruiyi.dao.TSellerDao;
 import com.liwei.ruiyi.service.LingxingService;
 import com.liwei.ruiyi.service.OrderService;
 import com.liwei.ruiyi.dao.TOrderDao;
 import com.liwei.ruiyi.service.SellerService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @Repository("orderService")
 public class OrderServiceImpl implements OrderService {
+    private static final Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
 
     @Autowired
     private TOrderDao orderDao;
@@ -25,6 +33,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     TSellerDao sellerDao;
+
+    @Autowired
+    TProfitDayDao profitDayDao;
 
     @Override
     public boolean queryOrdersByDate(String startDate, String endDate) {
@@ -45,11 +56,11 @@ public class OrderServiceImpl implements OrderService {
              *         2 订单修改时间【北京时间】
              *         3 平台更新时间【UTC时间】
              */
-            args.put("date_type",1);
-            args.put("offset",0);
-            args.put("length",5000);
-            args.put("sort_desc_by_date_type",0);
-            args.put("fulfillment_channel",2);
+            args.put("date_type", 1);
+            args.put("offset", 0);
+            args.put("length", 5000);
+            args.put("sort_desc_by_date_type", 0);
+            args.put("fulfillment_channel", 2);
 
             JSONObject data1 = lingxingService.post(LingxingConfig.query_orders, args);
             if (data1 != null && data1.getInteger("code") == 0) {
@@ -62,11 +73,11 @@ public class OrderServiceImpl implements OrderService {
                         orderDao.saveOrUpdateOrders(order);
                     }
                 }
-            }else if(data1 != null && data1.getInteger("code") != 0){
-                System.err.println("OrderServiceImpl: Line 66    message:"+data1.toString());
+            } else if (data1 != null && data1.getInteger("code") != 0) {
+                System.err.println("OrderServiceImpl: Line 66    message:" + data1.toString());
                 result = false;
                 break;
-            }else{
+            } else {
                 result = false;
                 break;
             }
@@ -82,16 +93,16 @@ public class OrderServiceImpl implements OrderService {
                         orderDao.saveOrUpdateOrders(order);
                     }
                 }
-            }else if(data2 != null && data2.getInteger("code") != 0){
-                System.err.println("OrderServiceImpl: Line 86    message:"+data2.toString());
+            } else if (data2 != null && data2.getInteger("code") != 0) {
+                System.err.println("OrderServiceImpl: Line 86    message:" + data2.toString());
                 result = false;
                 break;
-            }else{
+            } else {
                 result = false;
                 break;
             }
         }
-        System.out.println("订单数量："+count);
+        System.out.println("订单数量：" + count);
         return result;
     }
 
@@ -100,9 +111,9 @@ public class OrderServiceImpl implements OrderService {
         // 首先返回200条数据为一组的订单号集合
         // 然后拿到订单号集合，分别查询订单详情
         List<String> orderIds = orderDao.queryOrderIdsByDate(startDate, endDate);
-        for(String ids:orderIds){
+        for (String ids : orderIds) {
             JSONObject args = new JSONObject();
-            args.put("order_id",ids);
+            args.put("order_id", ids);
             JSONObject data = lingxingService.post(LingxingConfig.order_detail, args);
             if (data != null && data.getInteger("code") == 0) {
                 JSONArray array = data.getJSONArray("data");
@@ -115,13 +126,15 @@ public class OrderServiceImpl implements OrderService {
                         orderDao.saveOrUpdateOrderItems(orderId, items);
                     }
                 }
-            }else if(data != null && data.getInteger("code") != 0){
-                System.err.println("OrderServiceImpl: Line 65    message:"+data.toString());
+            } else if (data != null && data.getInteger("code") != 0) {
+                System.err.println("OrderServiceImpl: Line 65    message:" + data.toString());
                 return false;
-            }else{
+            } else {
                 return false;
             }
         }
         return false;
     }
+
+
 }

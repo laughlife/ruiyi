@@ -65,7 +65,6 @@ public class TOrderDaoImpl implements TOrderDao {
                 e.printStackTrace();
             }
         }
-
     }
 
     private String ISOTimeToSystemTime(String isoDateTime) {
@@ -181,8 +180,7 @@ public class TOrderDaoImpl implements TOrderDao {
     // 生成 UPDATE 语句
     private String generateUpdateSQL(JSONObject order, String tableName, String primaryKey) {
         Set<String> keys = order.keySet();
-        keys.remove(primaryKey); // 过滤掉主键，避免 SET 里面更新主键
-
+        keys.remove(primaryKey);
         String setClause = String.join(", ", keys.stream().map(k -> k + " = ?").toArray(String[]::new));
         return "UPDATE " + tableName + " SET " + setClause + " WHERE " + primaryKey + " = ?";
     }

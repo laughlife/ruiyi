@@ -2,6 +2,7 @@ package com.liwei.ruiyi.controller;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.liwei.ruiyi.service.OrderService;
+import com.liwei.ruiyi.service.ProfitDayService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +20,10 @@ public class OrderController {
     public OrderService orderService;
 
     @Autowired
-    private HttpSession session;
-
+    HttpServletRequest request;
 
     @Autowired
-    HttpServletRequest request;
+    ProfitDayService profitDayService;
 
     @RequestMapping("/queryOrders")
     @ResponseBody
@@ -45,6 +45,19 @@ public class OrderController {
         start_date = start_date + " 00:00:00";
         end_date = end_date + " 23:59:59";
         boolean queryStatus = orderService.queryOrderDetailsByDate(start_date, end_date);
+        rj.put("status", queryStatus);
+        String msg = "订单数据同步成功，时间范围：" + start_date + "至" + end_date;
+        rj.put("msg", queryStatus?msg:"订单数据同步失败");
+        return rj.toJSONString();
+    }
+
+    @RequestMapping("/profit_day")
+    @ResponseBody
+    public String profit_day(String start_date, String end_date) {
+        JSONObject rj = new JSONObject();
+//        start_date = start_date + " 00:00:00";
+//        end_date = end_date + " 23:59:59";
+        boolean queryStatus = profitDayService.getProfitReport(start_date, end_date);
         rj.put("status", queryStatus);
         String msg = "订单数据同步成功，时间范围：" + start_date + "至" + end_date;
         rj.put("msg", queryStatus?msg:"订单数据同步失败");

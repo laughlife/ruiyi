@@ -139,16 +139,13 @@ public class LingxingServiceImpl implements LingxingService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("resultJson:" + resultJson);
         //获取token
         String code = resultJson.getString("code");
         if ("200".equals(code)) {
             JSONObject data = resultJson.getJSONObject("data");
-            System.out.println("data:" + data);
             String accessToken = data.getString("access_token");
             String refreshToken = data.getString("refresh_token");
             int expireTime = data.getIntValue("expires_in");
-
             newToken.setAccessToken(accessToken);
             newToken.setRefreshToken(refreshToken);
             long currentTime = System.currentTimeMillis();
@@ -164,7 +161,7 @@ public class LingxingServiceImpl implements LingxingService {
 
 
     private TLxToken getTokenByNet() {
-        logger.info("获取新的token信息");
+
         TLxToken token = new TLxToken();
         String fullUrl = apiUrl + LingxingConfig.getTokenPath;
         RequestBody formBody = new MultipartBody.Builder()
@@ -210,6 +207,9 @@ public class LingxingServiceImpl implements LingxingService {
             token.setSaveTime(currentTime);
             token.setExpiresTime(expiresTime);
             //存储token
+            Date date = new Date(token.getExpiresTime());
+            String format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
+            logger.info("获取新的token信息，新的token到期时间为:{}", format);
         } else {
             return null;
         }
@@ -289,6 +289,8 @@ public class LingxingServiceImpl implements LingxingService {
         String sign = ApiSign.sign(signParams, appId);
         queryParams.put("sign", sign); // 签名放入 Query 参数
 
+
+
         // 4. 构建带 Query 参数的完整 URL
         HttpUrl.Builder urlBuilder = Objects.requireNonNull(HttpUrl.parse(fullUrl)).newBuilder();
         for (Map.Entry<String, String> entry : queryParams.entrySet()) {
@@ -301,7 +303,8 @@ public class LingxingServiceImpl implements LingxingService {
                 JSON.toJSONString(bodyParams),
                 MediaType.parse("application/json; charset=utf-8")
         );
-
+//        System.out.println(finalUrl);
+//        System.out.println(JSON.toJSONString(bodyParams));
         // 6. 构造请求
         Request request = new Request.Builder()
                 .url(finalUrl)
@@ -318,6 +321,7 @@ public class LingxingServiceImpl implements LingxingService {
             if (responseBody != null) {
                 String result = responseBody.string();
                 resultJson = JSONObject.parseObject(result);
+//                System.out.println(result);
             } else {
                 System.out.println("响应为空");
             }

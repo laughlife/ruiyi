@@ -82,6 +82,7 @@
                         </div>
                         <div class="layui-inline">
                             <button class="layui-btn" lay-on="order_details">订单明细</button>
+                            <button class="layui-btn" lay-on="profit_day">查询利润报表/日</button>
                         </div>
                     </div>
                 </div>
@@ -138,6 +139,7 @@
 
         //点击事件
         util.on('lay-on', {
+            //获取本地IP
             "getIp": function () {
                 $.ajax({
                     url: "${basePath}lingxing/getIp",
@@ -150,6 +152,7 @@
                     }
                 });
             },
+            //检查Token信息
             "checkToken": function () {
                 $.ajax({
                     url: "${basePath}lingxing/checkToken",
@@ -162,6 +165,7 @@
                     }
                 });
             },
+            //同步市场列表
             "refreshMarketplace": function () {
                 $.ajax({
                     url: "${basePath}marketplace/refreshMarketplace",
@@ -174,6 +178,7 @@
                     }
                 });
             },
+            //获取国家下地区列表
             "marketplace_list": function () {
                 $.ajax({
                     url: "${basePath}marketplace/marketplace_list",
@@ -186,6 +191,7 @@
                     }
                 });
             },
+            //获取店铺列表
             "seller_list": function () {
                 $.ajax({
                     url: "${basePath}seller/seller_list",
@@ -198,6 +204,7 @@
                     }
                 });
             },
+            //获取订单列表
             "order_list": function () {
                 var start = $('#laydate-start').val();
                 var end = $('#laydate-end').val();
@@ -222,6 +229,7 @@
                     }
                 });
             },
+            //获取订单明细
             "order_details":function(){
                 var start = $('#laydate-start').val();
                 var end = $('#laydate-end').val();
@@ -245,7 +253,34 @@
                         }
                     }
                 });
+            },
+            //获取产品表现
+            "profit_day":function(){
+                var start = $('#laydate-start').val();
+                var end = $('#laydate-end').val();
+                var loadIndex = layer.msg('数据正在加载中，请勿操作！', {
+                    icon: 16,
+                    shade: 0.3,
+                    time: 0
+                });
+                $.ajax({
+                    url: "${basePath}order/profit_day",
+                    type: "POST",
+                    data: {
+                        'start_date': start,
+                        'end_date': end
+                    },
+                    dataType: "json",
+                    success: function (data) {
+                        layer.close(loadIndex);
+                        if (data.status) {
+                            layer.msg(data.msg);
+                        }
+                    }
+                });
+
             }
+
         });
     });
 </script>
