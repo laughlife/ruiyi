@@ -125,8 +125,7 @@
                             </dd>
                         </dl>
                     </li>
-
-                    <%--<li data-name="component" class="layui-nav-item">
+                    <li data-name="component" class="layui-nav-item">
                         <a href="javascript:;" lay-tips="组件" lay-direction="2">
                             <i class="layui-icon layui-icon-component"></i>
                             <cite>组件</cite>
@@ -414,7 +413,6 @@
                             </dd>
                         </dl>
                     </li>
-                    --%>
                     <c:if test="${sessionScope.dev eq 1}">
                         <li data-name="set" class="layui-nav-item">
                             <a href="javascript:;" lay-tips="设置" lay-direction="2">

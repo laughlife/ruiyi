@@ -116,19 +116,38 @@
                             <dd data-name="console" class="layui-this">
                                 <a lay-href="/page/deepseek/home.jsp">deepseek控制台</a>
                             </dd>
-
                             <dd data-name="console">
                                 <a lay-href="${basePath}lingxing/goSettingPage">功能区</a>
                             </dd>
                         </dl>
                     </li>
-                    <c:if test="${sessionScope.dev eq 1}">
-                        <li data-name="set" class="layui-nav-item">
-                            <a href="javascript:;" lay-tips="设置" lay-direction="2">
-                                <i class="layui-icon layui-icon-set"></i>
-                                <cite>设置</cite>
-                            </a>
-                            <dl class="layui-nav-child">
+
+                    <li data-name="app" class="layui-nav-item">
+                        <a href="javascript:;" lay-tips="应用" lay-direction="2">
+                            <i class="layui-icon layui-icon-app"></i>
+                            <cite>应用</cite>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd data-name="image">
+                                <a href="javascript:;">图片处理</a>
+                                <dl class="layui-nav-child">
+                                    <dd data-name="list"><a lay-href="${basePath}image/goImagePage">图片生成</a></dd>
+                                    <dd data-name="comment"><a lay-href="app/content/comment.html">评论管理</a></dd>
+                                </dl>
+                            </dd>
+                            <dd>
+                                <a lay-href="app/message/index.html">消息中心</a>
+                            </dd>
+                        </dl>
+                    </li>
+
+                    <li data-name="set" class="layui-nav-item">
+                        <a href="javascript:;" lay-tips="设置" lay-direction="2">
+                            <i class="layui-icon layui-icon-set"></i>
+                            <cite>设置</cite>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <c:if test="${sessionScope.dev eq 1}">
                                 <dd class="layui-nav-itemed">
                                     <a href="javascript:;">图标</a>
                                     <dl class="layui-nav-child">
@@ -136,16 +155,17 @@
                                         <dd><a lay-href="/font/font_list">fontawesome6</a></dd>
                                     </dl>
                                 </dd>
-                                <dd class="layui-nav-itemed">
-                                    <a href="javascript:;">我的设置</a>
-                                    <dl class="layui-nav-child">
-                                        <dd><a lay-href="set/user/info.html">基本资料</a></dd>
-                                        <dd><a lay-href="${basePath}page/system/updatePwd.jsp">修改密码</a></dd>
-                                    </dl>
-                                </dd>
-                            </dl>
-                        </li>
-                    </c:if>
+                            </c:if>
+                            <dd class="layui-nav-itemed">
+                                <a href="javascript:;">我的设置</a>
+                                <dl class="layui-nav-child">
+                                    <dd><a lay-href="set/user/info.html">基本资料</a></dd>
+                                    <dd><a lay-href="${basePath}page/system/updatePwd.jsp">修改密码</a></dd>
+                                </dl>
+                            </dd>
+                        </dl>
+                    </li>
+
                 </ul>
             </div>
         </div>
