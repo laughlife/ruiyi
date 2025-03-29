@@ -42,8 +42,6 @@ public class ProfitDayServiceImpl implements ProfitDayService {
             args.put("currencyCode", "USD");
             args.put("summaryEnabled", true);
             args.put("orderStatus", "All");
-//            args.put("startDate", "2025-03-01");
-//            args.put("endDate", "2025-03-28");
             JSONObject data = lingxingService.post(LingxingConfig.profit_report, args);
             if (data != null && data.getInteger("code") == 0) {
                 JSONObject datas = data.getJSONObject("data");
