@@ -289,8 +289,6 @@ public class LingxingServiceImpl implements LingxingService {
         String sign = ApiSign.sign(signParams, appId);
         queryParams.put("sign", sign); // 签名放入 Query 参数
 
-
-
         // 4. 构建带 Query 参数的完整 URL
         HttpUrl.Builder urlBuilder = Objects.requireNonNull(HttpUrl.parse(fullUrl)).newBuilder();
         for (Map.Entry<String, String> entry : queryParams.entrySet()) {
@@ -303,8 +301,8 @@ public class LingxingServiceImpl implements LingxingService {
                 JSON.toJSONString(bodyParams),
                 MediaType.parse("application/json; charset=utf-8")
         );
-//        System.out.println(finalUrl);
-//        System.out.println(JSON.toJSONString(bodyParams));
+        System.out.println(finalUrl);
+        System.out.println(JSON.toJSONString(bodyParams));
         // 6. 构造请求
         Request request = new Request.Builder()
                 .url(finalUrl)

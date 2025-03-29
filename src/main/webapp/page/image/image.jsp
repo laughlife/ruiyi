@@ -19,6 +19,9 @@
           content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <link rel="stylesheet" href="${basePath}static/layui/css/layui.css" media="all">
     <script src="${basePath}static/layui/layui.js"></script>
+    <script src="${basePath}page/image/js/Blob.js"></script>
+    <script src="${basePath}page/image/js/FileSaver.min.js"></script>
+    <script src="${basePath}static/jquery/jquery-3.7.1.min.js"></script>
     <style>
         .image-container {
             display: flex;
@@ -77,19 +80,28 @@
             <div class="layui-card-body">
 
                 <div class="layui-form-item">
-                    <label class="layui-form-label">商品名称</label>
+                    <label class="layui-form-label">说明：</label>
+                    <div class="layui-input-block layui-text">
+                        图片生成尺寸为1000*1000，建议图片为<i style="color:red;">正方形，大于800*800</i>。<br/>
+                        如果图片小于800，有可能会在拉伸的时候出现图片不清晰的情况。<br />
+                        图片大于800，会自动压缩。
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">商品名称：</label>
                     <div class="layui-input-block">
                         <input name="name" id="imageName" type="text" placeholder="请输入商品名称" autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <label class="layui-form-label">输入数量</label>
+                    <label class="layui-form-label">输入数量：</label>
                     <div class="layui-input-block">
                         <input name="number" id="imageNumber" type="number" lay-affix="number" placeholder="请输入数量" autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <label class="layui-form-label">上传图片</label>
+                    <label class="layui-form-label">上传图片：</label>
                     <div class="layui-input-block">
                         <div class="layui-upload-drag" style="display: block;" id="image_upload">
                             <i class="layui-icon layui-icon-upload"></i>
@@ -136,7 +148,7 @@
                         var _html =`<div class="image-item">
                                         <img src="\${item}" alt="图片" layer-src="\${item}">
                                         <div class="image-actions">
-                                            <a class="layui-btn layui-btn-sm layui-btn-normal" href='\${item}' target="_blank" download="">下载</a>
+                                            <a class="layui-btn layui-btn-sm download-btn" href="javascript:downloadImage('\${item}');" >下载</a>
                                         </div>
                                     </div>`;
                         $("#show_image_view").append(_html);
@@ -162,6 +174,37 @@
             }
         });
     });
+
+    function downloadImage(_url) {
+        // 提取原始文件名（自动处理带参数的URL）
+        const rawFilename = _url.split('/').pop();                // 获取URL最后一段
+        const cleanFilename = rawFilename.split(/[#?]/)[0];       // 去除哈希和查询参数
+
+        fetch(_url, {
+            mode: 'cors',          // 处理跨域请求
+            headers: new Headers({ // 部分服务器需要明确Accept头
+                'Accept': 'image/webp,image/apng,image/*,*/*;q=0.8'
+            })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP错误! 状态码: ${response.status}`);
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                // 使用FileSaver.js保存文件
+                saveAs(blob, cleanFilename || 'image.jpg');  // 默认文件名兜底
+
+                // 释放内存（FileSaver内部已处理）
+                URL.revokeObjectURL(blob);
+            })
+            .catch(error => {
+                console.error('下载失败:', error);
+                // 使用layui弹窗提示（需确保已加载layer模块）
+                layer && layer.msg('下载失败: ' + error.message, { icon: 2 });
+            });
+    }
 </script>
 </body>
 </html>

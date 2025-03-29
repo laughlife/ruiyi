@@ -8,6 +8,7 @@ import com.liwei.ruiyi.utils.ReadProUtils;
 import com.liwei.ruiyi.utils.StringUtils;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -51,11 +52,14 @@ public class ImageController {
             list.add(i);
         }
         int addNumber = 1;
-        try {
-            addNumber = Integer.parseInt(number);
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
+        if (org.apache.commons.lang3.StringUtils.isNotBlank(number)) {
+            try {
+                addNumber = Integer.parseInt(number);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
         }
+
         if (!list.contains(addNumber)) {
             list.add(addNumber);
         }
@@ -100,7 +104,11 @@ public class ImageController {
             for (File f : files) {
                 if (f.isDirectory()) {
                     if (!f.getName().equals(today)) {
-                        f.delete();
+                        try {
+                            FileUtils.deleteDirectory(f); // 一键删除非空目录
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 }
             }
