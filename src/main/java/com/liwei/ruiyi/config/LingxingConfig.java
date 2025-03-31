@@ -19,6 +19,14 @@ public class LingxingConfig {
     //查询店铺利润日报表
     public static String profit_report = "/bd/profit/report/open/report/seller/list";
 
+    //查询费用类型列表-暂未用到
+    public static String fee_type = "/bd/fee/management/open/feeManagement/otherFee/type";
+    //查询费用类型明细表-暂未用到
+    public static String fee_type_list = "/bd/fee/management/open/feeManagement/otherFee/list";
+    //查询产品表现
+    public static String get_product_performance = "/bd/productPerformance/openApi/asinList";
+
+
 
 
 }

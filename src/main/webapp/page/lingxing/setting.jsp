@@ -85,21 +85,19 @@
                             <button class="layui-btn" lay-on="profit_day">查询利润报表/日</button>
                         </div>
                     </div>
+                    <div class="layui-form-item">
+                        <button class="layui-btn layui-btn-normal" lay-on="product_performance">产品表现</button>
+                    </div>
                 </div>
             </div>
         </div>
 
         <div class="layui-col-md6">
             <div class="layui-card">
-                <div class="layui-card-header">按钮主题</div>
+                <div class="layui-card-header">财务、费用</div>
                 <div class="layui-card-body">
                     <div class="layui-btn-container">
-                        <button class="layui-btn layui-btn-primary">原始按钮</button>
-                        <button class="layui-btn">默认按钮</button>
-                        <button class="layui-btn layui-btn-normal">百搭按钮</button>
-                        <button class="layui-btn layui-btn-warm">暖色按钮</button>
-                        <button class="layui-btn layui-btn-danger">警告按钮</button>
-                        <button class="layui-btn layui-btn-disabled">禁用按钮</button>
+                        <button class="layui-btn layui-btn-normal">费用类型</button>
                     </div>
                 </div>
             </div>
@@ -254,7 +252,7 @@
                     }
                 });
             },
-            //获取产品表现
+            //获取财务-利润报表-店铺   按天获取
             "profit_day":function(){
                 var start = $('#laydate-start').val();
                 var end = $('#laydate-end').val();
@@ -265,6 +263,32 @@
                 });
                 $.ajax({
                     url: "${basePath}order/profit_day",
+                    type: "POST",
+                    data: {
+                        'start_date': start,
+                        'end_date': end
+                    },
+                    dataType: "json",
+                    success: function (data) {
+                        layer.close(loadIndex);
+                        if (data.status) {
+                            layer.msg(data.msg);
+                        }
+                    }
+                });
+
+            },
+            //获取费用类型
+            "product_performance":function(){
+                var start = $('#laydate-start').val();
+                var end = $('#laydate-end').val();
+                var loadIndex = layer.msg('数据正在加载中，请勿操作！', {
+                    icon: 16,
+                    shade: 0.3,
+                    time: 0
+                });
+                $.ajax({
+                    url: "${basePath}product/get_product_performance",
                     type: "POST",
                     data: {
                         'start_date': start,

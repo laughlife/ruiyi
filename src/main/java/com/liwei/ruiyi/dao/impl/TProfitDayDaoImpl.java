@@ -22,21 +22,26 @@ public class TProfitDayDaoImpl implements TProfitDayDao {
     @Override
     public void saveOrUpdateProfitReport(JSONObject profit) {
         String sql = "SELECT COUNT(0) FROM t_profit_day WHERE sid = ? AND profit_day = ?";
-        Object[] args = new Object[]{profit.getString("id"), profit.getString("profit_day")};
+        Object[] args = new Object[]{profit.getString("sid"), profit.getString("profit_day")};
+        if(profit.getString("sid").equals("4462")){
+            System.out.println(profit);
+        }
         int count = jdbc.queryForObject(sql, args, Integer.class);
-        //postedDateDayLocale
+        //minPostedDateDayLocale
         if (count > 0) {
             // 生成 UPDATE 语句
-            String updateSql = generateUpdateSQL(profit, "t_profit_day", "id", "profit_day");
-            Object[] updateValues = getUpdateValues(profit, "id", "profit_day");
+            // 调用示例
+            LinkedHashSet<String> updateKeys = getUpdateKeys(profit, "sid", "profit_day");
+            String updateSql = generateUpdateSQL(profit, "t_profit_day", updateKeys, "sid", "profit_day");
+            Object[] updateValues = getUpdateValues(profit, updateKeys, "sid", "profit_day");
             try {
                 jdbc.update(updateSql, updateValues);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {
-            String insertSql = generateInsertSQL(profit, "t_profit_day", "id", "profit_day");
-            Object[] insertValues = getValues(profit,"id", "profit_day");
+            String insertSql = generateInsertSQL(profit, "t_profit_day", "sid", "profit_day");
+            Object[] insertValues = getValues(profit,"sid", "profit_day");
             try {
                 jdbc.update(insertSql, insertValues);
             } catch (Exception e) {
@@ -61,22 +66,6 @@ public class TProfitDayDaoImpl implements TProfitDayDao {
                 + (updateClause.isEmpty() ? "" : " ON DUPLICATE KEY UPDATE " + updateClause);
     }
 
-    private String generateUpdateSQL(JSONObject data, String tableName, String... primaryKeys) {
-        List<String> pkList = Arrays.asList(primaryKeys);
-        Set<String> updateKeys = data.keySet().stream()
-                .filter(key -> !pkList.contains(key))
-                .collect(Collectors.toSet());
-
-        String setClause = updateKeys.stream()
-                .map(k -> k + " = ?")
-                .collect(Collectors.joining(", "));
-
-        String whereClause = Arrays.stream(primaryKeys)
-                .map(pk -> pk + " = ?")
-                .collect(Collectors.joining(" AND "));
-
-        return "UPDATE " + tableName + " SET " + setClause + " WHERE " + whereClause;
-    }
 
     private Object[] getValues(JSONObject data, String... primaryKeys) {
         List<Object> values = new ArrayList<>(data.values()); // 先添加 INSERT 部分的值
@@ -92,21 +81,33 @@ public class TProfitDayDaoImpl implements TProfitDayDao {
         return values.toArray();
     }
 
-    private Object[] getUpdateValues(JSONObject data, String... primaryKeys) {
+    private String generateUpdateSQL(JSONObject data, String tableName, LinkedHashSet<String> updateKeys, String... primaryKeys) {
+        String setClause = updateKeys.stream()
+                .map(k -> k + " = ?")
+                .collect(Collectors.joining(", "));
+
+        String whereClause = Arrays.stream(primaryKeys)
+                .map(pk -> pk + " = ?")
+                .collect(Collectors.joining(" AND "));
+
+        return "UPDATE " + tableName + " SET " + setClause + " WHERE " + whereClause;
+    }
+
+    private LinkedHashSet<String> getUpdateKeys(JSONObject data, String... primaryKeys) {
+        Set<String> pkSet = new HashSet<>(Arrays.asList(primaryKeys));
+        return data.keySet().stream()
+                .filter(key -> !pkSet.contains(key))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    private Object[] getUpdateValues(JSONObject data, LinkedHashSet<String> updateKeys, String... primaryKeys) {
         List<Object> values = new ArrayList<>();
-
-        // 获取非主键字段值
-        for (String key : data.keySet()) {
-            if (!Arrays.asList(primaryKeys).contains(key)) {
-                values.add(data.get(key));
-            }
+        for (String key : updateKeys) {
+            values.add(data.get(key));
         }
-
-        // 添加主键字段值（用于 WHERE 子句）
         for (String pk : primaryKeys) {
             values.add(data.get(pk));
         }
-
         return values.toArray();
     }
 

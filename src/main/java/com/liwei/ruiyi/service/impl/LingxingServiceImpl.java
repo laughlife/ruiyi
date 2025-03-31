@@ -19,6 +19,7 @@ import com.liwei.ruiyi.utils.CheckUtils;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.SocketTimeoutException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -301,8 +302,6 @@ public class LingxingServiceImpl implements LingxingService {
                 JSON.toJSONString(bodyParams),
                 MediaType.parse("application/json; charset=utf-8")
         );
-        System.out.println(finalUrl);
-        System.out.println(JSON.toJSONString(bodyParams));
         // 6. 构造请求
         Request request = new Request.Builder()
                 .url(finalUrl)
@@ -319,10 +318,17 @@ public class LingxingServiceImpl implements LingxingService {
             if (responseBody != null) {
                 String result = responseBody.string();
                 resultJson = JSONObject.parseObject(result);
-//                System.out.println(result);
             } else {
                 System.out.println("响应为空");
             }
+        } catch (SocketTimeoutException e){
+            e.printStackTrace();
+            try {
+                Thread.sleep(10*1000L);
+            } catch (InterruptedException ex) {
+                throw new RuntimeException(ex);
+            }
+            post(url,args);
         } catch (IOException e) {
             e.printStackTrace();
         }
