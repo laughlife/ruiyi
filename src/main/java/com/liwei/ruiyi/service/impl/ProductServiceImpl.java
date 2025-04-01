@@ -4,6 +4,8 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.liwei.ruiyi.bo.TSeller;
 import com.liwei.ruiyi.config.LingxingConfig;
+import com.liwei.ruiyi.dao.TProHistoryDao;
+import com.liwei.ruiyi.dao.TProPerformanceDao;
 import com.liwei.ruiyi.dao.TSellerDao;
 import com.liwei.ruiyi.service.ProductService;
 import com.liwei.ruiyi.service.LingxingService;
@@ -30,6 +32,11 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     TSellerDao sellerDao;
 
+    @Autowired
+    TProPerformanceDao proPerformanceDao;
+
+    @Autowired
+    TProHistoryDao proHistoryDao;
 
     @Override
     public boolean getOrRefreshProductPerformance(String start_date, String end_date) {
@@ -68,14 +75,61 @@ public class ProductServiceImpl implements ProductService {
             args.put("end_date", day);
             args.put("summary_field", "asin");
             args.put("is_recently_enum", true);
-
             args.put("field", "volume");
             args.put("exp", "lt");
             args.put("from_value", 0);
 
-            System.err.println(DateUtils.getSystemTime());
-            JSONObject data = lingxingService.post(LingxingConfig.get_product_performance, args);
-            System.out.println(data);
+            JSONObject pro_json = lingxingService.post(LingxingConfig.get_product_performance, args);
+            if(pro_json.getInteger("code")==0){
+                //数据获取成功
+                JSONObject data = pro_json.getJSONObject("data");
+                String chain_start_date = data.getString("chain_start_date");
+                String chain_end_date = data.getString("chain_end_date");
+                String available_inventory_formula_zh = data.getString("available_inventory_formula_zh");
+                JSONArray list = data.getJSONArray("data");
+                for (int i = 0; i < list.size(); i++) {
+                    JSONObject obj = list.getJSONObject(i);
+                    JSONArray _tempArray = obj.getJSONArray("sids");
+                    JSONObject _tempJson;
+                    Integer get_sid = _tempArray.getInteger(0);
+                    obj.remove("sids");
+                    //拆分父ASIN
+                    _tempArray = obj.getJSONArray("parent_asins");
+                    _tempJson = _tempArray.getJSONObject(0);
+                    String parent_asin = _tempJson.getString("parent_asin");
+                    obj.remove("parent_asins");
+                    //拆分ASIN
+                    _tempArray = obj.getJSONArray("asins");
+                    _tempJson = _tempArray.getJSONObject(0);
+                    String asin = _tempJson.getString("asin");
+                    obj.remove("asins");
+                    //产品历史价格快照
+                    _tempArray = obj.getJSONArray("price_list");
+                    for(int j = 0; j < _tempArray.size(); j++){
+                        _tempJson = _tempArray.getJSONObject(j);
+                        _tempJson.put("query_date", day);
+                        _tempJson.put("asin", asin);
+                        proHistoryDao.saveOrUpdateProHistory(_tempJson);
+                    }
+                    obj.remove("price_list");
+
+
+
+                    obj.put("sid", get_sid);
+                    obj.put("parent_asin", parent_asin);
+                    obj.put("asin", asin);
+                    obj.put("query_date", day);
+                    obj.put("chain_start_date", chain_start_date);
+                    obj.put("chain_end_date", chain_end_date);
+                    obj.put("available_inventory_formula_zh", available_inventory_formula_zh);
+
+                    proPerformanceDao.saveOrUpdateProPerformance(obj);
+                }
+
+            }else{
+                //数据获取失败
+                logger.info("产品表现asin维度失败:{}", pro_json.toString());
+            }
             try {
                 Thread.sleep(1000L*10);
             } catch (InterruptedException e) {

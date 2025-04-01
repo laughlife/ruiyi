@@ -12,7 +12,7 @@ import java.util.*;
 
 public class GetCodeMysql {
     private final String tableSpace = "ruiyi";
-    private final String tableName = "t_profit_day";
+    private final String tableName = "t_pro_history";
     private static final String PACKAGE_PATH = "com.liwei.ruiyi";
 //    private final String url = "jdbc:mysql://81.70.86.120:8866/ruiyi?characterEncoding=utf8&serverTimezone=UTC&rewriteBatchedStatements=true";
     private final String url = "jdbc:mysql://localhost:3306/ruiyi?characterEncoding=utf8&serverTimezone=UTC&rewriteBatchedStatements=true";
@@ -34,7 +34,7 @@ public class GetCodeMysql {
             List<Map<String, String>> columns = getTableColumns(stmt);
             generateEntity(columns);
             generateRowMapper(columns);
-//            String tableName = "t_profit_day";
+//            String tableName = "t_pro_history";
 //            generateDaoCode(tableName);
 //            generateServiceCode(tableName);
         }
