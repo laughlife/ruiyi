@@ -20,6 +20,17 @@ public class TProHistoryDaoImpl implements TProHistoryDao {
 
     @Override
     public void saveOrUpdateProHistory(JSONObject pro_history) {
+
+        try{
+            Integer cid = pro_history.getInteger("cid");
+            if (cid == null || cid == 0) {
+                // 如果 cid 为空或为 0，设置为 NULL
+                pro_history.put("cid",null);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
         String sql = "SELECT COUNT(0) FROM t_pro_history WHERE mid = ? AND sid = ? and asin = ? and seller_sku = ? and query_date = ?";
         Object[] args = new Object[]{pro_history.getString("mid"), pro_history.getString("sid"),
                 pro_history.getString("asin"), pro_history.getString("seller_sku"), pro_history.getString("query_date")};

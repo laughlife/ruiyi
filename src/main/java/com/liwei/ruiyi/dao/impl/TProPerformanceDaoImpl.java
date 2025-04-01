@@ -11,6 +11,7 @@ import java.util.LinkedHashSet;
 
 @Repository("proPerformanceDao")
 public class TProPerformanceDaoImpl implements TProPerformanceDao {
+
     @Autowired
     private JdbcTemplate jdbc;
 
@@ -20,7 +21,9 @@ public class TProPerformanceDaoImpl implements TProPerformanceDao {
 
     @Override
     public void saveOrUpdateProPerformance(JSONObject pro) {
-        String sql = "SELECT COUNT(0) FROM t_pro_performance WHERE sid = ? AND query_date = ? and parent_asin = ? and asin = ?";
+        pro.remove("ranking_update_time");
+
+        String sql = "SELECT count(0) FROM t_pro_performance WHERE sid = ? AND query_date = ? and parent_asin = ? and asin = ?";
         Object[] args = new Object[]{pro.getString("sid"), pro.getString("query_date"),
                 pro.getString("parent_asin"), pro.getString("asin")};
         int count = jdbc.queryForObject(sql, args, Integer.class);
@@ -28,7 +31,7 @@ public class TProPerformanceDaoImpl implements TProPerformanceDao {
             // 生成 UPDATE 语句
             // 调用示例
             LinkedHashSet<String> updateKeys = SqlUtils.getUpdateKeys(pro, "sid", "query_date","parent_asin","asin");
-            String updateSql = SqlUtils.generateUpdateSQL(pro, "t_profit_day", updateKeys, "sid", "query_date","parent_asin","asin");
+            String updateSql = SqlUtils.generateUpdateSQL(pro, "t_pro_performance", updateKeys, "sid", "query_date","parent_asin","asin");
             Object[] updateValues = SqlUtils.getUpdateSQLValues(pro, updateKeys, "sid", "query_date","parent_asin","asin");
             try {
                 jdbc.update(updateSql, updateValues);
@@ -36,7 +39,7 @@ public class TProPerformanceDaoImpl implements TProPerformanceDao {
                 e.printStackTrace();
             }
         } else {
-            String insertSql = SqlUtils.generateInsertSQL(pro, "t_profit_day", "sid", "query_date","parent_asin","asin");
+            String insertSql = SqlUtils.generateInsertSQL(pro, "t_pro_performance", "sid", "query_date","parent_asin","asin");
             Object[] insertValues = SqlUtils.getInsertSQLValues(pro, "sid", "query_date","parent_asin","asin");
             try {
                 jdbc.update(insertSql, insertValues);

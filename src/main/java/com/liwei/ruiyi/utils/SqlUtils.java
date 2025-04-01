@@ -1,5 +1,6 @@
 package com.liwei.ruiyi.utils;
 
+import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 
 import java.util.*;
@@ -24,17 +25,29 @@ public class SqlUtils {
 
 
     public static Object[] getInsertSQLValues(JSONObject data, String... primaryKeys) {
-        List<Object> values = new ArrayList<>(data.values()); // 先添加 INSERT 部分的值
+        List<Object> values = new ArrayList<>(); // 先添加 INSERT 部分的值
+        // 处理插入部分的值，转换为字符串（如果是JSON类型）
+        for (Object value : data.values()) {
+            values.add(convertJsonValue(value));
+        }
 
         // 计算需要更新的字段（排除主键）
         Set<String> pkSet = new HashSet<>(Arrays.asList(primaryKeys));
         data.forEach((key, value) -> {
             if (!pkSet.contains(key)) {
-                values.add(value); // 追加 ON DUPLICATE KEY UPDATE 的值
+                values.add(convertJsonValue(value));
             }
         });
 
         return values.toArray();
+    }
+
+    // 将JSONObject或JSONArray转换为字符串，其他类型保持不变
+    private static Object convertJsonValue(Object value) {
+        if (value instanceof JSONObject || value instanceof JSONArray) {
+            return value.toString();
+        }
+        return value;
     }
 
     public static String generateUpdateSQL(JSONObject data, String tableName, LinkedHashSet<String> updateKeys, String... primaryKeys) {

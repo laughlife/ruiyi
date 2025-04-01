@@ -21,7 +21,7 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-@Repository("feeService")
+@Repository("productService")
 public class ProductServiceImpl implements ProductService {
 
     private static final Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class);
@@ -86,9 +86,10 @@ public class ProductServiceImpl implements ProductService {
                 String chain_start_date = data.getString("chain_start_date");
                 String chain_end_date = data.getString("chain_end_date");
                 String available_inventory_formula_zh = data.getString("available_inventory_formula_zh");
-                JSONArray list = data.getJSONArray("data");
+                JSONArray list = data.getJSONArray("list");
                 for (int i = 0; i < list.size(); i++) {
                     JSONObject obj = list.getJSONObject(i);
+
                     JSONArray _tempArray = obj.getJSONArray("sids");
                     JSONObject _tempJson;
                     Integer get_sid = _tempArray.getInteger(0);
@@ -112,8 +113,14 @@ public class ProductServiceImpl implements ProductService {
                         proHistoryDao.saveOrUpdateProHistory(_tempJson);
                     }
                     obj.remove("price_list");
-
-
+                    //产品表现asin维度
+                    _tempArray = obj.getJSONArray("seller_store_countries");
+                    _tempJson = _tempArray.getJSONObject(0);
+                    String country = _tempJson.getString("country");
+                    String seller_name = _tempJson.getString("seller_name");
+                    obj.remove("seller_store_countries");
+                    //这个字段使用不上，直接移除掉
+                    obj.remove("has_oprator_log");
 
                     obj.put("sid", get_sid);
                     obj.put("parent_asin", parent_asin);
@@ -122,6 +129,8 @@ public class ProductServiceImpl implements ProductService {
                     obj.put("chain_start_date", chain_start_date);
                     obj.put("chain_end_date", chain_end_date);
                     obj.put("available_inventory_formula_zh", available_inventory_formula_zh);
+                    obj.put("country", country);
+                    obj.put("seller_name", seller_name);
 
                     proPerformanceDao.saveOrUpdateProPerformance(obj);
                 }
