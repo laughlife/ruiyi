@@ -72,10 +72,10 @@ public class SqlUtils {
     public static Object[] getUpdateSQLValues(JSONObject data, LinkedHashSet<String> updateKeys, String... primaryKeys) {
         List<Object> values = new ArrayList<>();
         for (String key : updateKeys) {
-            values.add(data.get(key));
+            values.add(convertJsonValue(data.get(key)));
         }
         for (String pk : primaryKeys) {
-            values.add(data.get(pk));
+            values.add(convertJsonValue(data.get(pk)));
         }
         return values.toArray();
     }

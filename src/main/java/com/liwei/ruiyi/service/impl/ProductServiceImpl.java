@@ -42,7 +42,7 @@ public class ProductServiceImpl implements ProductService {
     public boolean getOrRefreshProductPerformance(String start_date, String end_date) {
 
         List<String> dates = getDates(start_date, end_date);
-
+        logger.info("开始获取产品表现数据：{}",DateUtils.getSystemTime());
         List<TSeller> sellers = sellerDao.queryAllSellers();
         List<Integer> sidList = new ArrayList<>();
         for (TSeller s : sellers) {
@@ -54,7 +54,7 @@ public class ProductServiceImpl implements ProductService {
                 analyzeProject(day, sid);
             }
         }
-
+        logger.info("产品表现数据获取结束：{}",DateUtils.getSystemTime());
         return false;
     }
 
@@ -78,7 +78,7 @@ public class ProductServiceImpl implements ProductService {
             args.put("field", "volume");
             args.put("exp", "lt");
             args.put("from_value", 0);
-
+            System.out.println("请求数据时间为："+day);
             JSONObject pro_json = lingxingService.post(LingxingConfig.get_product_performance, args);
             if(pro_json.getInteger("code")==0){
                 //数据获取成功
@@ -89,7 +89,6 @@ public class ProductServiceImpl implements ProductService {
                 JSONArray list = data.getJSONArray("list");
                 for (int i = 0; i < list.size(); i++) {
                     JSONObject obj = list.getJSONObject(i);
-
                     JSONArray _tempArray = obj.getJSONArray("sids");
                     JSONObject _tempJson;
                     Integer get_sid = _tempArray.getInteger(0);
@@ -140,11 +139,10 @@ public class ProductServiceImpl implements ProductService {
                 logger.info("产品表现asin维度失败:{}", pro_json.toString());
             }
             try {
-                Thread.sleep(1000L*10);
+                Thread.sleep(1000L*15);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            break;
         }
     }
 
