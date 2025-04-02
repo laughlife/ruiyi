@@ -17,4 +17,14 @@ public class SystemController {
         rj.put("status", true);
         return rj.toJSONString();
     }
+
+    @RequestMapping("/updatePwd")
+    @ResponseBody
+    public String updatePwd() {
+        boolean update = true;
+        JSONObject rj = new JSONObject();
+        rj.put("status", update);
+        rj.put("message", update ? "修改成功" : "修改失败，请查找原因");
+        return rj.toString();
+    }
 }

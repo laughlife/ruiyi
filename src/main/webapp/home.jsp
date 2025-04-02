@@ -20,6 +20,7 @@
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="icon" href="${path}/static/image/favicon.ico" type="image/x-icon"/>
     <link rel="stylesheet" href="${path}/static/layui/css/layui.css" media="all">
     <link rel="stylesheet" href="${path}/static/layui/style/admin.css" media="all">
     <script src="${path}/static/jquery/jquery-3.7.1.min.js"></script>
@@ -84,9 +85,9 @@
                     </a>
                     <dl class="layui-nav-child">
                         <dd><a lay-href="set/user/info.html">基本资料</a></dd>
-                        <dd><a lay-href="set/user/password.html">修改密码</a></dd>
+                        <dd><a lay-href="${basePath}page/system/updatePwd.jsp">修改密码</a></dd>
                         <hr>
-                        <dd layadmin-event="logout" style="text-align: center;"><a>退出</a></dd>
+                        <dd style="text-align: center;"><a href="${basePath}admin/loginout">退出</a></dd>
                     </dl>
                 </li>
 

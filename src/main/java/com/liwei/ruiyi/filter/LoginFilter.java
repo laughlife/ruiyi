@@ -22,9 +22,10 @@ public class LoginFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         String url = request.getRequestURI();
-        if (isUrlAllowed(url) || isUserLoggedIn(request) || url.startsWith("/wx/")) {
+        if (isUrlAllowed(url) || isUserLoggedIn(request) || url.startsWith("/wx/") || url.startsWith("/static/")) {
             filterChain.doFilter(request, response);
         } else {
+            //Service Remote Access Port
             System.out.println("验证未通过url："+url);
             response.sendRedirect(request.getContextPath() + "/index.jsp");
         }

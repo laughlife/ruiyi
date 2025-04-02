@@ -9,7 +9,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>后台管理</title>
+    <title>深圳市玖零壹品科技有限公司</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport"
           content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
@@ -19,12 +19,22 @@
     <link rel="icon" href="${path}/static/image/favicon.ico" type="image/x-icon"/>
     <link rel="stylesheet" type="text/css" href="${path}/static/layui/css/layui.css"/>
     <link rel="stylesheet" type="text/css" href="${path}/static/admin/css/login.css"/>
-
+    <style>
+        .footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 14px;
+            line-height: 30px;
+        }
+    </style>
 </head>
 <body>
 <div class="m-login-bg">
     <div class="m-login">
-        <h3>后台系统登录</h3>
+        <h3>深圳市玖零壹品科技有限公司</h3>
         <div class="m-login-warp">
             <form class="layui-form" lay-filter="loginForm">
                 <div class="layui-form-item">
@@ -53,19 +63,23 @@
                 </div>
             </form>
         </div>
-        <p class="copyright">Copyright 2015-2016 by XIAODU</p>
     </div>
+</div>
+
+<div class="footer">
+    深圳市玖零壹品科技有限公司 &copf; 2025
+    <a href="https://beian.miit.gov.cn/" target="_blank" style="margin-left:30px;"><img src="${basePath}static/image/gh.png" style="width:20px;"></a>
+    <a href="https://beian.miit.gov.cn/" target="_blank">粤ICP备2024337209号-1</a>
+<%--    <a href="https://beian.mps.gov.cn/#/query/webSearch?code=44030002006071" target="_blank"><img src="${basePath}static/image/ba.png" style="width:20px;"></a>--%>
+<%--    <a href="https://beian.mps.gov.cn/#/query/webSearch?code=44030002006071" rel="noreferrer" target="_blank">粤公网安备44030002006071号</a>--%>
 </div>
 <script src="${path}/static/layui/layui.js" type="text/javascript" charset="utf-8"></script>
 <script src="${path}/static/jquery/jquery-3.7.1.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="${path}/static/js/crypto-js.min.js" type="text/javascript" charset="utf-8"></script>
 <script>
-
-
     layui.use(function () {
         var form = layui.form,
             layer = layui.layer;
-
         //自定义验证规则
         form.verify({
             username: function (value, elem) {
@@ -79,7 +93,6 @@
                 }
             }
         });
-
 
         //监听提交
         form.on('submit(login)', function (data) {
@@ -105,12 +118,10 @@
         });
     });
 
-
     function md5WithCryptoJS(string) {
         const hash = CryptoJS.MD5(string).toString();
         return hash;
     }
-
 </script>
 </body>
 </html>

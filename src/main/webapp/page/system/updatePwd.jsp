@@ -15,9 +15,12 @@
     <title>设置我的密码</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <link rel="stylesheet" href="${basePath}static/layui/css/layui.css" media="all">
     <script src="${basePath}static/layui/layui.js"></script>
+    <script src="${basePath}static/jquery/jquery-3.7.1.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="${basePath}static/js/crypto-js.min.js" type="text/javascript" charset="utf-8"></script>
 </head>
 <body>
 <div class="layui-fluid">
@@ -26,44 +29,45 @@
             <div class="layui-card">
                 <div class="layui-card-header">修改密码</div>
                 <div class="layui-card-body">
-
-                    <div class="layui-form">
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">当前密码</label>
-                            <div class="layui-input-inline">
-                                <input type="password" name="oldPassword" lay-verify="required" lay-verType="tips"
-                                       class="layui-input">
+                    <form class="layui-form" lay-filter="passwordForm" action="${basePath}admin/updatePwd"
+                          method="post">
+                        <div class="layui-form">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">当前密码</label>
+                                <div class="layui-input-inline">
+                                    <input type="password" name="oldPassword" lay-verify="required" lay-verType="tips"
+                                           class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">新密码</label>
+                                <div class="layui-input-inline">
+                                    <input type="password" name="password" lay-verify="pass" lay-verType="tips"
+                                           autocomplete="off" id="LAY_password" class="layui-input">
+                                </div>
+                                <div class="layui-form-mid layui-word-aux">6到16个字符</div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">确认新密码</label>
+                                <div class="layui-input-inline">
+                                    <input type="password" name="repassword" lay-verify="repass" lay-verType="tips"
+                                           autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    <button class="layui-btn" lay-submit lay-filter="setmypass">确认修改</button>
+                                </div>
                             </div>
                         </div>
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">新密码</label>
-                            <div class="layui-input-inline">
-                                <input type="password" name="password" lay-verify="pass" lay-verType="tips"
-                                       autocomplete="off" id="LAY_password" class="layui-input">
-                            </div>
-                            <div class="layui-form-mid layui-word-aux">6到16个字符</div>
-                        </div>
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">确认新密码</label>
-                            <div class="layui-input-inline">
-                                <input type="password" name="repassword" lay-verify="repass" lay-verType="tips"
-                                       autocomplete="off" class="layui-input">
-                            </div>
-                        </div>
-                        <div class="layui-form-item">
-                            <div class="layui-input-block">
-                                <button class="layui-btn" lay-submit lay-filter="setmypass">确认修改</button>
-                            </div>
-                        </div>
-                    </div>
-
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
 <script>
-    layui.use(['form'], function () {
+    layui.use(function () {
         var form = layui.form;
         // 自定义验证规则
         form.verify({
