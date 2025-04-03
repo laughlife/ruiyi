@@ -1,12 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%
-    String path = request.getContextPath();
-    String basePath = request.getScheme() + "://"
-            + request.getServerName() + ":" + request.getServerPort()
-            + path + "/";
-    request.setAttribute("path",path);
-    request.setAttribute("basePath",basePath);
     String dev = request.getParameter("dev");
     if (dev != null) {
         session.setAttribute("dev", dev);
@@ -20,10 +14,10 @@
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <link rel="icon" href="${path}/static/image/favicon.ico" type="image/x-icon"/>
-    <link rel="stylesheet" href="${path}/static/layui/css/layui.css" media="all">
-    <link rel="stylesheet" href="${path}/static/layui/style/admin.css" media="all">
-    <script src="${path}/static/jquery/jquery-3.7.1.min.js"></script>
+    <link rel="icon" href="${basePath}static/image/favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="${basePath}static/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="${basePath}static/layui/style/admin.css" media="all">
+    <script src="${basePath}static/jquery/jquery-3.7.1.min.js"></script>
 </head>
 <body class="layui-layout-body">
 <div id="LAY_app">

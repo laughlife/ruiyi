@@ -1,5 +1,6 @@
 package com.liwei.ruiyi.filter;
 
+import com.liwei.ruiyi.utils.ReadProUtils;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,6 +22,7 @@ public class LoginFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
+        request.getSession().setAttribute("basePath", ReadProUtils.ReadProperties("basePath"));
         String url = request.getRequestURI();
         if (isUrlAllowed(url) || isUserLoggedIn(request) || url.startsWith("/wx/") || url.startsWith("/static/")) {
             filterChain.doFilter(request, response);

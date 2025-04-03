@@ -1,12 +1,5 @@
 <%@ page import="com.liwei.ruiyi.model.SocketMessage" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%
-    String path = request.getContextPath();
-    String basePath = request.getScheme() + "://"
-            + request.getServerName() + ":" + request.getServerPort()
-            + path + "/";
-    request.setAttribute("basePath", basePath);
-%>
 <html>
 <head>
     <meta charset="utf-8">
@@ -15,10 +8,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <link rel="stylesheet" href="/static/layui/css/layui.css" media="all">
-    <link rel="stylesheet" href="/static/layui/style/admin.css" media="all">
-    <script src="/static/layui/layui.js"></script>
-    <script src="/static/jquery/jquery-3.7.1.min.js"></script>
+    <link rel="stylesheet" href="${basePath}static/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="${basePath}static/layui/style/admin.css" media="all">
+    <script src="${basePath}static/layui/layui.js"></script>
+    <script src="${basePath}static/jquery/jquery-3.7.1.min.js"></script>
     <style>
         pre {
             border-width: 1px;
@@ -96,7 +89,7 @@
             var message = data.field.message;
             var _uid = $('#uuid').val();
             $.ajax({
-                url: "${path}/deepseek/sendMessage",
+                url: "${basePath}deepseek/sendMessage",
                 data: {
                     'uuid': _uid,
                     'message': message
@@ -123,6 +116,6 @@
         $("#leftMessage").scrollTop($("#leftMessage")[0].scrollHeight);
     }
 </script>
-<script src="/page/deepseek/js/home.js"></script>
+<script src="${basePath}page/deepseek/js/home.js"></script>
 </body>
 </html>
