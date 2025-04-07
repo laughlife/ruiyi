@@ -3,7 +3,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>深圳市玖零壹品科技有限公司</title>
+    <title>玖零壹品</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport"
           content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
@@ -94,7 +94,7 @@
             var username = submitData.username;
             var pwd = md5WithCryptoJS(submitData.password);
             $.ajax({
-                url: "/login/adminLogin",
+                url: "/login/userLogin",
                 type: "post",
                 data: {username: username, password: pwd},
                 dataType: "json",

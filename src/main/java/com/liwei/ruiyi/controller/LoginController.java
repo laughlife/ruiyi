@@ -1,10 +1,8 @@
 package com.liwei.ruiyi.controller;
 
-import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.liwei.ruiyi.bo.TAdmin;
-import com.liwei.ruiyi.service.TAdminService;
-import com.liwei.ruiyi.utils.ReadProUtils;
+import com.liwei.ruiyi.bo.TUser;
+import com.liwei.ruiyi.service.TUserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.apache.commons.lang3.StringUtils;
@@ -13,7 +11,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Controller
@@ -21,7 +18,7 @@ import java.util.*;
 public class LoginController {
 
     @Autowired
-    public TAdminService adminService;
+    public TUserService userService;
 
     @Autowired
     private HttpSession session;
@@ -30,16 +27,16 @@ public class LoginController {
     @Autowired
     HttpServletRequest request;
 
-    @RequestMapping("/adminLogin")
+    @RequestMapping("/userLogin")
     @ResponseBody
-    public String adminLogin(String username, String password) {
+    public String userLogin(String username, String password) {
         JSONObject rj = new JSONObject();
         if (StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)) {
-            TAdmin admin = adminService.queryAdminMessage(username, password);
-            if (null != admin) {
+            TUser user = userService.queryUserMessage(username, password);
+            if (null != user) {
                 rj.put("status", "success");
-                rj.put("admin", admin);
-                session.setAttribute("admin", admin);
+                rj.put("user", user);
+                session.setAttribute("user", user);
             } else {
                 rj.put("status", "fail");
                 rj.put("message", "请检查用户名或密码");
