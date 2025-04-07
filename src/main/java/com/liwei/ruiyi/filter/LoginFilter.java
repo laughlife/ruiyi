@@ -42,7 +42,7 @@ public class LoginFilter implements Filter {
 
     private boolean isUserLoggedIn(HttpServletRequest request) {
         // 这里实现判断用户是否登录的逻辑，例如检查会话中是否有特定的用户标识
-        return request.getSession().getAttribute("admin") != null;
+        return request.getSession().getAttribute("user") != null;
     }
 
     @Override

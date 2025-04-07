@@ -1,9 +1,7 @@
 package com.liwei.ruiyi.controller;
 
 import com.alibaba.fastjson2.JSONObject;
-import com.liwei.ruiyi.bo.TAdmin;
 import com.liwei.ruiyi.service.DeepseekService;
-import com.liwei.ruiyi.service.TFontService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

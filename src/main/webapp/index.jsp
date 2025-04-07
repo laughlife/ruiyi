@@ -102,7 +102,7 @@
                     var status = data.status;
                     var message = data.message;
                     if (status == 'success') {
-                        window.location = '/home.jsp';
+                        window.location = '/home/goHomePage';
                     } else {
                         layer.msg(message);
                     }

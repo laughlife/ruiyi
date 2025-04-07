@@ -1,11 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%
-    String dev = request.getParameter("dev");
-    if (dev != null) {
-        session.setAttribute("dev", dev);
-    }
-%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -53,7 +47,6 @@
                 <li class="layui-nav-item" lay-unselect>
                     <a lay-href="app/message/index.html" layadmin-event="message" lay-text="消息中心">
                         <i class="layui-icon layui-icon-notice"></i>
-
                         <!-- 如果有新消息，则显示小圆点 -->
                         <span class="layui-badge-dot"></span>
                     </a>
@@ -81,7 +74,7 @@
                         <dd><a lay-href="set/user/info.html">基本资料</a></dd>
                         <dd><a lay-href="/page/system/updatePwd.jsp">修改密码</a></dd>
                         <hr>
-                        <dd style="text-align: center;"><a href="/admin/loginout">退出</a></dd>
+                        <dd style="text-align: center;"><a href="/user/loginout">退出</a></dd>
                     </dl>
                 </li>
 
@@ -101,33 +94,33 @@
                     <span>南阳睿翼</span>
                 </div>
 
-                <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
-                    <li data-name="home" class="layui-nav-item layui-nav-itemed">
-                        <a href="javascript:;" lay-tips="主页" lay-direction="2">
+                <ul class="layui-nav layui-nav-tree" lay-shrink="all">
+                    <li class="layui-nav-item layui-nav-itemed">
+                        <a href="javascript:;" lay-tips="开发" lay-direction="2">
                             <i class="layui-icon layui-icon-home"></i>
-                            <cite>主控制台</cite>
+                            <cite>开发</cite>
                         </a>
                         <dl class="layui-nav-child">
                             <dd data-name="console" class="layui-this">
-                                <a lay-href="/page/deepseek/home.jsp">deepseek控制台</a>
+                                <a lay-href="/page/deepseek/home.jsp">deepseek</a>
                             </dd>
                             <dd data-name="console">
-                                <a lay-href="/lingxing/goSettingPage">功能区</a>
+                                <a lay-href="/lingxing/goSettingPage">功能测试</a>
                             </dd>
                         </dl>
                     </li>
 
-                    <li data-name="app" class="layui-nav-item">
+                    <li class="layui-nav-item">
                         <a href="javascript:;" lay-tips="应用" lay-direction="2">
                             <i class="layui-icon layui-icon-app"></i>
                             <cite>应用</cite>
                         </a>
                         <dl class="layui-nav-child">
-                            <dd data-name="image">
+                            <dd>
                                 <a href="javascript:;">图片处理</a>
                                 <dl class="layui-nav-child">
-                                    <dd data-name="list"><a lay-href="/image/goImagePage">图片生成</a></dd>
-                                    <dd data-name="comment"><a lay-href="app/content/comment.html">评论管理</a></dd>
+                                    <dd><a lay-href="/image/goImagePage">图片生成</a></dd>
+                                    <dd><a lay-href="app/content/comment.html">评论管理</a></dd>
                                 </dl>
                             </dd>
                             <dd>
@@ -154,7 +147,7 @@
                             <dd class="layui-nav-itemed">
                                 <a href="javascript:;">我的设置</a>
                                 <dl class="layui-nav-child">
-                                    <dd><a lay-href="set/user/info.html">基本资料</a></dd>
+                                    <dd><a lay-href="/set/user/info.html">基本资料</a></dd>
                                     <dd><a lay-href="/page/system/updatePwd.jsp">修改密码</a></dd>
                                 </dl>
                             </dd>

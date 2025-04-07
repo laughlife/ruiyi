@@ -1,7 +1,6 @@
 package com.liwei.ruiyi.service;
 
 import com.alibaba.fastjson2.JSONObject;
-import com.liwei.ruiyi.bo.TAdmin;
 import org.springframework.stereotype.Service;
 
 @Service

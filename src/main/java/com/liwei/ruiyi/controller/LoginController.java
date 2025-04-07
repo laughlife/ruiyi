@@ -23,10 +23,6 @@ public class LoginController {
     @Autowired
     private HttpSession session;
 
-
-    @Autowired
-    HttpServletRequest request;
-
     @RequestMapping("/userLogin")
     @ResponseBody
     public String userLogin(String username, String password) {
@@ -53,15 +49,4 @@ public class LoginController {
         return "main";
     }
 
-
-    private Map<String, Object> createSeries(String name, int size, Random random) {
-        Map<String, Object> series = new HashMap<>();
-        series.put("name", name);
-        List<Integer> data = new ArrayList<>();
-        for (int i = 0; i < size; i++) {
-            data.add(random.nextInt(500));
-        }
-        series.put("data", data);
-        return series;
-    }
 }
