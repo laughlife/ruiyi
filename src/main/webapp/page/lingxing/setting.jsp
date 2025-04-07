@@ -10,8 +10,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <link rel="stylesheet" href="${basePath}static/layui/css/layui.css" media="all">
-    <script src="${basePath}static/layui/layui.js"></script>
+    <link rel="stylesheet" href="/static/layui/css/layui.css" media="all">
+    <script src="/static/layui/layui.js"></script>
 </head>
 <body>
 <div class="layui-fluid">
@@ -46,7 +46,7 @@
                         <div>点击上传，或将文件拖拽到此处</div>
                         <div id="currency_upload_preview">
                             <hr>
-                            <img src="${basePath}images/logo.ico" alt="上传成功后渲染"
+                            <img src="/images/logo.ico" alt="上传成功后渲染"
                                  style="max-width: 50px;max-height: 50px;">
                         </div>
                     </div>
@@ -110,13 +110,13 @@
             elem: '#currency_upload',
             accept: 'file',
             exts: 'xlsx|xls',
-            url: '${basePath}currency/uploadCurrency',
+            url: '/currency/uploadCurrency',
             data: {
                 'id': 'xxx'
             },
             done: function (res) {
                 layer.msg(res.msg);
-                $('#currency_upload_preview').find('img').attr('src', '${basePath}images/excel.png');
+                $('#currency_upload_preview').find('img').attr('src', '/images/excel.png');
             }
         });
 
@@ -133,7 +133,7 @@
             //获取本地IP
             "getIp": function () {
                 $.ajax({
-                    url: "${basePath}lingxing/getIp",
+                    url: "/lingxing/getIp",
                     type: "POST",
                     dataType: "json",
                     success: function (data) {
@@ -146,7 +146,7 @@
             //检查Token信息
             "checkToken": function () {
                 $.ajax({
-                    url: "${basePath}lingxing/checkToken",
+                    url: "/lingxing/checkToken",
                     type: "POST",
                     dataType: "json",
                     success: function (data) {
@@ -159,7 +159,7 @@
             //同步市场列表
             "refreshMarketplace": function () {
                 $.ajax({
-                    url: "${basePath}marketplace/refreshMarketplace",
+                    url: "/marketplace/refreshMarketplace",
                     type: "POST",
                     dataType: "json",
                     success: function (data) {
@@ -172,7 +172,7 @@
             //获取国家下地区列表
             "marketplace_list": function () {
                 $.ajax({
-                    url: "${basePath}marketplace/marketplace_list",
+                    url: "/marketplace/marketplace_list",
                     type: "POST",
                     dataType: "json",
                     success: function (data) {
@@ -185,7 +185,7 @@
             //获取店铺列表
             "seller_list": function () {
                 $.ajax({
-                    url: "${basePath}seller/seller_list",
+                    url: "/seller/seller_list",
                     type: "POST",
                     dataType: "json",
                     success: function (data) {
@@ -205,7 +205,7 @@
                     time: 0
                 });
                 $.ajax({
-                    url: "${basePath}order/queryOrders",
+                    url: "/order/queryOrders",
                     type: "POST",
                     data: {
                         'start_date': start,
@@ -230,7 +230,7 @@
                     time: 0
                 });
                 $.ajax({
-                    url: "${basePath}order/orderDetails",
+                    url: "/order/orderDetails",
                     type: "POST",
                     data: {
                         'start_date': start,
@@ -255,7 +255,7 @@
                     time: 0
                 });
                 $.ajax({
-                    url: "${basePath}order/profit_day",
+                    url: "/order/profit_day",
                     type: "POST",
                     data: {
                         'start_date': start,
@@ -281,7 +281,7 @@
                     time: 0
                 });
                 $.ajax({
-                    url: "${basePath}product/get_product_performance",
+                    url: "/product/get_product_performance",
                     type: "POST",
                     data: {
                         'start_date': start,

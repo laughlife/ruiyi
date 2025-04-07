@@ -24,7 +24,7 @@ public class LoginFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         request.getSession().setAttribute("basePath", ReadProUtils.ReadProperties("basePath"));
         String url = request.getRequestURI();
-        if (isUrlAllowed(url) || isUserLoggedIn(request) || url.startsWith("/wx/") || url.startsWith("/static/")) {
+        if (isUrlAllowed(url) || isUserLoggedIn(request) || url.startsWith("/static/")) {
             filterChain.doFilter(request, response);
         } else {
             //Service Remote Access Port

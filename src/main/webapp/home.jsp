@@ -14,10 +14,10 @@
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <link rel="icon" href="${basePath}static/image/favicon.ico" type="image/x-icon"/>
-    <link rel="stylesheet" href="${basePath}static/layui/css/layui.css" media="all">
-    <link rel="stylesheet" href="${basePath}static/layui/style/admin.css" media="all">
-    <script src="${basePath}static/jquery/jquery-3.7.1.min.js"></script>
+    <link rel="icon" href="/static/image/favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="/static/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/layui/style/admin.css" media="all">
+    <script src="/static/jquery/jquery-3.7.1.min.js"></script>
 </head>
 <body class="layui-layout-body">
 <div id="LAY_app">
@@ -79,9 +79,9 @@
                     </a>
                     <dl class="layui-nav-child">
                         <dd><a lay-href="set/user/info.html">基本资料</a></dd>
-                        <dd><a lay-href="${basePath}page/system/updatePwd.jsp">修改密码</a></dd>
+                        <dd><a lay-href="/page/system/updatePwd.jsp">修改密码</a></dd>
                         <hr>
-                        <dd style="text-align: center;"><a href="${basePath}admin/loginout">退出</a></dd>
+                        <dd style="text-align: center;"><a href="/admin/loginout">退出</a></dd>
                     </dl>
                 </li>
 
@@ -97,7 +97,7 @@
         <!-- 侧边菜单 -->
         <div class="layui-side layui-side-menu">
             <div class="layui-side-scroll">
-                <div class="layui-logo" lay-href="${base}/page/deepseek/home.jsp">
+                <div class="layui-logo" lay-href="/page/deepseek/home.jsp">
                     <span>南阳睿翼</span>
                 </div>
 
@@ -112,7 +112,7 @@
                                 <a lay-href="/page/deepseek/home.jsp">deepseek控制台</a>
                             </dd>
                             <dd data-name="console">
-                                <a lay-href="${basePath}lingxing/goSettingPage">功能区</a>
+                                <a lay-href="/lingxing/goSettingPage">功能区</a>
                             </dd>
                         </dl>
                     </li>
@@ -126,7 +126,7 @@
                             <dd data-name="image">
                                 <a href="javascript:;">图片处理</a>
                                 <dl class="layui-nav-child">
-                                    <dd data-name="list"><a lay-href="${basePath}image/goImagePage">图片生成</a></dd>
+                                    <dd data-name="list"><a lay-href="/image/goImagePage">图片生成</a></dd>
                                     <dd data-name="comment"><a lay-href="app/content/comment.html">评论管理</a></dd>
                                 </dl>
                             </dd>
@@ -155,7 +155,7 @@
                                 <a href="javascript:;">我的设置</a>
                                 <dl class="layui-nav-child">
                                     <dd><a lay-href="set/user/info.html">基本资料</a></dd>
-                                    <dd><a lay-href="${basePath}page/system/updatePwd.jsp">修改密码</a></dd>
+                                    <dd><a lay-href="/page/system/updatePwd.jsp">修改密码</a></dd>
                                 </dl>
                             </dd>
                         </dl>
@@ -192,7 +192,7 @@
         <!-- 主体内容 -->
         <div class="layui-body" id="LAY_app_body">
             <div class="layadmin-tabsbody-item layui-show">
-                <iframe src="${basePath}lingxing/goSettingPage" frameborder="0" class="layadmin-iframe"></iframe>
+                <iframe src="/lingxing/goSettingPage" frameborder="0" class="layadmin-iframe"></iframe>
             </div>
         </div>
 
@@ -201,7 +201,7 @@
     </div>
 </div>
 
-<script src="${base}/static/layui/layui.js"></script>
+<script src="/static/layui/layui.js"></script>
 <script>
     layui.config({
         base: '/static/layui/'
@@ -221,7 +221,7 @@
         setInterval(function () {
             //5分钟向后台请求一次，防止session过期
             $.ajax({
-                url: "${basePath}system/refresh", // 保持Session 的后端接口
+                url: "/system/refresh", // 保持Session 的后端接口
                 type: "post",
                 cache: false,
                 dataType: "json",
@@ -229,14 +229,14 @@
                     if (!data.status) {
                         layer.msg("登录已过期，请重新登录", {icon: 5});
                         setTimeout(function () {
-                            window.location.href = "${basePath}index.jsp";
+                            window.location.href = "/index.jsp";
                         }, 1000);
                     }
                 },
                 error: function (data) {
                     layer.msg("登录已过期，请重新登录", {icon: 5});
                     setTimeout(function () {
-                        window.location.href = "${basePath}index.jsp";
+                        window.location.href = "/index.jsp";
                     }, 1000);
                 }
             });

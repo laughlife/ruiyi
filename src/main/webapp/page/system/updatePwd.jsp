@@ -10,10 +10,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <link rel="stylesheet" href="${basePath}static/layui/css/layui.css" media="all">
-    <script src="${basePath}static/layui/layui.js"></script>
-    <script src="${basePath}static/jquery/jquery-3.7.1.min.js" type="text/javascript" charset="utf-8"></script>
-    <script src="${basePath}static/js/crypto-js.min.js" type="text/javascript" charset="utf-8"></script>
+    <link rel="stylesheet" href="/static/layui/css/layui.css" media="all">
+    <script src="/static/layui/layui.js"></script>
+    <script src="/static/jquery/jquery-3.7.1.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/static/js/crypto-js.min.js" type="text/javascript" charset="utf-8"></script>
 </head>
 <body>
 <div class="layui-fluid">
@@ -22,7 +22,7 @@
             <div class="layui-card">
                 <div class="layui-card-header">修改密码</div>
                 <div class="layui-card-body">
-                    <form class="layui-form" lay-filter="passwordForm" action="${basePath}admin/updatePwd"
+                    <form class="layui-form" lay-filter="passwordForm" action="/admin/updatePwd"
                           method="post">
                         <div class="layui-form">
                             <div class="layui-form-item">

@@ -9,11 +9,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <link rel="stylesheet" href="${basePath}static/layui/css/layui.css" media="all">
-    <script src="${basePath}static/layui/layui.js"></script>
-    <script src="${basePath}page/image/js/Blob.js"></script>
-    <script src="${basePath}page/image/js/FileSaver.min.js"></script>
-    <script src="${basePath}static/jquery/jquery-3.7.1.min.js"></script>
+    <link rel="stylesheet" href="/static/layui/css/layui.css" media="all">
+    <script src="/static/layui/layui.js"></script>
+    <script src="/page/image/js/Blob.js"></script>
+    <script src="/page/image/js/FileSaver.min.js"></script>
+    <script src="/static/jquery/jquery-3.7.1.min.js"></script>
     <style>
         .image-container {
             display: flex;
@@ -124,7 +124,7 @@
             accept: 'file',
             exts: 'jpg|png|gif',
             size: 1024 * 5,
-            url: '${basePath}image/uploadImageToCreateOrderImage',
+            url: '/image/uploadImageToCreateOrderImage',
             data: {
                 'name': function (){
                     return $('#imageName').val();
@@ -154,7 +154,7 @@
             //获取本地IP
             "getIp": function () {
                 $.ajax({
-                    url: "${basePath}lingxing/getIp",
+                    url: "/lingxing/getIp",
                     type: "POST",
                     dataType: "json",
                     success: function (data) {

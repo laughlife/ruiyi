@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Font Awesome 图标展示</title>
-    <link rel="stylesheet" href="${basePath}static/fontawesome6/css/all.min.css">
+    <link rel="stylesheet" href="/static/fontawesome6/css/all.min.css">
     <style>
         .icon-container {
             display: flex;

@@ -12,10 +12,10 @@ import java.util.*;
 
 public class GetCodeMysql {
     private final String tableSpace = "ruiyi";
-    private final String tableName = "t_pro_history";
+    private final String tableName = "t_department_permission";
     private static final String PACKAGE_PATH = "com.liwei.ruiyi";
-//    private final String url = "jdbc:mysql://81.70.86.120:8866/ruiyi?characterEncoding=utf8&serverTimezone=UTC&rewriteBatchedStatements=true";
-    private final String url = "jdbc:mysql://localhost:3306/ruiyi?characterEncoding=utf8&serverTimezone=UTC&rewriteBatchedStatements=true";
+    private final String url = "jdbc:mysql://81.70.86.120:8866/ruiyi?characterEncoding=utf8&serverTimezone=UTC&rewriteBatchedStatements=true";
+//    private final String url = "jdbc:mysql://localhost:3306/ruiyi?characterEncoding=utf8&serverTimezone=UTC&rewriteBatchedStatements=true";
     private final String driverName = "com.mysql.cj.jdbc.Driver";
     private final String userName = "root";
     private final String password = "Liv88625200@@";
@@ -35,8 +35,8 @@ public class GetCodeMysql {
             generateEntity(columns);
             generateRowMapper(columns);
 //            String tableName = "t_pro_history";
-//            generateDaoCode(tableName);
-//            generateServiceCode(tableName);
+            generateDaoCode(tableName);
+            generateServiceCode(tableName);
         }
     }
 
