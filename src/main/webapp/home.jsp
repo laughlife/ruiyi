@@ -154,6 +154,18 @@
                         </dl>
                     </li>
 
+                    <li data-name="set" class="layui-nav-item">
+                        <a href="javascript:;" lay-tips="权限设置" lay-direction="2">
+                            <i class="layui-icon layui-icon-set"></i>
+                            <cite>权限设置</cite>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd class="layui-nav-itemed">
+                                <a lay-href="/page/menu/menu.jsp">菜单设置</a>
+                            </dd>
+                        </dl>
+                    </li>
+
                 </ul>
             </div>
         </div>

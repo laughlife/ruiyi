@@ -19,4 +19,40 @@ public class TPermissionDaoImpl implements TPermissionDao {
         String sql = "select * from t_permission";
         return jdbc.query(sql, new TPermissionMapper());
     }
+
+    @Override
+    public boolean addRootMenu(String name) {
+        String sql = "insert into t_permission(name) values(?)";
+        return jdbc.update(sql, name) > 0;
+    }
+
+    @Override
+    public boolean updatePermission(String id, String field, String value) {
+        String sql = "update t_permission set " + field + "=? where id=?";
+        if (jdbc.update(sql, value, id) > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean deletePermission(String id) {
+        String sql = "select count(0) from t_permission where parent_id=?";
+        if (jdbc.queryForObject(sql, Integer.class, id) == 0) {
+            sql = "delete from t_permission where id=?";
+            if (jdbc.update(sql, id) > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean addChildMenu(String parentId, String name) {
+        String sql = "insert into t_permission(parent_id,name) values(?,?)";
+        if (jdbc.update(sql, parentId, name) > 0) {
+            return true;
+        }
+        return false;
+    }
 }

@@ -16,10 +16,14 @@ public class PermissionServiceImpl implements PermissionService {
     private TPermissionDao permissionDao;
 
     @Override
-    public JSONArray getAllPermission() {
+    public JSONObject getAllPermission() {
         //现在需要查询所有的菜单信息，暂时不做权限限制
         List<TPermission> permissionList = permissionDao.getAllPermission();
-        return eachPermission(permissionList);
+        JSONObject result = new JSONObject();
+        result.put("count", permissionList.size());
+        result.put("code", 0);
+        result.put("data", eachPermission(permissionList));
+        return result;
     }
 
     private JSONArray eachPermission(List<TPermission> permissionList) {
@@ -64,10 +68,31 @@ public class PermissionServiceImpl implements PermissionService {
             for (TPermission child : children) {
                 childArray.add(buildMenuTree(child, permissionMap));
             }
-            jsonMenu.put("child", childArray);
+            jsonMenu.put("children", childArray);
         } else {
             //jsonMenu.put("child", new JSONArray()); // 保证始终有child字段
         }
         return jsonMenu;
+    }
+
+
+    @Override
+    public boolean addRootMenu(String name) {
+        return permissionDao.addRootMenu(name);
+    }
+
+    @Override
+    public boolean updatePermission(String id, String field, String value) {
+        return permissionDao.updatePermission(id, field, value);
+    }
+
+    @Override
+    public boolean deletePermission(String id) {
+        return permissionDao.deletePermission(id);
+    }
+
+    @Override
+    public boolean addChildMenu(String parentId, String name) {
+        return permissionDao.addChildMenu(parentId, name);
     }
 }

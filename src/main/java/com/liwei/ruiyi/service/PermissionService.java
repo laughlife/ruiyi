@@ -9,5 +9,13 @@ import java.util.List;
 
 @Service
 public interface PermissionService {
-    JSONArray getAllPermission();
+    JSONObject getAllPermission();
+
+    boolean addRootMenu(String name);
+
+    boolean updatePermission(String id, String field, String value);
+
+    boolean deletePermission(String id);
+
+    boolean addChildMenu(String parentId, String name);
 }
