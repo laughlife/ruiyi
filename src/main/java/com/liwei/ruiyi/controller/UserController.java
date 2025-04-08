@@ -35,4 +35,10 @@ public class UserController {
         request.getSession().invalidate();
         return "index";
     }
+    @RequestMapping("/setting")
+    public String setting() {
+        // 清理会话
+        request.getSession().invalidate();
+        return "page/user/setting";
+    }
 }

@@ -28,6 +28,12 @@ public class TPermissionDaoImpl implements TPermissionDao {
 
     @Override
     public boolean updatePermission(String id, String field, String value) {
+        if (field.equals("parentId")) {
+            field = "parent_id";
+        }
+        if (field.equals("isLink")) {
+            field = "is_link";
+        }
         String sql = "update t_permission set " + field + "=? where id=?";
         if (jdbc.update(sql, value, id) > 0) {
             return true;

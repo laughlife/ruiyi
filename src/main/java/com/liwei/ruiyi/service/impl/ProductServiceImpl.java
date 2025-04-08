@@ -78,9 +78,14 @@ public class ProductServiceImpl implements ProductService {
             args.put("field", "volume");
             args.put("exp", "lt");
             args.put("from_value", 0);
-            System.out.println("请求数据时间为："+day);
+            System.out.println("");
+            System.out.println("-------------------------------------------------------------------");
+            System.out.println("参数："+args.toString());
+            System.out.println("请求时间为："+DateUtils.getSystemTime());
             JSONObject pro_json = lingxingService.post(LingxingConfig.get_product_performance, args);
+            System.out.println("返回结果时间为："+DateUtils.getSystemTime());
             if(pro_json.getInteger("code")==0){
+                System.out.println("【成功】");
                 //数据获取成功
                 JSONObject data = pro_json.getJSONObject("data");
                 String chain_start_date = data.getString("chain_start_date");
@@ -136,10 +141,10 @@ public class ProductServiceImpl implements ProductService {
 
             }else{
                 //数据获取失败
-                logger.info("产品表现asin维度失败:{}", pro_json.toString());
+                logger.info("请求失败:{}", pro_json.toString());
             }
             try {
-                Thread.sleep(1000L*15);
+                Thread.sleep(1000L*3);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

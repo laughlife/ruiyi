@@ -10,6 +10,7 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <link rel="stylesheet" href="/static/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/fontawesome6/css/all.min.css" media="all">
     <script src="/static/layui/layui.js"></script>
 </head>
 <body>
@@ -49,12 +50,12 @@
             toolbar: '#table-toolbar',
             cols: [[
                 {field: 'id', title: 'ID', width: 80},
-                {field: 'name', title: '权限名称', edit: 'text', width: 180},
+                {field: 'name', title: '权限名称', edit: 'text', width: 220},
                 {field: 'icon', title: '图标', edit: 'text', width: 200},
                 {field: 'path', title: '路径', edit: 'text'},
                 {field: 'description', title: '描述信息', edit: 'text', width: 400},
                 {field: 'px', title: '排序', edit: 'text', width: 80},
-                {field: 'is_link', title: '是否链接', edit: 'text', width: 160},
+                {field: 'isLink', title: '是否链接', edit: 'text', width: 160},
                 {fixed: "right", title: "操作", width: 190, align: "center", toolbar: "#permission-treeTable-tools"}
             ]],
             page: false
@@ -77,7 +78,6 @@
                     if (data.status) {
                         layer.msg(data.msg);
                     }
-                    inst.reload();
                 }
             });
 

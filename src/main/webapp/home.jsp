@@ -7,11 +7,17 @@
     <title>睿翼</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <link rel="icon" href="/static/image/favicon.ico" type="image/x-icon"/>
     <link rel="stylesheet" href="/static/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/fontawesome6/css/all.min.css" media="all">
     <link rel="stylesheet" href="/static/layui/style/admin.css" media="all">
     <script src="/static/jquery/jquery-3.7.1.min.js"></script>
+    <style>
+        cite{margin-left:10px;}
+        .ml20{margin-left:20px;}
+    </style>
 </head>
 <body class="layui-layout-body">
 <div id="LAY_app">
@@ -39,7 +45,8 @@
                 </li>
 
                 <li class="layui-nav-item layui-hide-xs" lay-unselect>
-                    <input type="text" placeholder="搜索..." autocomplete="off" class="layui-input layui-input-search" layadmin-event="serach" lay-action="template/search.html?keywords=">
+                    <input type="text" placeholder="搜索..." autocomplete="off" class="layui-input layui-input-search"
+                           layadmin-event="serach" lay-action="template/search.html?keywords=">
                 </li>
             </ul>
             <ul class="layui-nav layui-layout-right" lay-filter="layadmin-layout-right">
@@ -79,7 +86,8 @@
                 </li>
 
                 <li class="layui-nav-item layui-hide-xs" lay-unselect>
-                    <a href="javascript:;" layadmin-event="about"><i class="layui-icon layui-icon-more-vertical"></i></a>
+                    <a href="javascript:;" layadmin-event="about"><i
+                            class="layui-icon layui-icon-more-vertical"></i></a>
                 </li>
                 <li class="layui-nav-item layui-show-xs-inline-block layui-hide-sm" lay-unselect>
                     <a href="javascript:;" layadmin-event="more"><i class="layui-icon layui-icon-more-vertical"></i></a>
@@ -95,77 +103,39 @@
                 </div>
 
                 <ul class="layui-nav layui-nav-tree" lay-shrink="all">
-                    <li class="layui-nav-item layui-nav-itemed">
-                        <a href="javascript:;" lay-tips="开发" lay-direction="2">
-                            <i class="layui-icon layui-icon-home"></i>
-                            <cite>开发</cite>
-                        </a>
-                        <dl class="layui-nav-child">
-                            <dd data-name="console" class="layui-this">
-                                <a lay-href="/page/deepseek/home.jsp">deepseek</a>
-                            </dd>
-                            <dd data-name="console">
-                                <a lay-href="/lingxing/goSettingPage">功能测试</a>
-                            </dd>
-                        </dl>
-                    </li>
-
-                    <li class="layui-nav-item">
-                        <a href="javascript:;" lay-tips="应用" lay-direction="2">
-                            <i class="layui-icon layui-icon-app"></i>
-                            <cite>应用</cite>
-                        </a>
-                        <dl class="layui-nav-child">
-                            <dd>
-                                <a href="javascript:;">图片处理</a>
+                    <c:forEach items="${menuList}" var="menu" varStatus="i">
+                        <li class="layui-nav-item ${i.index eq 0 ? 'layui-nav-itemed' : ''}">
+                            <a href="javascript:;" lay-tips="${menu.name}">
+                                <i class="${menu.icon}"></i>
+                                <cite>${menu.name}</cite>
+                            </a>
+                            <c:if test="${menu.children.size() gt 0}">
                                 <dl class="layui-nav-child">
-                                    <dd><a lay-href="/image/goImagePage">图片生成</a></dd>
-                                    <dd><a lay-href="app/content/comment.html">评论管理</a></dd>
+                                    <c:forEach items="${menu.children}" var="child">
+                                        <dd>
+                                            <c:choose>
+                                                <c:when test="${child.isLink eq 1}">
+                                                    <a class="ml20" lay-href="${child.path}">${child.name}</a>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <a class="ml20" href="javascript:;">${child.name}</a>
+                                                    <c:if test="${child.children.size() gt 0}">
+                                                        <dl class="layui-nav-child">
+                                                            <c:forEach items="${child.children}" var="c">
+                                                                <dd>
+                                                                    <a lay-href="${c.path}">${c.name}</a>
+                                                                </dd>
+                                                            </c:forEach>
+                                                        </dl>
+                                                    </c:if>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </dd>
+                                    </c:forEach>
                                 </dl>
-                            </dd>
-                            <dd>
-                                <a lay-href="app/message/index.html">消息中心</a>
-                            </dd>
-                        </dl>
-                    </li>
-
-                    <li data-name="set" class="layui-nav-item">
-                        <a href="javascript:;" lay-tips="设置" lay-direction="2">
-                            <i class="layui-icon layui-icon-set"></i>
-                            <cite>设置</cite>
-                        </a>
-                        <dl class="layui-nav-child">
-                            <c:if test="${sessionScope.dev eq 1}">
-                                <dd class="layui-nav-itemed">
-                                    <a href="javascript:;">图标</a>
-                                    <dl class="layui-nav-child">
-                                        <dd><a lay-href="/page/icon/icon.jsp">layui</a></dd>
-                                        <dd><a lay-href="/font/font_list">fontawesome6</a></dd>
-                                    </dl>
-                                </dd>
                             </c:if>
-                            <dd class="layui-nav-itemed">
-                                <a href="javascript:;">我的设置</a>
-                                <dl class="layui-nav-child">
-                                    <dd><a lay-href="/set/user/info.html">基本资料</a></dd>
-                                    <dd><a lay-href="/page/system/updatePwd.jsp">修改密码</a></dd>
-                                </dl>
-                            </dd>
-                        </dl>
-                    </li>
-
-                    <li data-name="set" class="layui-nav-item">
-                        <a href="javascript:;" lay-tips="权限设置" lay-direction="2">
-                            <i class="layui-icon layui-icon-set"></i>
-                            <cite>权限设置</cite>
-                        </a>
-                        <dl class="layui-nav-child">
-                            <dd class="layui-nav-itemed">
-                                <a lay-href="/page/menu/menu.jsp">菜单设置</a>
-                            </dd>
-                        </dl>
-                    </li>
-
+                        </li>
+                    </c:forEach>
                 </ul>
             </div>
         </div>
@@ -188,7 +158,8 @@
             </div>
             <div class="layui-tab" lay-unauto lay-allowClose="true" lay-filter="layadmin-layout-tabs">
                 <ul class="layui-tab-title" id="LAY_app_tabsheader">
-                    <li lay-id="home/console.html" lay-attr="home/console.html" class="layui-this"><i class="layui-icon layui-icon-home"></i></li>
+                    <li lay-id="home/console.html" lay-attr="home/console.html" class="layui-this"><i
+                            class="layui-icon layui-icon-home"></i></li>
                 </ul>
             </div>
         </div>
@@ -218,11 +189,11 @@
     //     $("#LAY_app_body").find("iframe")[0].contentWindow.location.reload();
     // });
 
-    layui.use(function(){
+    layui.use(function () {
 
     });
 
-    $(document).ready(function (){
+    $(document).ready(function () {
         setInterval(function () {
             //5分钟向后台请求一次，防止session过期
             $.ajax({

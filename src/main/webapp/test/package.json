@@ -1,35 +1,170 @@
-[
-  {
-    "id": 1,
-    "name": "应用",
-    "parentId": -1,
-    "dataScope": "all",
-    "icon": "layui-icon layui-icon-app",
-    "description": "应用主菜单",
-    "px": 1,
-    "isLink": 0,
-    "child": [
-      {
-        "id": 2,
-        "name": "图片处理",
-        "parentId": 1,
-        "dataScope": "all",
-        "description": "生成sku图",
-        "px": 1,
-        "isLink": 0,
-        "child": [
-          {
-            "id": 3,
-            "name": "图片生成",
-            "parentId": 2,
-            "dataScope": "all",
-            "path": "/image/goImagePage",
-            "description": "生成产品上传时的图片",
-            "px": 1,
-            "isLink": 1
-          }
-        ]
-      }
-    ]
-  }
-]
+{
+  "count": 16,
+  "code": 0,
+  "data": [
+    {
+      "id": 1,
+      "name": "应用",
+      "parentId": -1,
+      "dataScope": "all",
+      "icon": "layui-icon layui-icon-app",
+      "description": "应用主菜单",
+      "px": 10,
+      "isLink": 0,
+      "children": [
+        {
+          "id": 2,
+          "name": "图片处理",
+          "parentId": 1,
+          "dataScope": "all",
+          "description": "生成sku图",
+          "px": 1,
+          "isLink": 0,
+          "children": [
+            {
+              "id": 3,
+              "name": "图片生成",
+              "parentId": 2,
+              "dataScope": "all",
+              "path": "/image/goImagePage",
+              "description": "生成产品上传时的图片",
+              "px": 1,
+              "isLink": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "name": "管理",
+      "parentId": -1,
+      "dataScope": "all",
+      "icon": "fa-solid fa-users",
+      "px": 20,
+      "isLink": 0
+    },
+    {
+      "id": 5,
+      "name": "设置",
+      "parentId": -1,
+      "dataScope": "all",
+      "icon": "fa-solid fa-screwdriver-wrench",
+      "description": "设置功能",
+      "px": 30,
+      "isLink": 0,
+      "children": [
+        {
+          "id": 11,
+          "name": "基本资料",
+          "parentId": 5,
+          "dataScope": "all",
+          "path": "/user/setting",
+          "description": "维护个人基本资料",
+          "px": 1,
+          "isLink": 1
+        },
+        {
+          "id": 12,
+          "name": "修改密码",
+          "parentId": 5,
+          "dataScope": "all",
+          "path": "/page/system/updatePwd.jsp",
+          "description": "修改密码",
+          "px": 2,
+          "isLink": 1
+        },
+        {
+          "id": 13,
+          "name": "权限设置",
+          "parentId": 5,
+          "dataScope": "all",
+          "px": 3,
+          "isLink": 0,
+          "children": [
+            {
+              "id": 14,
+              "name": "菜单设置",
+              "parentId": 13,
+              "dataScope": "all",
+              "px": 0,
+              "isLink": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "开发",
+      "parentId": -1,
+      "dataScope": "all",
+      "icon": "layui-icon layui-icon-util",
+      "description": "开发人员功能区",
+      "px": 99,
+      "isLink": 0,
+      "children": [
+        {
+          "id": 17,
+          "name": "菜单设置",
+          "parentId": 4,
+          "dataScope": "all",
+          "path": "/page/menu/menu.jsp",
+          "description": "菜单设置-开发人员维护",
+          "px": 0,
+          "isLink": 1
+        },
+        {
+          "id": 8,
+          "name": "图标",
+          "parentId": 4,
+          "dataScope": "all",
+          "px": 10,
+          "isLink": 0,
+          "children": [
+            {
+              "id": 9,
+              "name": "layui图标",
+              "parentId": 8,
+              "dataScope": "all",
+              "path": "/page/icon/icon.jsp",
+              "description": "layui图标",
+              "px": 1,
+              "isLink": 1
+            },
+            {
+              "id": 10,
+              "name": "fontawesome6",
+              "parentId": 8,
+              "dataScope": "all",
+              "path": "/font/font_list",
+              "description": "fontawesome6图标",
+              "px": 2,
+              "isLink": 1
+            }
+          ]
+        },
+        {
+          "id": 6,
+          "name": "deepseek",
+          "parentId": 4,
+          "dataScope": "all",
+          "path": "/page/deepseek/deepseek.jsp",
+          "description": "deepseek接入项目",
+          "px": 20,
+          "isLink": 1
+        },
+        {
+          "id": 7,
+          "name": "功能测试",
+          "parentId": 4,
+          "dataScope": "all",
+          "path": "/lingxing/goSettingPage",
+          "description": "开发人员的功能菜单",
+          "px": 30,
+          "isLink": 1
+        }
+      ]
+    }
+  ]
+}

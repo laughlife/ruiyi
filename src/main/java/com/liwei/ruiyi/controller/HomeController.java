@@ -31,6 +31,8 @@ public class HomeController {
         }else{
             request.getSession().removeAttribute("dev");
         }
+        JSONObject json = permissionService.getAllPermission();
+        request.setAttribute("menuList", json.getJSONArray("data"));
         return "home";
     }
 
