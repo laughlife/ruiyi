@@ -60,14 +60,14 @@ public class ProductServiceImpl implements ProductService {
 
     public void analyzeProject(String day, List<Integer> sid) {
         for(Integer s : sid){
-            JSONArray array = new JSONArray();
-            array.add(s);
+//            JSONArray array = new JSONArray();
+//            array.add(s);
 
             JSONObject args = new JSONObject();
             args.put("offset", 0);
             //分页长度，最大10000,默认20
             args.put("length", 10000);
-            args.put("sid", array);
+            args.put("sid", s);
             //盲猜是按照交易量排序
             args.put("sort_field", "volume");
             args.put("sort_type", "desc");
@@ -78,14 +78,8 @@ public class ProductServiceImpl implements ProductService {
             args.put("field", "volume");
             args.put("exp", "lt");
             args.put("from_value", 0);
-            System.out.println("");
-            System.out.println("-------------------------------------------------------------------");
-            System.out.println("参数："+args.toString());
-            System.out.println("请求时间为："+DateUtils.getSystemTime());
             JSONObject pro_json = lingxingService.post(LingxingConfig.get_product_performance, args);
-            System.out.println("返回结果时间为："+DateUtils.getSystemTime());
             if(pro_json.getInteger("code")==0){
-                System.out.println("【成功】");
                 //数据获取成功
                 JSONObject data = pro_json.getJSONObject("data");
                 String chain_start_date = data.getString("chain_start_date");
@@ -144,7 +138,7 @@ public class ProductServiceImpl implements ProductService {
                 logger.info("请求失败:{}", pro_json.toString());
             }
             try {
-                Thread.sleep(1000L*3);
+                Thread.sleep(1000L*1);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

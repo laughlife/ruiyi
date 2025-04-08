@@ -1,5 +1,4 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -72,27 +71,31 @@
         <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete"><i class="fa-solid fa-minus fa-fw"></i>成员离岗</button>
     </div>
 </script>
-
+<script type="text/html" id="bm-table-toolbar">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-bg-blue layui-btn-sm" lay-event="addRootNode">添加一级部门</button>
+    </div>
+</script>
 <script>
-    var bmcyTable, bmTable;
-    layui.use(['layer', 'form', 'table', 'miniTab'], function () {
-        var layer = layui.layer,
-            table = layui.table,
-            miniTab = layui.miniTab;
-        miniTab.listen();
+    layui.use(function () {
+        var treeTable = layui.treeTable;
+        var layer = layui.layer;
+        var $ = layui.jquery;
+        var bmcyTable;
 
-        bmTable = table.render({
+        var bmTable = treeTable.render({
             elem: '#bmTable',
             url: '/bm/queryAllBm',
-            page: false,
+            tree:{},
+            toolbar: '#bm-table-toolbar',
             cols: [[
                 {type: 'numbers', title: '编号', width: 80},
-                {field: 'id', title: 'ID', hide: true},
                 {field: 'name', title: '名称', edit: 'text', width: 150},
                 {field: 'ms', title: '描述信息', edit: 'text'},
                 {field: 'idx', title: '权重', edit: 'number', width: 80},
                 {align: 'center', title: '操作', toolbar: '#bmTableToolbar', width: 400}
-            ]]
+            ]],
+            page: false
         });
 
         table.on('edit(bmTableFilter)', function(obj) {

@@ -45,11 +45,11 @@
         // 渲染
         var inst = treeTable.render({
             elem: '#permissionTreeTable',
-            url: '/home/initMenu', // 此处为静态模拟数据，实际使用时需换成真实接口
+            url: '/home/initMenu',
             tree: {},
             toolbar: '#table-toolbar',
             cols: [[
-                {field: 'id', title: 'ID', width: 80},
+                {type: 'numbers', title: '编号', width: 80},
                 {field: 'name', title: '权限名称', edit: 'text', width: 220},
                 {field: 'icon', title: '图标', edit: 'text', width: 200},
                 {field: 'path', title: '路径', edit: 'text'},
