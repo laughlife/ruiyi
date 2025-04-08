@@ -84,8 +84,6 @@
         });
         // 表头工具栏工具事件
         treeTable.on("toolbar(permissionTreeTable)", function (obj) {
-            var config = obj.config;
-            var tableId = config.id;
             // 获取选中行
             if (obj.event === "addRootNode") {
                 layer.prompt({title: '添加根节点', formType: 2}, function (pass, index) {

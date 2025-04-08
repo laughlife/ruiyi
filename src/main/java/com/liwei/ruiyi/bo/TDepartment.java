@@ -12,4 +12,7 @@ public class TDepartment {
     private Integer parentId;
     private Integer level;
     private String path;
+    private Integer px;
+    private String icon;
+    private String description;
 }

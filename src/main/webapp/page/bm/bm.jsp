@@ -6,7 +6,8 @@
     <title>部门管理</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
 
     <link rel="stylesheet" href="/static/layui/css/layui.css" media="all">
     <link rel="stylesheet" href="/static/fontawesome6/css/all.min.css" media="all">
@@ -17,29 +18,11 @@
 <div class="layui-fluid">
     <div class="layui-row layui-col-space15">
         <div class="layui-col-md12">
+
             <div class="layui-card">
-                <div class="layui-card-header">部门信息维护</div>
+                <div class="layui-card-header">部门管理</div>
                 <div class="layui-card-body">
-                    <div style="margin: 10px 10px 10px 10px">
-                        <form class="layui-form layui-form-pane" action="">
-                            <div class="layui-form-item">
-                                <div class="layui-inline">
-                                    <button type="button" id="create_bm_btn"
-                                            class="layui-btn layui-btn-primary icon-blue" lay-submit
-                                            lay-filter="xjbm_filter"><i class="fa-solid fa-plus"></i> 新建部门
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            <div class="layui-card">
-                <div class="layui-card-header">部门信息</div>
-                <div class="layui-card-body">
-                    <div class="layui-row layui-col-space15">
-                        <table id="bmTable" class="layui-table" lay-filter="bmTableFilter"></table>
-                    </div>
+                    <table id="bmTable" class="layui-hide" lay-filter="bmTableFilter"></table>
                 </div>
             </div>
 
@@ -67,8 +50,11 @@
 </script>
 <script type="text/html" id="bmcyTableToolbar">
     <div class="layui-btn-container">
-        <button class="layui-btn layui-btn-sm" lay-event="setld"><i class="fa-solid fa-check fa-fw"></i>&nbsp;&nbsp;设为领导</button>
-        <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete"><i class="fa-solid fa-minus fa-fw"></i>成员离岗</button>
+        <button class="layui-btn layui-btn-sm" lay-event="setld"><i class="fa-solid fa-check fa-fw"></i>&nbsp;&nbsp;设为领导
+        </button>
+        <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete"><i
+                class="fa-solid fa-minus fa-fw"></i>成员离岗
+        </button>
     </div>
 </script>
 <script type="text/html" id="bm-table-toolbar">
@@ -79,26 +65,48 @@
 <script>
     layui.use(function () {
         var treeTable = layui.treeTable;
+        var table = layui.table;
         var layer = layui.layer;
         var $ = layui.jquery;
         var bmcyTable;
 
         var bmTable = treeTable.render({
             elem: '#bmTable',
-            url: '/bm/queryAllBm',
-            tree:{},
+            url: '/department/queryAllBm',
+            tree: {},
             toolbar: '#bm-table-toolbar',
             cols: [[
                 {type: 'numbers', title: '编号', width: 80},
                 {field: 'name', title: '名称', edit: 'text', width: 150},
-                {field: 'ms', title: '描述信息', edit: 'text'},
-                {field: 'idx', title: '权重', edit: 'number', width: 80},
+                {field: 'description', title: '描述信息', edit: 'text'},
+                {field: 'px', title: '权重', edit: 'number', width: 80},
+                {field: 'code', title: '编码', width: 80},
+                {field: 'level', title: '目录层', width: 80},
+                {field: 'path', title: '路径', width: 80},
                 {align: 'center', title: '操作', toolbar: '#bmTableToolbar', width: 400}
             ]],
             page: false
         });
 
-        table.on('edit(bmTableFilter)', function(obj) {
+        treeTable.on("toolbar(bmTableFilter)", function (obj) {
+            // 获取选中行
+            if (obj.event === "addRootNode") {
+                layer.open({
+                    title: '新建部门',
+                    type: 2,
+                    shade: 0.5,
+                    shadeClose: true,
+                    area: ['60%', '60%'],
+                    content: '/department/goCreateBmPage',
+                    end: function () {
+                        bmTable.reload();
+                    }
+                });
+            }
+        });
+
+
+        treeTable.on('edit(bmTableFilter)', function (obj) {
             var data = obj.data; // Get the entire row data
             var field = obj.field; // Get the field name
             var value = obj.value; // Get the field value
@@ -111,62 +119,47 @@
                     value: value
                 },
                 dataType: 'json',
-                success: function(res) {
+                success: function (res) {
                     layer.msg(res.message);
                 }
             });
         });
 
-        $("#create_bm_btn").click(function () {
-            layer.open({
-                title: '新建部门',
-                type: 2,
-                shade: 0.2,
-                maxmin: true,
-                shadeClose: true,
-                area: ['60%', '60%'],
-                content: '/bm/goCreateBmPage',
-                end: function () {
-                    bmTable.reload();
-                }
-            });
-        });
-
-        table.on('tool(bmTableFilter)', function (obj) {
-            var _data = obj.data;
-            if (obj.event === 'delete') {
-                $.ajax({
-                    url: '/bm/deleteBm',
-                    type: 'POST',
-                    data: {
-                        'id': queryId
-                    },
-                    success: function (res) {
-                        bmTable.reload();
-                    }
-                });
-            } else if (obj.event === 'query') {
-                $('#showBmcy').show();
-                bmcyTable = table.render({
-                    elem: '#bmcyTable',
-                    url: '/bm/queryAllBmcy',
-                    where: {'id': _data.id},
-                    page: false,
-                    cols: [[
-                        {type: 'numbers', title: '编号', width: 80},
-                        {type: 'id', hide: true},
-                        {field: 'bmmc', title: '部门名称', width: 150},
-                        {field: 'username', title: '人员', width: 200},
-                        {field: 'phone', title: '电话', width: 200},
-                        {
-                            field: 'sfld', title: '是否领导', templet: function (d) {
-                                return d.sfld === 1 ? '是' : '-';
-                            }
+        treeTable.on('tool(bmTableFilter)', function (obj) {
+                var _data = obj.data;
+                if (obj.event === 'delete') {
+                    $.ajax({
+                        url: '/bm/deleteBm',
+                        type: 'POST',
+                        data: {
+                            'id': queryId
                         },
-                        {align: 'center', title: '操作', toolbar: '#bmcyTableToolbar', width: 400}
-                    ]]
-                });
-            } else if (obj.event === 'addBmcy') {
+                        success: function (res) {
+                            bmTable.reload();
+                        }
+                    });
+                } else if (obj.event === 'query') {
+                    $('#showBmcy').show();
+                    bmcyTable = table.render({
+                        elem: '#bmcyTable',
+                        url: '/bm/queryAllBmcy',
+                        where: {'id': _data.id},
+                        page: false,
+                        cols: [[
+                            {type: 'numbers', title: '编号', width: 80},
+                            {type: 'id', hide: true},
+                            {field: 'bmmc', title: '部门名称', width: 150},
+                            {field: 'username', title: '人员', width: 200},
+                            {field: 'phone', title: '电话', width: 200},
+                            {
+                                field: 'sfld', title: '是否领导', templet: function (d) {
+                                    return d.sfld === 1 ? '是' : '-';
+                                }
+                            },
+                            {align: 'center', title: '操作', toolbar: '#bmcyTableToolbar', width: 400}
+                        ]]
+                    });
+                } else if (obj.event === 'addBmcy') {
                     var addBmcyLayer = layer.open({
                         title: '添加部门成员',
                         type: 2,

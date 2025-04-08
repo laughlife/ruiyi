@@ -14,6 +14,9 @@ public class TDepartmentMapper implements RowMapper<TDepartment> {
         obj.setParentId(rs.getInt("parent_id"));
         obj.setLevel(rs.getInt("level"));
         obj.setPath(rs.getString("path"));
+        obj.setPx(rs.getInt("px"));
+        obj.setIcon(rs.getString("icon"));
+        obj.setDescription(rs.getString("description"));
         return obj;
     }
 }
