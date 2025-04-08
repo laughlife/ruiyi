@@ -40,11 +40,19 @@
 
 <script type="text/html" id="bmTableToolbar">
     <div class="layui-btn-container">
-        <button class="layui-btn layui-btn-sm" lay-event="query"><i class="fa-solid fa-user fa-fw"></i>查看信息
+        {{# if(d.level === 1 || d.level === 2){ }}
+            <button class="layui-btn layui-bg-blue layui-btn-sm" lay-event="addChildBm">
+                <i class="fa-solid fa-folder-plus"></i>添加子部门
+            </button>
+        {{# } }}
+        <button class="layui-btn layui-btn-sm" lay-event="query">
+            <i class="fa-solid fa-user fa-fw"></i>查看信息
         </button>
-        <button class="layui-btn layui-btn-sm" lay-event="addBmcy"><i class="fa-solid fa-user-plus fa-fw"></i>添加成员
+        <button class="layui-btn layui-btn-sm" lay-event="addBmcy">
+            <i class="fa-solid fa-user-plus fa-fw"></i>添加成员
         </button>
-        <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete"><i class="fa-solid fa-trash"></i>删除
+        <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete">
+            <i class="fa-solid fa-trash"></i>删除
         </button>
     </div>
 </script>
@@ -79,10 +87,10 @@
                 {type: 'numbers', title: '编号', width: 80},
                 {field: 'name', title: '名称', edit: 'text', width: 150},
                 {field: 'description', title: '描述信息', edit: 'text'},
-                {field: 'px', title: '权重', edit: 'number', width: 80},
-                {field: 'code', title: '编码', width: 80},
-                {field: 'level', title: '目录层', width: 80},
-                {field: 'path', title: '路径', width: 80},
+                {field: 'px', title: '排序', edit: 'number', width: 80},
+                {field: 'code', title: '编码', width: 300},
+                {field: 'path', title: '路径', width: 300},
+                {field: 'level', title: '层级', width: 80},
                 {align: 'center', title: '操作', toolbar: '#bmTableToolbar', width: 400}
             ]],
             page: false
@@ -107,11 +115,11 @@
 
 
         treeTable.on('edit(bmTableFilter)', function (obj) {
-            var data = obj.data; // Get the entire row data
-            var field = obj.field; // Get the field name
-            var value = obj.value; // Get the field value
+            var data = obj.data;
+            var field = obj.field;
+            var value = obj.value;
             $.ajax({
-                url: '/bm/updateBm',
+                url: '/department/updateBm',
                 type: 'POST',
                 data: {
                     id: data.id,
@@ -127,7 +135,19 @@
 
         treeTable.on('tool(bmTableFilter)', function (obj) {
                 var _data = obj.data;
-                if (obj.event === 'delete') {
+                if (obj.event === 'addChildBm') {
+                    layer.open({
+                        title: '新建子部门',
+                        type: 2,
+                        shade: 0.5,
+                        shadeClose: true,
+                        area: ['60%', '60%'],
+                        content: '/department/goCreateBmPage?parentId=' + _data.id,
+                        end: function () {
+                            bmTable.reload();
+                        }
+                    });
+                }else if (obj.event === 'delete') {
                     $.ajax({
                         url: '/bm/deleteBm',
                         type: 'POST',
@@ -142,12 +162,11 @@
                     $('#showBmcy').show();
                     bmcyTable = table.render({
                         elem: '#bmcyTable',
-                        url: '/bm/queryAllBmcy',
+                        url: '/department/queryAllBmcy',
                         where: {'id': _data.id},
                         page: false,
                         cols: [[
                             {type: 'numbers', title: '编号', width: 80},
-                            {type: 'id', hide: true},
                             {field: 'bmmc', title: '部门名称', width: 150},
                             {field: 'username', title: '人员', width: 200},
                             {field: 'phone', title: '电话', width: 200},

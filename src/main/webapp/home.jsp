@@ -115,15 +115,30 @@
                                         <dd>
                                             <c:choose>
                                                 <c:when test="${child.isLink eq 1}">
-                                                    <a class="ml20" lay-href="${child.path}">${child.name}</a>
+                                                    <a class="ml20" lay-href="${child.path}">
+                                                        <c:if test="${!empty(child.icon)}">
+                                                            <i class="${child.icon}"></i>
+                                                        </c:if>
+                                                        ${child.name}
+                                                    </a>
                                                 </c:when>
                                                 <c:otherwise>
-                                                    <a class="ml20" href="javascript:;">${child.name}</a>
+                                                    <a class="ml20" href="javascript:;">
+                                                        <c:if test="${!empty(child.icon)}">
+                                                            <i class="${child.icon}"></i>
+                                                        </c:if>
+                                                        ${child.name}
+                                                    </a>
                                                     <c:if test="${child.children.size() gt 0}">
                                                         <dl class="layui-nav-child">
                                                             <c:forEach items="${child.children}" var="c">
                                                                 <dd>
-                                                                    <a lay-href="${c.path}">${c.name}</a>
+                                                                    <a lay-href="${c.path}">
+                                                                        <c:if test="${!empty(c.icon)}">
+                                                                            <i class="${c.icon}"></i>
+                                                                        </c:if>
+                                                                        ${c.name}
+                                                                    </a>
                                                                 </dd>
                                                             </c:forEach>
                                                         </dl>

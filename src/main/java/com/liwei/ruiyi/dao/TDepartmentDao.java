@@ -1,5 +1,6 @@
 package com.liwei.ruiyi.dao;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.liwei.ruiyi.bo.TDepartment;
 import org.springframework.stereotype.Service;
 
@@ -12,4 +13,6 @@ public interface TDepartmentDao {
     TDepartment getBmById(String id);
 
     boolean addBm(TDepartment bm);
+
+    boolean updateBm(JSONObject bm);
 }

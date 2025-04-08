@@ -5,6 +5,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.liwei.ruiyi.bo.TDepartment;
 import com.liwei.ruiyi.bo.TPermission;
 import com.liwei.ruiyi.bo.TUser;
+import com.liwei.ruiyi.dao.TUserDao;
 import com.liwei.ruiyi.service.DepartmentService;
 import com.liwei.ruiyi.dao.TDepartmentDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,9 @@ import java.util.*;
 public class DepartmentServiceImpl implements DepartmentService {
     @Autowired
     private TDepartmentDao departmentDao;
+
+    @Autowired
+    TUserDao userDao;
 
     @Override
     public JSONObject queryAllBm() {
@@ -58,6 +62,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         jsonMenu.put("id", menu.getId());
         jsonMenu.put("name", menu.getName());
         jsonMenu.put("code", menu.getCode());
+        jsonMenu.put("level", menu.getLevel());
         jsonMenu.put("parentId", menu.getParentId());
         jsonMenu.put("path", menu.getPath());
         jsonMenu.put("px", menu.getPx());
@@ -102,6 +107,7 @@ public class DepartmentServiceImpl implements DepartmentService {
                 return false;
             }
             bm.setPath(parentBm.getPath() + bm.getCode() + "/");
+            bm.setCode(parentBm.getCode() + "-" + bm.getCode());
         }
         //非一级部门的parentId为一级部门的id，需要添加的信息为：code,px,icon,level,path
         return departmentDao.addBm(bm);
@@ -114,7 +120,8 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public List<TUser> getBmcyList(Integer id) {
-        return List.of();
+        TDepartment bm = departmentDao.getBmById(String.valueOf(id));
+        return userDao.getBmcyList(bm.getCode());
     }
 
     @Override
@@ -149,7 +156,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public boolean updateBm(JSONObject bm) {
-        return false;
+        return departmentDao.updateBm(bm);
     }
 
     @Override

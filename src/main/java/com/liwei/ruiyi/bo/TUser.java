@@ -12,6 +12,7 @@ public class TUser {
     private String name;
     private String phone;
     private Integer departmentId;
+    private String departmentCode;
     private Integer isLadder;
     private Integer isAdmin;
     private String createTime;

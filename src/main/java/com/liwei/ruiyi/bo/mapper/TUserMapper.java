@@ -14,6 +14,7 @@ public class TUserMapper implements RowMapper<TUser> {
         obj.setName(rs.getString("name"));
         obj.setPhone(rs.getString("phone"));
         obj.setDepartmentId(rs.getInt("department_id"));
+        obj.setDepartmentCode(rs.getString("department_code"));
         obj.setIsLadder(rs.getInt("is_ladder"));
         obj.setIsAdmin(rs.getInt("is_admin"));
         obj.setCreateTime(rs.getString("create_time"));

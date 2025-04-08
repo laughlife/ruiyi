@@ -1,5 +1,6 @@
 package com.liwei.ruiyi.dao.impl;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.liwei.ruiyi.bo.TDepartment;
 import com.liwei.ruiyi.bo.mapper.TDepartmentMapper;
 import com.liwei.ruiyi.dao.TDepartmentDao;
@@ -37,6 +38,20 @@ public class TDepartmentDaoImpl implements TDepartmentDao {
         Object[] args = {bm.getName(), bm.getCode(), bm.getParentId(), bm.getLevel(), bm.getPath(), bm.getPx(), bm.getIcon(), bm.getDescription()};
         try {
             return jdbc.update(sql, args) > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    @Override
+    public boolean updateBm(JSONObject bm) {
+        String id = bm.getString("id");
+        String field = bm.getString("field");
+        String value = bm.getString("value");
+        String sql = "update t_department set "+field+" = ? where id = ?";
+        try {
+            return jdbc.update(sql, value, id) > 0;
         } catch (Exception e) {
             e.printStackTrace();
         }

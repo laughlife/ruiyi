@@ -35,4 +35,9 @@ public class TUserDaoImpl implements TUserDao {
         int count = jdbc.update(sql, params);
         return count > 0;
     }
+
+    @Override
+    public List<TUser> getBmcyList(String code) {
+        return List.of();
+    }
 }
