@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -85,7 +86,7 @@
             toolbar: '#bm-table-toolbar',
             cols: [[
                 {type: 'numbers', title: '编号', width: 80},
-                {field: 'name', title: '名称', edit: 'text', width: 150},
+                {field: 'name', title: '名称', edit: 'text', width: 200},
                 {field: 'description', title: '描述信息', edit: 'text'},
                 {field: 'px', title: '排序', edit: 'number', width: 80},
                 {field: 'code', title: '编码', width: 300},

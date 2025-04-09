@@ -1,10 +1,17 @@
 package com.liwei.ruiyi.service.impl;
 
+import com.alibaba.fastjson2.JSONObject;
+import com.liwei.ruiyi.bo.TDepartment;
 import com.liwei.ruiyi.bo.TUser;
+import com.liwei.ruiyi.dao.TDepartmentDao;
 import com.liwei.ruiyi.dao.TUserDao;
 import com.liwei.ruiyi.service.TUserService;
+import com.liwei.ruiyi.utils.PageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository("userService")
 public class TUserServiceImpl implements TUserService {
@@ -12,6 +19,8 @@ public class TUserServiceImpl implements TUserService {
     @Autowired
     TUserDao userDao;
 
+    @Autowired
+    TDepartmentDao departmentDao;
     @Override
     public TUser queryUserMessage(String username, String password) {
         return userDao.queryUserMessage(username, password);
@@ -20,5 +29,66 @@ public class TUserServiceImpl implements TUserService {
     @Override
     public boolean updatePwd(Integer id, String oldPassword, String password) {
         return userDao.updatePwd(id, oldPassword, password);
+    }
+
+    @Override
+    public PageUtils queryUserByPage(PageUtils page) {
+        PageUtils userPage = userDao.queryUsers(page);
+        List<TUser> data = userPage.getData();
+        List<JSONObject> userList = new ArrayList<>();
+        for (TUser user : data) {
+            JSONObject userJson = new JSONObject();
+            userJson.put("id", user.getId());
+            userJson.put("username", user.getUsername());
+            userJson.put("name", user.getName());
+            userJson.put("phone", user.getPhone());
+            Integer departmentId = user.getDepartmentId();
+            if (departmentId != null && departmentId > 0) {
+                TDepartment department = departmentDao.getBmById(String.valueOf(departmentId));
+                userJson.put("department", department.getName());
+            }else{
+                userJson.put("department", "");
+            }
+            if(user.getIsAdmin() == 1){
+                userJson.put("is_admin", "是");
+            }else{
+                userJson.put("is_admin", "否");
+            }
+            if(user.getIsLadder() == 1){
+                userJson.put("is_ladder", "是");
+            }else{
+                userJson.put("is_ladder", "否");
+            }
+            if(user.getIsBan() == 1){
+                userJson.put("is_ban", "是");
+            }else{
+                userJson.put("is_ban", "否");
+            }
+            userList.add(userJson);
+        }
+        userPage.setData(userList);
+        return userPage;
+    }
+
+    @Override
+    public List<TDepartment> getDepartments() {
+        return departmentDao.getBmList();
+    }
+
+    @Override
+    public boolean checkUsername(String username) {
+        return userDao.checkUsername(username);
+    }
+
+    @Override
+    public JSONObject addUser(TUser user) {
+        JSONObject rj = new JSONObject();
+        if(userDao.checkUsername(user.getUsername())){
+            boolean result = userDao.addUser(user);
+        }else{
+            rj.put("status", false);
+            rj.put("message", "用户名已存在");
+        }
+        return rj;
     }
 }

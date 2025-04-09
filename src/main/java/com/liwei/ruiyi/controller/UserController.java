@@ -1,13 +1,19 @@
 package com.liwei.ruiyi.controller;
 
+import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
+import com.liwei.ruiyi.bo.TDepartment;
 import com.liwei.ruiyi.bo.TUser;
+import com.liwei.ruiyi.dao.TDepartmentDao;
 import com.liwei.ruiyi.service.TUserService;
+import com.liwei.ruiyi.utils.PageUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/user")
@@ -17,6 +23,7 @@ public class UserController {
 
     @Autowired
     TUserService userService;
+
 
     @RequestMapping("/updatePwd")
     @ResponseBody
@@ -35,10 +42,96 @@ public class UserController {
         request.getSession().invalidate();
         return "index";
     }
-    @RequestMapping("/setting")
-    public String setting() {
-        // 清理会话
-        request.getSession().invalidate();
-        return "page/user/setting";
+
+    @RequestMapping("/userManager")
+    public String userManager() {
+        List<TDepartment> departments = userService.getDepartments();
+        request.setAttribute("departments", departments);
+        return "page/user/userManager";
+    }
+
+    @RequestMapping("/goCreateUserPage")
+    public String goCreateUserPage() {
+        List<TDepartment> departments = userService.getDepartments();
+        request.setAttribute("departments", departments);
+        return "page/user/createUser";
+    }
+
+    @RequestMapping("/updateUser")
+    @ResponseBody
+    public String updateUser(String userid, String nickname) {
+//        TUser user = userLoginService.updateUserNicknameById(userid, nickname);
+        JSONObject rj = new JSONObject();
+//        rj.put("user", user);
+        rj.put("status", "success");
+        return rj.toJSONString();
+    }
+
+    @RequestMapping("/addUser")
+    @ResponseBody
+    public String addUser(TUser user) {
+        JSONObject rj = userService.addUser(user);
+        return rj.toJSONString();
+    }
+
+    @RequestMapping("/checkUsername")
+    @ResponseBody
+    public String checkUsername(String username) {
+        JSONObject rj = new JSONObject();
+        boolean answer = userService.checkUsername(username);
+        rj.put("status", answer);
+        rj.put("msg", answer ? "用户名不存在，可以使用" : "用户名已存在，请修改");
+        return rj.toJSONString();
+    }
+
+    @RequestMapping("/goUpdateUserRolePage")
+    public String goUpdateUserRolePage(String id) {
+        request.setAttribute("userid", id);
+//        request.setAttribute("user", userService.findUserById(id));
+//        List<DRole> roles = userService.queryAllRole();
+//        request.setAttribute("roles", roles);
+        return "page/user/updateRole";
+    }
+
+    @RequestMapping("/updateUserRole")
+    @ResponseBody
+    public String updateUserRole(String userid, String userRole) {
+//        userService.updateUserRole(userid, userRole);
+        JSONObject rj = new JSONObject();
+        rj.put("status", "success");
+        return rj.toJSONString();
+    }
+
+    @RequestMapping("/updateUserMessage")
+    @ResponseBody
+    public String updateUserMessage(String id, String filed, String value) {
+//        TUser user = userService.updateUserMessage(id, filed,value);
+        JSONObject rj = new JSONObject();
+//        rj.put("user", user);
+        rj.put("status", "success");
+        return rj.toJSONString();
+    }
+
+    @RequestMapping("/queryUser")
+    @ResponseBody
+    public String queryUser() {
+        int nowPage = Integer.parseInt(request.getParameter("page"));
+        int limit = Integer.parseInt(request.getParameter("limit"));
+        PageUtils pageUtils = new PageUtils(nowPage, limit);
+
+        String key = request.getParameter("key");
+        String departmentCode = request.getParameter("departmentCode");
+        JSONObject params = new JSONObject();
+        params.put("key", key);
+        params.put("departmentCode", departmentCode);
+        pageUtils.setSearchParams(params);
+
+        PageUtils page = userService.queryUserByPage(pageUtils);
+        JSONObject returnJson = new JSONObject();
+        returnJson.put("code", 0);
+        returnJson.put("msg", "操作成功");
+        returnJson.put("count", page.getTotal());
+        returnJson.put("data", page.getData());
+        return JSON.toJSONString(returnJson);
     }
 }

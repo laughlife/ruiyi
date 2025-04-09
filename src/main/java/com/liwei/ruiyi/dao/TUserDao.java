@@ -1,6 +1,8 @@
 package com.liwei.ruiyi.dao;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.liwei.ruiyi.bo.TUser;
+import com.liwei.ruiyi.utils.PageUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,4 +14,10 @@ public interface TUserDao {
     boolean updatePwd(Integer id, String oldPassword,String password);
 
     List<TUser> getBmcyList(String code);
+
+    PageUtils queryUsers(PageUtils page);
+
+    boolean checkUsername(String username);
+
+    boolean addUser(TUser user);
 }
