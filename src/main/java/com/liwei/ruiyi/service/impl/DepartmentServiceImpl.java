@@ -32,6 +32,16 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    public JSONObject queryMyBm(String departmentCode) {
+        List<TDepartment> bmList = departmentDao.getDepartmentsByCode(departmentCode);
+        JSONObject result = new JSONObject();
+        result.put("count", bmList.size());
+        result.put("code", 0);
+        result.put("data", eachPermission(bmList));
+        return result;
+    }
+
+    @Override
     public List<TDepartment> getBmList() {
         return departmentDao.getBmList();
     }
@@ -114,14 +124,57 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public boolean deleteBm(String bmId) {
-        return false;
+    public JSONObject deleteDepartment(String bmId) {
+        boolean checkCouldDelete = departmentDao.checkCouldDelete(bmId);
+        JSONObject returnJson = new JSONObject();
+        if (checkCouldDelete) {
+            returnJson.put("status", false);
+            returnJson.put("msg", "部门信息删除失败，该部门下有子级部门或存在成员信息。");
+            return returnJson;
+        }else{
+            boolean isDelete = departmentDao.deleteDepartmentById(bmId);
+            returnJson.put("status", isDelete);
+            returnJson.put("msg", isDelete?"删除成功。":"删除失败，请联系开发人员检查错误原因。");
+        }
+        return returnJson;
     }
 
     @Override
-    public List<TUser> getBmcyList(Integer id) {
+    public List<JSONObject> getBmcyList(Integer id) {
         TDepartment bm = departmentDao.getBmById(String.valueOf(id));
-        return userDao.getBmcyList(bm.getCode());
+        List<TUser> userList = userDao.getBmcyList(bm.getCode());
+        List<JSONObject> result = new ArrayList<>();
+        for (TUser user : userList) {
+            JSONObject userJson = new JSONObject();
+            userJson.put("id", user.getId());
+            userJson.put("username", user.getUsername());
+            userJson.put("name", user.getName());
+            userJson.put("phone", user.getPhone());
+            Integer departmentId = user.getDepartmentId();
+            if (departmentId != null && departmentId > 0) {
+                TDepartment department = departmentDao.getBmById(String.valueOf(departmentId));
+                userJson.put("department", department.getName());
+            }else{
+                userJson.put("department", "");
+            }
+            if(user.getIsAdmin() == 1){
+                userJson.put("is_admin", "是");
+            }else{
+                userJson.put("is_admin", "否");
+            }
+            if(user.getIsLadder() == 1){
+                userJson.put("is_ladder", "是");
+            }else{
+                userJson.put("is_ladder", "否");
+            }
+            if(user.getIsBan() == 1){
+                userJson.put("is_ban", "否");
+            }else{
+                userJson.put("is_ban", "是");
+            }
+            result.add(userJson);
+        }
+        return result;
     }
 
     @Override

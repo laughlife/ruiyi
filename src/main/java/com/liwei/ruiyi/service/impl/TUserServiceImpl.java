@@ -133,4 +133,9 @@ public class TUserServiceImpl implements TUserService {
     public boolean updateBan(String id) {
         return userDao.updateBan(id);
     }
+
+    @Override
+    public List<TDepartment> getDepartmentsByCode(String departmentCode) {
+        return departmentDao.getDepartmentsByCode(departmentCode);
+    }
 }

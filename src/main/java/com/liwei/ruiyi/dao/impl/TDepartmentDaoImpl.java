@@ -18,7 +18,7 @@ public class TDepartmentDaoImpl implements TDepartmentDao {
     @Override
     public List<TDepartment> getBmList() {
         String sql = "select * from t_department";
-        return jdbc.query(sql,new TDepartmentMapper());
+        return jdbc.query(sql, new TDepartmentMapper());
     }
 
     @Override
@@ -49,9 +49,45 @@ public class TDepartmentDaoImpl implements TDepartmentDao {
         String id = bm.getString("id");
         String field = bm.getString("field");
         String value = bm.getString("value");
-        String sql = "update t_department set "+field+" = ? where id = ?";
+        String sql = "update t_department set " + field + " = ? where id = ?";
         try {
             return jdbc.update(sql, value, id) > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    @Override
+    public List<TDepartment> getDepartmentsByCode(String departmentCode) {
+        String sql = "select * from t_department where code like ?";
+        Object[] args = {departmentCode + "%"};
+        return jdbc.query(sql, new TDepartmentMapper(), args);
+    }
+
+    @Override
+    public boolean checkCouldDelete(String bmId) {
+        String sql = "select * from t_department where id = ?";
+        TDepartment bm = jdbc.queryForObject(sql, new TDepartmentMapper(), bmId);
+        String departmentCode = bm.getCode();
+        sql = "select count(0) from t_user where department_code like ?";
+        int count = jdbc.queryForObject(sql, Integer.class, departmentCode + "%");
+        if(count > 1){
+            return false;
+        }
+        sql = "select count(0) from t_user where department_code like ?";
+        count = jdbc.queryForObject(sql, Integer.class, departmentCode + "%");
+        if(count > 0){
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean deleteDepartmentById(String bmId) {
+        String sql = "delete from t_department where id = ?";
+        try {
+            return jdbc.update(sql, bmId) > 0;
         } catch (Exception e) {
             e.printStackTrace();
         }

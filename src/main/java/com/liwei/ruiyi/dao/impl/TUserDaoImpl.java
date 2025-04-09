@@ -45,6 +45,11 @@ public class TUserDaoImpl implements TUserDao {
 
     @Override
     public List<TUser> getBmcyList(String code) {
+        String sql = "select * from t_user where department_code like ?";
+        List<TUser> userList = jdbc.query("select * from t_user where department_code like ?", new TUserMapper(), code + "%");
+        if (userList.size() > 0) {
+            return userList;
+        }
         return List.of();
     }
 

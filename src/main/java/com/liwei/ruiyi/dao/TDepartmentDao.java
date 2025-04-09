@@ -15,4 +15,10 @@ public interface TDepartmentDao {
     boolean addBm(TDepartment bm);
 
     boolean updateBm(JSONObject bm);
+
+    List<TDepartment> getDepartmentsByCode(String departmentCode);
+
+    boolean checkCouldDelete(String bmId);
+
+    boolean deleteDepartmentById(String bmId);
 }

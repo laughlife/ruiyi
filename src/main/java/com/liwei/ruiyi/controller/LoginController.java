@@ -28,6 +28,8 @@ public class LoginController {
     public String userLogin(String username, String password) {
         JSONObject rj = new JSONObject();
         rj.put("status", false);
+        // icon:X
+        rj.put("icon", 2);
         rj.put("msg", "请检查用户名或密码");
         if (StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)) {
             //首先查询用户是否存在，如果存在了返回用户信息，
@@ -35,10 +37,14 @@ public class LoginController {
             TUser user = userService.queryUserMessage(username, password);
             if (null != user && user.getIsBan() == 0) {
                 rj.put("status", true);
+                // icon:√
+                rj.put("icon", 1);
                 rj.put("msg", "登录成功。");
                 session.setAttribute("user", user);
             }else{
                 rj.put("status", false);
+                // icon: 锁
+                rj.put("icon", 4);
                 rj.put("msg", "用户已被禁止登录，请联系管理员或负责人。");
             }
         }

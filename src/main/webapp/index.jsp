@@ -103,9 +103,9 @@
 
                     if (data.status) {
                         window.location = '/home/goHomePage';
-                        layer.msg(data.msg, {icon: 1,time: 500});
-                    }else{
-                        layer.msg(data.msg, {icon: 4,time: 3000});
+                        layer.msg(data.msg, {icon: data.icon, time: 500});
+                    } else {
+                        layer.msg(data.msg, {icon: data.icon, time: 3000});
                     }
                 }
             });

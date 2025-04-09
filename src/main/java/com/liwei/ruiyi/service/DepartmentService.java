@@ -12,13 +12,15 @@ import java.util.List;
 public interface DepartmentService {
     JSONObject queryAllBm();
 
+    JSONObject queryMyBm(String departmentCode);
+
     List<TDepartment> getBmList();
 
     boolean addBm(TDepartment bm);
 
-    boolean deleteBm(String bmId);
+    JSONObject deleteDepartment(String bmId);
 
-    List<TUser> getBmcyList(Integer id);
+    List<JSONObject> getBmcyList(Integer id);
 
     TDepartment getBmById(String id);
 

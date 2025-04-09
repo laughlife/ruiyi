@@ -4,10 +4,10 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.liwei.ruiyi.bo.TDepartment;
 import com.liwei.ruiyi.bo.TUser;
-import com.liwei.ruiyi.dao.TDepartmentDao;
 import com.liwei.ruiyi.service.TUserService;
 import com.liwei.ruiyi.utils.PageUtils;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,13 +45,12 @@ public class UserController {
 
     @RequestMapping("/userManager")
     public String userManager() {
-        //todo 验证用户权限之后再放筛选功能
         TUser user = (TUser) request.getSession().getAttribute("user");
         List<TDepartment> departments;
         if (user.getIsAdmin() == 1) {
             departments = userService.getDepartments();
         } else {
-            departments = userService.getDepartments();
+            departments = userService.getDepartmentsByCode(user.getDepartmentCode());
         }
         request.setAttribute("departments", departments);
         return "page/user/userManager";
@@ -59,8 +58,13 @@ public class UserController {
 
     @RequestMapping("/goCreateUserPage")
     public String goCreateUserPage() {
-        //todo 验证用户权限之后再放筛选功能
-        List<TDepartment> departments = userService.getDepartments();
+        TUser user = (TUser) request.getSession().getAttribute("user");
+        List<TDepartment> departments;
+        if (user.getIsAdmin() == 1) {
+            departments = userService.getDepartments();
+        } else {
+            departments = userService.getDepartmentsByCode(user.getDepartmentCode());
+        }
         request.setAttribute("departments", departments);
         return "page/user/createUser";
     }
@@ -70,8 +74,13 @@ public class UserController {
         TUser queryUser = userService.queryUserById(id);
         request.setAttribute("queryUser", queryUser);
 
-        //todo 验证用户权限之后再放筛选功能
-        List<TDepartment> departments = userService.getDepartments();
+        TUser user = (TUser) request.getSession().getAttribute("user");
+        List<TDepartment> departments;
+        if (user.getIsAdmin() == 1) {
+            departments = userService.getDepartments();
+        } else {
+            departments = userService.getDepartmentsByCode(user.getDepartmentCode());
+        }
         request.setAttribute("departments", departments);
         return "page/user/updateUser";
     }
@@ -83,16 +92,6 @@ public class UserController {
         request.setAttribute("department", department);
 
         return "page/user/updateOwnMessage";
-    }
-
-    @RequestMapping("/updateUser")
-    @ResponseBody
-    public String updateUser(String userid, String nickname) {
-//        TUser user = userLoginService.updateUserNicknameById(userid, nickname);
-        JSONObject rj = new JSONObject();
-//        rj.put("user", user);
-        rj.put("status", "success");
-        return rj.toJSONString();
     }
 
     @RequestMapping("/addUser")
@@ -112,23 +111,6 @@ public class UserController {
         return rj.toJSONString();
     }
 
-    @RequestMapping("/goUpdateUserRolePage")
-    public String goUpdateUserRolePage(String id) {
-        request.setAttribute("userid", id);
-//        request.setAttribute("user", userService.findUserById(id));
-//        List<DRole> roles = userService.queryAllRole();
-//        request.setAttribute("roles", roles);
-        return "page/user/updateRole";
-    }
-
-    @RequestMapping("/updateUserRole")
-    @ResponseBody
-    public String updateUserRole(String userid, String userRole) {
-//        userService.updateUserRole(userid, userRole);
-        JSONObject rj = new JSONObject();
-        rj.put("status", "success");
-        return rj.toJSONString();
-    }
 
     @RequestMapping("/updateUserMessage")
     @ResponseBody
@@ -196,12 +178,20 @@ public class UserController {
     @RequestMapping("/queryUser")
     @ResponseBody
     public String queryUser() {
+
+        TUser user = (TUser) request.getSession().getAttribute("user");
+
         int nowPage = Integer.parseInt(request.getParameter("page"));
         int limit = Integer.parseInt(request.getParameter("limit"));
         PageUtils pageUtils = new PageUtils(nowPage, limit);
 
         String key = request.getParameter("key");
         String departmentCode = request.getParameter("departmentCode");
+
+        if(StringUtils.isEmpty(departmentCode) && user.getIsAdmin() != 1){
+            departmentCode = user.getDepartmentCode();
+        }
+
         JSONObject params = new JSONObject();
         params.put("key", key);
         params.put("departmentCode", departmentCode);

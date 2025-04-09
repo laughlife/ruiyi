@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -30,9 +30,7 @@
             <div class="layui-card" id="showBmcy" style="display: none;">
                 <div class="layui-card-header">部门信息</div>
                 <div class="layui-card-body">
-                    <div class="layui-row layui-col-space15">
-                        <table id="bmcyTable" class="layui-table" lay-filter="bmcyTableFilter"></table>
-                    </div>
+                    <table id="bmcyTable" class="layui-table" lay-filter="bmcyTableFilter"></table>
                 </div>
             </div>
         </div>
@@ -49,26 +47,17 @@
         <button class="layui-btn layui-btn-sm" lay-event="query">
             <i class="fa-solid fa-user fa-fw"></i>查看信息
         </button>
-        <button class="layui-btn layui-btn-sm" lay-event="addBmcy">
-            <i class="fa-solid fa-user-plus fa-fw"></i>添加成员
-        </button>
         <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete">
             <i class="fa-solid fa-trash"></i>删除
         </button>
     </div>
 </script>
-<script type="text/html" id="bmcyTableToolbar">
-    <div class="layui-btn-container">
-        <button class="layui-btn layui-btn-sm" lay-event="setld"><i class="fa-solid fa-check fa-fw"></i>&nbsp;&nbsp;设为领导
-        </button>
-        <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete"><i
-                class="fa-solid fa-minus fa-fw"></i>成员离岗
-        </button>
-    </div>
-</script>
+
 <script type="text/html" id="bm-table-toolbar">
     <div class="layui-btn-container">
-        <button class="layui-btn layui-bg-blue layui-btn-sm" lay-event="addRootNode">添加一级部门</button>
+        <c:if test="${user.isAdmin eq 1}">
+            <button class="layui-btn layui-bg-blue layui-btn-sm" lay-event="addRootNode">添加一级部门${user.isAdmin}</button>
+        </c:if>
     </div>
 </script>
 <script>
@@ -150,7 +139,7 @@
                     });
                 }else if (obj.event === 'delete') {
                     $.ajax({
-                        url: '/bm/deleteBm',
+                        url: '/department/deleteDepartment',
                         type: 'POST',
                         data: {
                             'id': queryId
@@ -168,31 +157,23 @@
                         page: false,
                         cols: [[
                             {type: 'numbers', title: '编号', width: 80},
-                            {field: 'bmmc', title: '部门名称', width: 150},
-                            {field: 'username', title: '人员', width: 200},
-                            {field: 'phone', title: '电话', width: 200},
-                            {
-                                field: 'sfld', title: '是否领导', templet: function (d) {
-                                    return d.sfld === 1 ? '是' : '-';
+                            {title: '用户名', width: 150, field: 'username'},
+                            {title: '姓名', width: 150, field: 'name'},
+                            {title: '手机号', width: 200, field: 'phone'},
+                            {title: '部门',  field: 'department'},
+                            {title: '负责人', width: 80, field: 'is_ladder',templet: function(d) {
+                                    return d.is_ladder === '是' ? '<span style="color:green">√</span>' : '<span style="color:red">×</span>';
                                 }
                             },
-                            {align: 'center', title: '操作', toolbar: '#bmcyTableToolbar', width: 400}
-                        ]]
-                    });
-                } else if (obj.event === 'addBmcy') {
-                    var addBmcyLayer = layer.open({
-                        title: '添加部门成员',
-                        type: 2,
-                        shade: 0.2,
-                        maxmin: true,
-                        shadeClose: true,
-                        area: ['60%', '60%'],
-                        content: '/bm/goAddBmcyPage?id=' + _data.id,
-                        end: function () {
-                            if ($('#showBmcy').is(':visible')) {
-                                bmcyTable.reload();
+                            {title: '管理员', width: 80, field: 'is_admin',templet: function(d) {
+                                    return d.is_admin === '是' ? '<span style="color:green">√</span>' : '<span style="color:red">×</span>';
+                                }
+                            },
+                            {title: '状态', width: 80, field: 'is_ban',templet: function(d) {
+                                    return d.is_ban === '是' ? '<span style="color:green">√</span>' : '<span style="color:red">×</span>';
+                                }
                             }
-                        }
+                        ]]
                     });
                 }
             }

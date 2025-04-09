@@ -37,4 +37,6 @@ public interface TUserService {
     boolean updateAdmin(String id);
 
     boolean updateBan(String id);
+
+    List<TDepartment> getDepartmentsByCode(String departmentCode);
 }

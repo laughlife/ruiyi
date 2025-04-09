@@ -29,7 +29,15 @@ public class DepartmentController {
     @RequestMapping("/queryAllBm")
     @ResponseBody
     public String queryAllBm() {
-        JSONObject bmList = departmentService.queryAllBm();
+        TUser user = (TUser) request.getSession().getAttribute("user");
+        //如果是管理员，则查询所有的部门信息
+        //如果不是管理员，则查询当前用户下的部门信息
+        JSONObject bmList;
+        if(user.getIsAdmin() == 1){
+            bmList = departmentService.queryAllBm();
+        }else{
+            bmList = departmentService.queryMyBm(user.getDepartmentCode());
+        }
         return bmList.toJSONString();
     }
 
@@ -94,7 +102,7 @@ public class DepartmentController {
     public String queryAllBmcy() {
         String id = request.getParameter("id");
         Integer idInt = Integer.parseInt(id);
-        List<TUser> bmcyList = departmentService.getBmcyList(idInt);
+        List<JSONObject> bmcyList = departmentService.getBmcyList(idInt);
         JSONObject returnJson = new JSONObject();
         returnJson.put("code", 0);
         returnJson.put("msg", "操作成功");
@@ -106,8 +114,6 @@ public class DepartmentController {
     @RequestMapping("/searchUser")
     @ResponseBody
     public String searchUser(String id, String key) {
-        System.out.println(id);
-        System.out.println(key);
         JSONArray userArray = departmentService.queryBmcyByKey(id, key);
         JSONObject returnJson = new JSONObject();
         returnJson.put("code", 0);
@@ -129,14 +135,11 @@ public class DepartmentController {
         return returnJson.toJSONString();
     }
 
-    @RequestMapping("/deleteBm")
+    @RequestMapping("/deleteDepartment")
     @ResponseBody
-    public String deleteBm(String id) {
-        boolean isDelete = departmentService.deleteBm(id);
-        JSONObject returnJson = new JSONObject();
-        returnJson.put("status", isDelete ? "success" : "file");
-        returnJson.put("message", isDelete ? "部门信息删除成功。" : "部门信息删除失败，请查找原因。");
-        return JSON.toJSONString(returnJson);
+    public String deleteDepartment(String id) {
+        JSONObject returnJson = departmentService.deleteDepartment(id);
+        return returnJson.toJSONString();
     }
 
     @RequestMapping("/deleteBmcy")
