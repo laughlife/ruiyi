@@ -1,7 +1,9 @@
 package com.liwei.ruiyi.dao.impl;
 
 import com.alibaba.fastjson2.JSONObject;
+import com.liwei.ruiyi.bo.TDepartment;
 import com.liwei.ruiyi.bo.TUser;
+import com.liwei.ruiyi.bo.mapper.TDepartmentMapper;
 import com.liwei.ruiyi.bo.mapper.TUserMapper;
 import com.liwei.ruiyi.dao.TUserDao;
 import com.liwei.ruiyi.utils.DateUtils;
@@ -106,6 +108,51 @@ public class TUserDaoImpl implements TUserDao {
         Object[] args = {user.getUsername(), user.getPassword(), user.getName(), user.getPhone(), department_id,
                 departmentCode, 0, 0, DateUtils.getSystemTime(), null,
                 0};
+        int count = jdbc.update(sql, args);
+        return count > 0;
+    }
+
+    @Override
+    public TUser queryUserById(String id) {
+        String sql = "select * from t_user where id = ?";
+        List<TUser> userList = jdbc.query(sql, new TUserMapper(), id);
+        if (userList.size() > 0) {
+            return userList.get(0);
+        }
+        return null;
+    }
+
+    @Override
+    public boolean updateUserMessage(TUser user) {
+        Integer department_id  = user.getDepartmentId();
+        String sql = "select code from t_department where id = ?";
+        String departmentCode = jdbc.queryForObject(sql, String.class, department_id);
+
+        sql = "update t_user set username=?,name = ?,phone = ?,department_code=?,department_id=? where id = ?";
+        Object[] args = {user.getUsername(), user.getName(), user.getPhone(), departmentCode, department_id, user.getId()};
+        int count = 0;
+        try {
+            //这里添加try catch是因为这里有可能会出现索引冲突
+            count = jdbc.update(sql, args);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return count > 0;
+    }
+
+    @Override
+    public boolean updateOwnMessage(TUser user) {
+        String sql = "update t_user set name = ?,phone = ? where id = ?";
         return false;
+    }
+
+    @Override
+    public TDepartment getDepartmentById(Integer departmentId) {
+        String sql = "select * from t_department where id = ?";
+        List<TDepartment> departmentList = jdbc.query(sql, new TDepartmentMapper(), departmentId);
+        if (departmentList.size() > 0) {
+            return departmentList.get(0);
+        }
+        return null;
     }
 }

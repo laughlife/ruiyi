@@ -21,4 +21,12 @@ public interface TUserService {
     boolean checkUsername(String username);
 
     JSONObject addUser(TUser user);
+
+    TUser queryUserById(String id);
+
+    boolean updateUserMessage(TUser user);
+
+    boolean updateOwnMessage(TUser user);
+
+    TDepartment getDepartmentById(Integer departmentId);
 }

@@ -45,16 +45,44 @@ public class UserController {
 
     @RequestMapping("/userManager")
     public String userManager() {
-        List<TDepartment> departments = userService.getDepartments();
+        //todo 验证用户权限之后再放筛选功能
+        TUser user = (TUser) request.getSession().getAttribute("user");
+        List<TDepartment> departments;
+        if (user.getIsAdmin() == 1) {
+            departments = userService.getDepartments();
+        } else {
+            departments = userService.getDepartments();
+        }
         request.setAttribute("departments", departments);
         return "page/user/userManager";
     }
 
     @RequestMapping("/goCreateUserPage")
     public String goCreateUserPage() {
+        //todo 验证用户权限之后再放筛选功能
         List<TDepartment> departments = userService.getDepartments();
         request.setAttribute("departments", departments);
         return "page/user/createUser";
+    }
+
+    @RequestMapping("/goUpdateUserPage")
+    public String goUpdateUserPage(String id) {
+        TUser queryUser = userService.queryUserById(id);
+        request.setAttribute("queryUser", queryUser);
+
+        //todo 验证用户权限之后再放筛选功能
+        List<TDepartment> departments = userService.getDepartments();
+        request.setAttribute("departments", departments);
+        return "page/user/updateUser";
+    }
+
+    @RequestMapping("/goUpdateOwnPage")
+    public String goUpdateOwnPage() {
+        TUser user = (TUser) request.getSession().getAttribute("user");
+        TDepartment department = userService.getDepartmentById(user.getDepartmentId());
+        request.setAttribute("department", department);
+
+        return "page/user/updateOwnMessage";
     }
 
     @RequestMapping("/updateUser")
@@ -104,11 +132,23 @@ public class UserController {
 
     @RequestMapping("/updateUserMessage")
     @ResponseBody
-    public String updateUserMessage(String id, String filed, String value) {
-//        TUser user = userService.updateUserMessage(id, filed,value);
+    public String updateUserMessage(TUser user) {
+        boolean updateStatus = userService.updateUserMessage(user);
         JSONObject rj = new JSONObject();
-//        rj.put("user", user);
-        rj.put("status", "success");
+        rj.put("status", updateStatus);
+        rj.put("msg", updateStatus ? "用户信息修改成功。" : "用户信息修改失败。");
+        return rj.toJSONString();
+    }
+    @RequestMapping("/updateOwnMessage")
+    @ResponseBody
+    public String updateOwnMessage(TUser user) {
+        TUser user1 = (TUser) request.getSession().getAttribute("user");
+        user.setId(user1.getId());
+
+        boolean updateStatus = userService.updateUserMessage(user);
+        JSONObject rj = new JSONObject();
+        rj.put("status", updateStatus);
+        rj.put("msg", updateStatus ? "信息修改成功。" : "信息修改失败。");
         return rj.toJSONString();
     }
 

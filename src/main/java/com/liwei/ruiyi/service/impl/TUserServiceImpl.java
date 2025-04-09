@@ -60,9 +60,9 @@ public class TUserServiceImpl implements TUserService {
                 userJson.put("is_ladder", "否");
             }
             if(user.getIsBan() == 1){
-                userJson.put("is_ban", "是");
-            }else{
                 userJson.put("is_ban", "否");
+            }else{
+                userJson.put("is_ban", "是");
             }
             userList.add(userJson);
         }
@@ -85,10 +85,32 @@ public class TUserServiceImpl implements TUserService {
         JSONObject rj = new JSONObject();
         if(userDao.checkUsername(user.getUsername())){
             boolean result = userDao.addUser(user);
+            rj.put("status", result);
+            rj.put("message", result ? "添加成功" : "添加失败，请查找原因");
         }else{
             rj.put("status", false);
             rj.put("message", "用户名已存在");
         }
         return rj;
+    }
+
+    @Override
+    public TUser queryUserById(String id) {
+        return userDao.queryUserById(id);
+    }
+
+    @Override
+    public boolean updateUserMessage(TUser user) {
+        return userDao.updateUserMessage(user);
+    }
+
+    @Override
+    public boolean updateOwnMessage(TUser user) {
+        return userDao.updateOwnMessage(user);
+    }
+
+    @Override
+    public TDepartment getDepartmentById(Integer departmentId) {
+        return userDao.getDepartmentById(departmentId);
     }
 }

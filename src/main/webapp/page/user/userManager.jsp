@@ -66,7 +66,9 @@
     </div>
 </div>
 <script type="text/html" id="userEdit">
-    <a class="layui-btn layui-btn-sm" lay-event="updateMessage">信息修改</a>
+    <%--{{# if(d.level === 1 || d.level === 2){ }}--%>
+        <a class="layui-btn layui-btn-sm" lay-event="updateMessage">信息修改</a>
+    <%--{{# } }}--%>
     <a class="layui-btn layui-btn-sm layui-bg-blue" lay-event="updatePassword">重置密码</a>
     <a class="layui-btn layui-btn-sm layui-bg-blue" lay-event="updateLadder">负责人设置/取消</a>
     <a class="layui-btn layui-btn-sm layui-bg-red" lay-event="updateAdmin">管理员设定/取消</a>
@@ -91,9 +93,18 @@
                 {title: '姓名', width: 150, field: 'name'},
                 {title: '手机号', width: 200, field: 'phone'},
                 {title: '部门',  field: 'department'},
-                {title: '负责人', width: 80, field: 'is_ladder'},
-                {title: '管理员', width: 80, field: 'is_admin'},
-                {title: '状态', width: 80, field: 'is_ban'},
+                {title: '负责人', width: 80, field: 'is_ladder',templet: function(d) {
+                        return d.is_ladder === '是' ? '<span style="color:green">√</span>' : '<span style="color:red">×</span>';
+                    }
+                },
+                {title: '管理员', width: 80, field: 'is_admin',templet: function(d) {
+                        return d.is_admin === '是' ? '<span style="color:green">√</span>' : '<span style="color:red">×</span>';
+                    }
+                },
+                {title: '状态', width: 80, field: 'is_ban',templet: function(d) {
+                        return d.is_ban === '是' ? '<span style="color:green">√</span>' : '<span style="color:red">×</span>';
+                    }
+                },
                 {field: 'right', align: 'center', title: '操作', toolbar: '#userEdit', width: 600}
             ]]
         });
@@ -108,7 +119,7 @@
                     maxmin: true,
                     shadeClose: true,
                     area: ['40%', '60%'],
-                    content: '/user/goUpdateUserRolePage?id=' + _data.id,
+                    content: '/user/goUpdateUserPage?id=' + _data.id,
                     end: function () {
                         userTable.reload();
                     }
