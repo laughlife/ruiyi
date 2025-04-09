@@ -200,14 +200,6 @@
         index: 'lib/index'
     }).use('index');
 
-    // $('body').on('click', '[data-refresh]', function () {
-    //     $("#LAY_app_body").find("iframe")[0].contentWindow.location.reload();
-    // });
-
-    layui.use(function () {
-
-    });
-
     $(document).ready(function () {
         setInterval(function () {
             //5分钟向后台请求一次，防止session过期

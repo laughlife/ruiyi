@@ -29,4 +29,12 @@ public interface TUserService {
     boolean updateOwnMessage(TUser user);
 
     TDepartment getDepartmentById(Integer departmentId);
+
+    boolean updateUserPassword(String id, String password);
+
+    boolean updateLadder(String id);
+
+    boolean updateAdmin(String id);
+
+    boolean updateBan(String id);
 }

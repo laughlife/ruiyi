@@ -71,9 +71,12 @@
     <%--{{# } }}--%>
     <a class="layui-btn layui-btn-sm layui-bg-blue" lay-event="updatePassword">重置密码</a>
     <a class="layui-btn layui-btn-sm layui-bg-blue" lay-event="updateLadder">负责人设置/取消</a>
-    <a class="layui-btn layui-btn-sm layui-bg-red" lay-event="updateAdmin">管理员设定/取消</a>
-    <a class="layui-btn layui-btn-sm layui-bg-red" lay-event="updateAdmin">禁用/启用用户</a>
+    <c:if test="${user.isAdmin eq 1}">
+        <a class="layui-btn layui-btn-sm layui-bg-red" lay-event="updateAdmin">管理员设定/取消</a>
+    </c:if>
+    <a class="layui-btn layui-btn-sm layui-bg-red" lay-event="updateBan">禁用/启用用户</a>
 </script>
+<script src="/static/js/crypto-js.min.js" type="text/javascript" charset="utf-8"></script>
 <script>
     var userTable = null;
     layui.use(function () {
@@ -124,6 +127,77 @@
                         userTable.reload();
                     }
                 });
+            }else if(obj.event === 'updatePassword'){
+                layer.prompt({title: '重置密码框', formType: 1}, function(pass, index){
+                    layer.close(index);
+                    $.ajax({
+                        url: '/user/resetUserPassword',
+                        type: 'post',
+                        data: {
+                            id: _data.id,
+                            password: md5WithCryptoJS(pass)
+                        },
+                        dataType: 'json',
+                        success: function (res) {
+                            if (res.status) {
+                                layer.msg(res.msg, {icon: 1, time: 1000});
+                            } else {
+                                layer.msg(res.msg, {icon: 2, time: 1000});
+                            }
+                        }
+                    });
+                });
+            }else if(obj.event === 'updateLadder'){
+                $.ajax({
+                    url: '/user/updateLadder',
+                    type: 'post',
+                    data: {
+                        id: _data.id
+                    },
+                    dataType: 'json',
+                    success: function (res) {
+                        if (res.status) {
+                            layer.msg(res.msg, {icon: 1, time: 1000});
+                            userTable.reload();
+                        } else {
+                            layer.msg(res.msg, {icon: 2, time: 1000});
+                        }
+                    }
+                });
+            }else if(obj.event === 'updateAdmin'){
+                $.ajax({
+                    url: '/user/updateAdmin',
+                    type: 'post',
+                    data: {
+                        id: _data.id
+                    },
+                    dataType: 'json',
+                    success: function (res) {
+                        if (res.status) {
+                            layer.msg(res.msg, {icon: 1, time: 1000});
+                            userTable.reload();
+                        } else {
+                            layer.msg(res.msg, {icon: 2, time: 1000});
+                        }
+                    }
+                });
+            }else if(obj.event === 'updateBan'){
+                $.ajax({
+                    url: '/user/updateBan',
+                    type: 'post',
+                    data: {
+                        id: _data.id
+                    },
+                    dataType: 'json',
+                    success: function (res) {
+                        if (res.status) {
+                            layer.msg(res.msg, {icon: 1, time: 1000});
+                            userTable.reload();
+                        } else {
+                            layer.msg(res.msg, {icon: 2, time: 1000});
+                        }
+                    }
+                });
             }
         });
         /**
@@ -162,6 +236,10 @@
         });
 
     });
+    function md5WithCryptoJS(string) {
+        const hash = CryptoJS.MD5(string).toString();
+        return hash;
+    }
 </script>
 </body>
 </html>

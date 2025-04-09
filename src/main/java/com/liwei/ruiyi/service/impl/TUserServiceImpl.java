@@ -113,4 +113,24 @@ public class TUserServiceImpl implements TUserService {
     public TDepartment getDepartmentById(Integer departmentId) {
         return userDao.getDepartmentById(departmentId);
     }
+
+    @Override
+    public boolean updateUserPassword(String id, String password) {
+        return userDao.updateUserPassword(id, password);
+    }
+
+    @Override
+    public boolean updateLadder(String id) {
+        return userDao.updateLadder(id);
+    }
+
+    @Override
+    public boolean updateAdmin(String id) {
+        return userDao.updateAdmin(id);
+    }
+
+    @Override
+    public boolean updateBan(String id) {
+        return userDao.updateBan(id);
+    }
 }

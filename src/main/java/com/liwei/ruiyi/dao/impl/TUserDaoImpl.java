@@ -97,7 +97,7 @@ public class TUserDaoImpl implements TUserDao {
 
     @Override
     public boolean addUser(TUser user) {
-        Integer department_id  = user.getDepartmentId();
+        Integer department_id = user.getDepartmentId();
         String sql = "select code from t_department where id = ?";
         String departmentCode = jdbc.queryForObject(sql, String.class, department_id);
         sql = "insert into t_user(username,password,name,phone,department_id," +
@@ -124,7 +124,7 @@ public class TUserDaoImpl implements TUserDao {
 
     @Override
     public boolean updateUserMessage(TUser user) {
-        Integer department_id  = user.getDepartmentId();
+        Integer department_id = user.getDepartmentId();
         String sql = "select code from t_department where id = ?";
         String departmentCode = jdbc.queryForObject(sql, String.class, department_id);
 
@@ -143,7 +143,9 @@ public class TUserDaoImpl implements TUserDao {
     @Override
     public boolean updateOwnMessage(TUser user) {
         String sql = "update t_user set name = ?,phone = ? where id = ?";
-        return false;
+        Object[] args = {user.getName(), user.getPhone(), user.getId()};
+        int count = jdbc.update(sql, args);
+        return count > 0;
     }
 
     @Override
@@ -154,5 +156,37 @@ public class TUserDaoImpl implements TUserDao {
             return departmentList.get(0);
         }
         return null;
+    }
+
+    @Override
+    public boolean updateUserPassword(String id, String password) {
+        String sql = "update t_user set password = ? where id = ?";
+        int count = jdbc.update(sql, password, id);
+        return count > 0;
+    }
+
+    @Override
+    public boolean updateLadder(String id) {
+        String sql = "update t_user set is_ladder = CASE WHEN is_ladder = 0 THEN 1 ELSE 0 END where id = ?";
+        int count = jdbc.update(sql, id);
+        return count > 0;
+    }
+
+    @Override
+    public boolean updateAdmin(String id) {
+        String sql = "update t_user set is_admin = CASE WHEN is_admin = 0 THEN 1 ELSE 0 END where id = ?";
+        int count = jdbc.update(sql, id);
+        return count > 0;
+    }
+
+    @Override
+    public boolean updateBan(String id) {
+        String sql = "update t_user set is_ban = CASE WHEN is_ban = 0 THEN 1 ELSE 0 END where id = ?";
+        int count = jdbc.update(sql, id);
+        if (count > 0) {
+            sql = "update t_user set delete_time = CASE WHEN is_ban = 0 THEN null ELSE ? END where id = ?";
+            count = jdbc.update(sql, DateUtils.getSystemTime(), id);
+        }
+        return count > 0;
     }
 }

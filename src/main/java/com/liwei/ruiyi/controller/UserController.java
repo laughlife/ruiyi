@@ -139,16 +139,57 @@ public class UserController {
         rj.put("msg", updateStatus ? "用户信息修改成功。" : "用户信息修改失败。");
         return rj.toJSONString();
     }
+
     @RequestMapping("/updateOwnMessage")
     @ResponseBody
     public String updateOwnMessage(TUser user) {
         TUser user1 = (TUser) request.getSession().getAttribute("user");
         user.setId(user1.getId());
 
-        boolean updateStatus = userService.updateUserMessage(user);
+        boolean updateStatus = userService.updateOwnMessage(user);
         JSONObject rj = new JSONObject();
         rj.put("status", updateStatus);
         rj.put("msg", updateStatus ? "信息修改成功。" : "信息修改失败。");
+        return rj.toJSONString();
+    }
+
+    @RequestMapping("/resetUserPassword")
+    @ResponseBody
+    public String resetUserPassword(String id, String password) {
+        boolean updateStatus = userService.updateUserPassword(id, password);
+        JSONObject rj = new JSONObject();
+        rj.put("status", updateStatus);
+        rj.put("msg", updateStatus ? "密码重置成功。" : "密码重置失败。");
+        return rj.toJSONString();
+    }
+
+    @RequestMapping("/updateLadder")
+    @ResponseBody
+    public String updateLadder(String id) {
+        boolean updateStatus = userService.updateLadder(id);
+        JSONObject rj = new JSONObject();
+        rj.put("status", updateStatus);
+        rj.put("msg", updateStatus ? "是否负责人状态更新成功。" : "是否负责人状态更新失败。");
+        return rj.toJSONString();
+    }
+
+    @RequestMapping("/updateAdmin")
+    @ResponseBody
+    public String updateAdmin(String id) {
+        boolean updateStatus = userService.updateAdmin(id);
+        JSONObject rj = new JSONObject();
+        rj.put("status", updateStatus);
+        rj.put("msg", updateStatus ? "是否管理员状态更新成功。" : "是否管理员状态更新失败。");
+        return rj.toJSONString();
+    }
+
+    @RequestMapping("/updateBan")
+    @ResponseBody
+    public String updateBan(String id) {
+        boolean updateStatus = userService.updateBan(id);
+        JSONObject rj = new JSONObject();
+        rj.put("status", updateStatus);
+        rj.put("msg", updateStatus ? "是否可以可以登录状态更新成功。" : "是否可以可以登录状态更新失败。");
         return rj.toJSONString();
     }
 

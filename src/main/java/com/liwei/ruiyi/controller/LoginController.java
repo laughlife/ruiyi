@@ -27,19 +27,20 @@ public class LoginController {
     @ResponseBody
     public String userLogin(String username, String password) {
         JSONObject rj = new JSONObject();
+        rj.put("status", false);
+        rj.put("msg", "请检查用户名或密码");
         if (StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)) {
+            //首先查询用户是否存在，如果存在了返回用户信息，
+            // 接着再确定用户是否被禁用，如果被禁用，也是无法登录的，直接返回登录失败。
             TUser user = userService.queryUserMessage(username, password);
-            if (null != user) {
-                rj.put("status", "success");
-                rj.put("user", user);
+            if (null != user && user.getIsBan() == 0) {
+                rj.put("status", true);
+                rj.put("msg", "登录成功。");
                 session.setAttribute("user", user);
-            } else {
-                rj.put("status", "fail");
-                rj.put("message", "请检查用户名或密码");
+            }else{
+                rj.put("status", false);
+                rj.put("msg", "用户已被禁止登录，请联系管理员或负责人。");
             }
-        } else {
-            rj.put("status", "fail");
-            rj.put("message", "请检查用户名或密码");
         }
         return rj.toJSONString();
     }

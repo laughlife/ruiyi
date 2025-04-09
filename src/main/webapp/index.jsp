@@ -62,10 +62,11 @@
 
 <div class="footer">
     深圳市玖零壹品科技有限公司 &copf; 2025
-    <a href="https://beian.miit.gov.cn/" target="_blank" style="margin-left:30px;"><img src="/static/image/gh.png" style="width:20px;"></a>
+    <a href="https://beian.miit.gov.cn/" target="_blank" style="margin-left:30px;"><img src="/static/image/gh.png"
+                                                                                        style="width:20px;"></a>
     <a href="https://beian.miit.gov.cn/" target="_blank">粤ICP备2024337209号-1</a>
-<%--    <a href="https://beian.mps.gov.cn/#/query/webSearch?code=44030002006071" target="_blank"><img src="/static/image/ba.png" style="width:20px;"></a>--%>
-<%--    <a href="https://beian.mps.gov.cn/#/query/webSearch?code=44030002006071" rel="noreferrer" target="_blank">粤公网安备44030002006071号</a>--%>
+    <%--    <a href="https://beian.mps.gov.cn/#/query/webSearch?code=44030002006071" target="_blank"><img src="/static/image/ba.png" style="width:20px;"></a>--%>
+    <%--    <a href="https://beian.mps.gov.cn/#/query/webSearch?code=44030002006071" rel="noreferrer" target="_blank">粤公网安备44030002006071号</a>--%>
 </div>
 <script src="/static/layui/layui.js" type="text/javascript" charset="utf-8"></script>
 <script src="/static/jquery/jquery-3.7.1.min.js" type="text/javascript" charset="utf-8"></script>
@@ -99,12 +100,12 @@
                 data: {username: username, password: pwd},
                 dataType: "json",
                 success: function (data) {
-                    var status = data.status;
-                    var message = data.message;
-                    if (status == 'success') {
+
+                    if (data.status) {
                         window.location = '/home/goHomePage';
-                    } else {
-                        layer.msg(message);
+                        layer.msg(data.msg, {icon: 1,time: 500});
+                    }else{
+                        layer.msg(data.msg, {icon: 4,time: 3000});
                     }
                 }
             });
