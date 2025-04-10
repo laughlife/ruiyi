@@ -10,8 +10,7 @@ public class TDepartmentPermissionMapper implements RowMapper<TDepartmentPermiss
         TDepartmentPermission obj = new TDepartmentPermission();
         obj.setDepartmentId(rs.getInt("department_id"));
         obj.setPermissionId(rs.getInt("permission_id"));
-        obj.setIsInheritable(rs.getInt("is_inheritable"));
-        obj.setIsContractible(rs.getInt("is_contractible"));
+        obj.setHas(rs.getInt("has"));
         return obj;
     }
 }

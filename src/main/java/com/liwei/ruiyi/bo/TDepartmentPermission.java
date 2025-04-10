@@ -8,6 +8,5 @@ import java.util.*;
 public class TDepartmentPermission {
     private Integer departmentId;
     private Integer permissionId;
-    private Integer isInheritable;
-    private Integer isContractible;
+    private Integer has;
 }

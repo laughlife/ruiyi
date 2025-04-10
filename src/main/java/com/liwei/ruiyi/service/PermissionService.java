@@ -18,4 +18,18 @@ public interface PermissionService {
     boolean deletePermission(String id);
 
     boolean addChildMenu(String parentId, String name);
+
+
+    /**
+     * 获取所有部门，用于权限设置左侧的菜单树
+     * @return
+     */
+    JSONArray getAllDepartments();
+
+    /**
+     * 根据部门ID获取权限，展示在权限右侧的功能列表，用于设置部门权限。
+     * @param departmentId
+     * @return
+     */
+    JSONArray getPermissionByDepartmentId(String departmentId,int isAdmin);
 }
