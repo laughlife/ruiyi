@@ -45,31 +45,20 @@ public class DeepseekServiceImpl implements DeepseekService {
                 .writeTimeout(3, TimeUnit.MINUTES)
                 .build();
 
-        // chatgpt生成的调用接口，尝试一下：
-//        String json = "{ \"prompt\": \"" + prompt + "\", \"max_tokens\": 100 }";
-//
-//        RequestBody body = RequestBody.create(json, MediaType.get("application/json"));
-//        Request request = new Request.Builder()
-//                .url(API_ENDPOINT)
-//                .addHeader("Authorization", "Bearer " + API_KEY)
-//                .post(body)
-//                .build();
-
-//        try (Response response = client.newCall(request).execute()) {
-//            response.body().string();
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
 
         // 使用JSONObject构建规范的JSON请求体
         JSONObject send = new JSONObject();
-        send.put("model", "deepseek-coder");
-
+        send.put("model", "deepseek-chat");
+        //deepseek-chat deepseek-coder
         JSONObject message = new JSONObject();
         message.put("role", "user");
         message.put("content", prompt);
         send.put("messages", new JSONObject[]{message});
-        send.put("temperature", 0.2);
+        send.put("max_tokens", 4096);     // 最大回复长度
+        send.put("temperature", 0.1);     // 降低随机性
+        send.put("top_p", 0.1);           // 限制候选词范围
+        send.put("frequency_penalty", 0); // 减少重复（0-1）
+        send.put("presence_penalty", 0);  // 避免新话题（0-1）
         RequestBody body = RequestBody.create(
                 send.toString(),
                 MediaType.parse("application/json")
@@ -113,8 +102,6 @@ public class DeepseekServiceImpl implements DeepseekService {
     }
 
     private void sendLeftMessage(String message) {
-        System.out.println("uuid: " + sid);
-        System.out.println("sendLeftMessage: " + message);
         if (StringUtils.isNotBlank(sid)) {
             SocketMessage socketMessage = new SocketMessage(SocketMessage.TYPE_ANSWER, message, DateUtils.getSystemTime());
             DeepseekSocket.sendToAllClient(socketMessage, sid);

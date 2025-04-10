@@ -112,7 +112,22 @@
 
     function leftAppend(msg) {
         var message = JSON.parse(msg);
-        $("#leftMessage").append(message.time + ":   " + message.message + "<br />");
+        var outmessage = message.message;
+        var processedMessage = outmessage.replace(/```([\s\S]*?)```/g, function(match, codeContent) {
+            // 替换为Layui代码块模板
+            return '<pre class="layui-code code-demo" lay-options="{}">' + codeContent + '</pre>';
+        });
+        // 添加处理后的消息到DOM
+        $("#leftMessage").append(message.time + ":   " + processedMessage + "<br />");
+        // 初始化Layui代码块
+        layui.use(['code'], function(){
+            layui.code({
+                elem: '.code-demo',
+                about: false,   // 隐藏右下角"Layui"标识
+                encode: true,   // 自动转义HTML符号
+                height: 'auto'  // 自动高度
+            });
+        });
         $("#leftMessage").scrollTop($("#leftMessage")[0].scrollHeight);
     }
 </script>

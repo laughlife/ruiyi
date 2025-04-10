@@ -43,7 +43,7 @@ function receiveMessage(message) {
 
 $(document).ready(function () {
     socketPath = socketPath.replaceAll('http://', "ws://").replaceAll('https://', "wss://");
-    var socketUrl = socketPath + "deepseek/" + uuid;
+    var socketUrl = socketPath + "/deepseek/" + uuid;
 
     clientAppend("socket连接中:" + socketUrl);
 
