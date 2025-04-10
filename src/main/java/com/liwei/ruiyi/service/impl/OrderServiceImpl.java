@@ -102,7 +102,6 @@ public class OrderServiceImpl implements OrderService {
                 break;
             }
         }
-        System.out.println("订单数量：" + count);
         return result;
     }
 

@@ -41,7 +41,7 @@ public class LoginController {
                 rj.put("icon", 1);
                 rj.put("msg", "登录成功。");
                 session.setAttribute("user", user);
-            }else{
+            }else if(null != user && user.getIsBan() == 1){
                 rj.put("status", false);
                 // icon: 锁
                 rj.put("icon", 4);

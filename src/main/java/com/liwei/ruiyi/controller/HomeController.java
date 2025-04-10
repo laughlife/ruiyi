@@ -38,7 +38,6 @@ public class HomeController {
     public String initMenu() {
         TUser user = (TUser) request.getSession().getAttribute("user");
         JSONObject json = permissionService.getPermissionsByDepartmentId(user.getDepartmentId());
-        System.out.println(json.toJSONString());
         return json.toJSONString();
     }
 

@@ -98,7 +98,7 @@
         <!-- 侧边菜单 -->
         <div class="layui-side layui-side-menu">
             <div class="layui-side-scroll">
-                <div class="layui-logo" lay-href="/page/deepseek/home.jsp">
+                <div class="layui-logo" lay-href="/user/goUpdateOwnPage">
                     <span>南阳睿翼</span>
                 </div>
 
@@ -183,7 +183,7 @@
         <!-- 主体内容 -->
         <div class="layui-body" id="LAY_app_body">
             <div class="layadmin-tabsbody-item layui-show">
-                <iframe src="/lingxing/goSettingPage" frameborder="0" class="layadmin-iframe"></iframe>
+                <iframe src="/user/goUpdateOwnPage" frameborder="0" class="layadmin-iframe"></iframe>
             </div>
         </div>
 

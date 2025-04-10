@@ -22,9 +22,7 @@ public class TProfitDayDaoImpl implements TProfitDayDao {
     public void saveOrUpdateProfitReport(JSONObject profit) {
         String sql = "SELECT COUNT(0) FROM t_profit_day WHERE sid = ? AND profit_day = ?";
         Object[] args = new Object[]{profit.getString("sid"), profit.getString("profit_day")};
-        if(profit.getString("sid").equals("4462")){
-            System.out.println(profit);
-        }
+
         int count = jdbc.queryForObject(sql, args, Integer.class);
 
         if (count > 0) {
