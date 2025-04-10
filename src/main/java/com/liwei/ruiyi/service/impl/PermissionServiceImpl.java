@@ -1,5 +1,6 @@
 package com.liwei.ruiyi.service.impl;
 
+import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.liwei.ruiyi.bo.TDepartment;
@@ -165,7 +166,7 @@ public class PermissionServiceImpl implements PermissionService {
     public JSONArray getPermissionByDepartmentId(String departmentId,int isAdmin) {
         List<TPermission> permissionList = permissionDao.getAllPermission();
         List<TDepartmentPermission> departmentPermissionList = departmentPermissionDao.getPermissionByDepartmentId(departmentId);
-        return null;
+        return eachPermission(permissionList,departmentPermissionList);
     }
 
     private JSONArray eachPermission(List<TPermission> permissionList,List<TDepartmentPermission> departmentPermissionList) {
@@ -202,7 +203,18 @@ public class PermissionServiceImpl implements PermissionService {
         jsonMenu.put("title", title);
         jsonMenu.put("field", menu.getId());
         jsonMenu.put("spread", true);
-
+        //在这里查找权限是否可用，如果可用则设置checked为true，不可用则设置checked为false
+        //判断规则:menu.getId()为权限ID，
+        for(TDepartmentPermission departmentPermission:departmentPermissionList){
+            if(departmentPermission.getPermissionId().equals(menu.getId())){
+                if(departmentPermission.getHas()==1){
+                    jsonMenu.put("checked",true);
+                }else{
+                    jsonMenu.put("checked",false);
+                }
+                break;
+            }
+        }
         // 递归处理子菜单
         List<TPermission> children = permissionMap.getOrDefault(menu.getId(), new ArrayList<>());
         if (!children.isEmpty()) {
@@ -210,10 +222,15 @@ public class PermissionServiceImpl implements PermissionService {
             children.sort(Comparator.comparingInt(TPermission::getPx));
             JSONArray childArray = new JSONArray();
             for (TPermission child : children) {
-                childArray.add(buildMenuTree(child, permissionMap));
+                childArray.add(buildMenuTree(child, permissionMap,departmentPermissionList));
             }
             jsonMenu.put("children", childArray);
         }
         return jsonMenu;
+    }
+
+    @Override
+    public boolean updatePermission(Integer departmentId, List<Integer> permissionIds) {
+        return departmentPermissionDao.updatePermission(departmentId, permissionIds);
     }
 }

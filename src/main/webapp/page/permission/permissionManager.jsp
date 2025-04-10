@@ -27,20 +27,18 @@
             </div>
         </div>
         <div class="layui-col-md9">
-            <div class="layui-card-header">权限</div>
-            <div class="layui-card-body">
+            <div class="layui-card">
+                <div class="layui-card-header" id="permission_title_div">权限</div>
+                <div class="layui-card-body" id="permission_div">
 
+                </div>
             </div>
         </div>
     </div>
 </div>
 <script>
-    var department_tree;
-    var permission_tree;
     layui.use(function () {
         var tree = layui.tree;
-        var layer = layui.layer;
-        var util = layui.util;
         var $ = layui.jquery;
 
         $(document).ready(function () {
@@ -51,7 +49,7 @@
                 success: function (data) {
                     if (data.status) {
                         var _data = data.data;
-                        department_tree = tree.render({
+                        tree.render({
                             elem: '#department_div',
                             data: _data,
                             onlyIconControl: true,
@@ -59,6 +57,9 @@
                             isJump: true,
                             click: function (obj) {
                                 var data = obj.data;
+                                var title = data.title;
+                                $('#permission_title_div').html( title + " —— 权限信息：");
+                                $("#permission_div").html("");
                                 initPermissionTree(data.id);
                             }
                         });
@@ -67,16 +68,7 @@
             })
         });
 
-    });
-
-    function initPermissionTree(departmentId) {
-
-        layui.use(function () {
-            var tree = layui.tree;
-            var layer = layui.layer;
-            var util = layui.util;
-            var $ = layui.jquery;
-
+        function initPermissionTree(departmentId) {
             $.ajax({
                 url: '/permission/getPermissionTree',
                 type: 'get',
@@ -84,14 +76,61 @@
                 data: {
                     departmentId: departmentId
                 },
-                success: function (data) {
-                    if (data.status) {
+                success: function (rt) {
+                    var listener = false;
+                    if (rt.status) {
+                        var permissionTree = tree.render({
+                            elem: '#permission_div',
+                            data: rt.data,
+                            onlyIconControl: true,
+                            showCheckbox: true,
+                            id: 'permission_tree',
+                            isJump: true,
+                            oncheck: function(obj) {
+                                listenerPermissionTree();
+                            }
+                        });
 
+                        setTimeout(function() {
+                            listener = true;
+                        }, 1000);
+                        let arr = [];
+                        function listenerPermissionTree() {
+                            if (listener) {
+                                var checkData = permissionTree.getChecked('permission_tree');
+                                arr = [];
+                                checkNode(checkData);
+                                //遍历之后将 arr 赋值给后台
+                                $.ajax({
+                                    url: '/permission/updatePermission',
+                                    type: 'post',
+                                    dataType: 'json',
+                                    data: {
+                                        departmentId: departmentId,
+                                        permissionIds: arr
+                                    },
+                                    success: function (rt) {
+                                        layer.msg(rt.msg);
+                                    }
+                                });
+                            }
+                        }
+                        function checkNode(node) {
+                            for(var i = 0; i < node.length; i++){
+                                arr.push(node[i].id);
+                                if (node[i].children && node[i].children.length > 0) {
+                                    checkNode(node[i].children);
+                                }
+                            }
+                        }
                     }
                 }
             });
-        });
-    }
+        }
+
+    });
+
+
 
 </script>
 </body>

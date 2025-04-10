@@ -32,4 +32,12 @@ public interface PermissionService {
      * @return
      */
     JSONArray getPermissionByDepartmentId(String departmentId,int isAdmin);
+
+    /**
+     * 更新权限
+     * @param departmentId 部门ID
+     * @param permissionIds 权限ID集合
+     * @return
+     */
+    boolean updatePermission(Integer departmentId, List<Integer> permissionIds);
 }

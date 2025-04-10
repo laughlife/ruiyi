@@ -1,188 +1,157 @@
 [
   {
-    title: 'A-1',
-    id: 1,
-    field: 'name1',
-    checked: true,
-    spread: true,
-    children: [
+    "id": 21,
+    "title": "<i class='fa-solid fa-chart-column'></i>数据",
+    "field": 21,
+    "spread": true,
+    "checked": true,
+    "children": [
       {
-        title: 'B-1-1 可允许跳转',
-        id: 3,
-        field: 'name11',
-        href: '',
-        children: [
+        "id": 22,
+        "title": "<i class='fa-solid fa-donate'></i>财务数据",
+        "field": 22,
+        "spread": true,
+        "checked": true,
+        "children": [
           {
-            title: 'C-1-1-3',
-            id: 23,
-            field: '',
-            children: [
-              {
-                title: 'D-1-1-3-1',
-                id: 24,
-                field: '',
-                children: [
-                  {
-                    title: 'E-1-1-3-1-1',
-                    id: 30,
-                    field: ''
-                  },
-                  {
-                    title: 'E-1-1-3-1-2',
-                    id: 31,
-                    field: ''
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            title: 'C-1-1-1',
-            id: 7,
-            field: '',
-            children: [
-              {
-                title: 'D-1-1-1-1 可允许跳转',
-                id: 15,
-                field: '',
-                href: ''
-              }
-            ]
-          },
-          {
-            title: 'C-1-1-2',
-            id: 8,
-            field: '',
-            children: [
-              {
-                title: 'D-1-1-2-1',
-                id: 32,
-                field: ''
-              }
-            ]
-          }
-        ]
-      },
-      {
-        title: 'B-1-2',
-        id: 4,
-        spread: true,
-        children: [
-          {
-            title: 'C-1-2-1',
-            id: 9,
-            field: '',
-            disabled: true
-          },
-          {
-            title: 'C-1-2-2',
-            id: 10,
-            field: ''
-          }
-        ]
-      },
-      {
-        title: 'B-1-3',
-        id: 20,
-        field: '',
-        children: [
-          {
-            title: 'C-1-3-1',
-            id: 21,
-            field: ''
-          },
-          {
-            title: 'C-1-3-2',
-            id: 22,
-            field: ''
+            "id": 23,
+            "title": "工资数据",
+            "field": 23,
+            "spread": true,
+            "checked": true
           }
         ]
       }
     ]
   },
   {
-    title: 'A-2',
-    id: 2,
-    field: '',
-    spread: true,
-    children: [
+    "id": 1,
+    "title": "<i class='fa-solid fa-atom'></i>应用",
+    "field": 1,
+    "spread": true,
+    "checked": true,
+    "children": [
       {
-        title: 'B-2-1',
-        id: 5,
-        field: '',
-        spread: true,
-        children: [
-          {
-            title: 'C-2-1-1',
-            id: 11,
-            field: ''
-          },
-          {
-            title: 'C-2-1-2',
-            id: 12,
-            field: ''
-          }
-        ]
+        "id": 24,
+        "title": "<i class='fa-solid fa-plane-up'></i>deepseek",
+        "field": 24,
+        "spread": true,
+        "checked": true
       },
       {
-        title: 'B-2-2',
-        id: 6,
-        field: '',
-        children: [
+        "id": 2,
+        "title": "<i class='fa-solid fa-image'></i>图片处理",
+        "field": 2,
+        "spread": true,
+        "checked": true,
+        "children": [
           {
-            title: 'C-2-2-1',
-            id: 13,
-            field: ''
-          },
-          {
-            title: 'C-2-2-2',
-            id: 14,
-            field: '',
-            disabled: true
+            "id": 3,
+            "title": "<i class='fa-solid fa-images'></i>图片生成",
+            "field": 3,
+            "spread": true,
+            "checked": true
           }
         ]
       }
     ]
   },
   {
-    title: 'A-3',
-    id: 16,
-    field: '',
-    children: [
+    "id": 16,
+    "title": "<i class='fa-solid fa-users'></i>管理",
+    "field": 16,
+    "spread": true,
+    "checked": true,
+    "children": [
       {
-        title: 'B-3-1',
-        id: 17,
-        field: '',
-        fixed: true,
-        children: [
+        "id": 18,
+        "title": "<i class='fa-solid fa-sitemap'></i>部门管理",
+        "field": 18,
+        "spread": true,
+        "checked": true
+      },
+      {
+        "id": 19,
+        "title": "<i class='fa-solid fa-user-check'></i>人员管理",
+        "field": 19,
+        "spread": true,
+        "checked": true
+      },
+      {
+        "id": 20,
+        "title": "<i class='fa-solid fa-check-square'></i>权限分配",
+        "field": 20,
+        "spread": true,
+        "checked": true
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "title": "<i class='fa-solid fa-screwdriver-wrench'></i>设置",
+    "field": 5,
+    "spread": true,
+    "checked": true,
+    "children": [
+      {
+        "id": 11,
+        "title": "基本资料",
+        "field": 11,
+        "spread": true,
+        "checked": true
+      },
+      {
+        "id": 12,
+        "title": "修改密码",
+        "field": 12,
+        "spread": true,
+        "checked": true
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "title": "<i class='fa-solid fa-laptop'></i>开发",
+    "field": 4,
+    "spread": true,
+    "checked": true,
+    "children": [
+      {
+        "id": 17,
+        "title": "菜单设置",
+        "field": 17,
+        "spread": true,
+        "checked": true
+      },
+      {
+        "id": 8,
+        "title": "图标",
+        "field": 8,
+        "spread": true,
+        "checked": true,
+        "children": [
           {
-            title: 'C-3-1-1',
-            id: 18,
-            field: ''
+            "id": 9,
+            "title": "layui图标",
+            "field": 9,
+            "spread": true,
+            "checked": true
           },
           {
-            title: 'C-3-1-2',
-            id: 19,
-            field: ''
+            "id": 10,
+            "title": "fontawesome6",
+            "field": 10,
+            "spread": true,
+            "checked": true
           }
         ]
       },
       {
-        title: 'B-3-2',
-        id: 27,
-        field: '',
-        children: [
-          {
-            title: 'C-3-2-1',
-            id: 28,
-            field: ''
-          },
-          {
-            title: 'C-3-2-2',
-            id: 29,
-            field: ''
-          }
-        ]
+        "id": 7,
+        "title": "功能测试",
+        "field": 7,
+        "spread": true,
+        "checked": true
       }
     ]
   }
