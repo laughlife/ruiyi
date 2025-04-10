@@ -11,6 +11,8 @@ import java.util.List;
 public interface PermissionService {
     JSONObject getAllPermission();
 
+    JSONObject getPermissionsByDepartmentId(Integer departmentId);
+
     boolean addRootMenu(String name);
 
     boolean updatePermission(String id, String field, String value);

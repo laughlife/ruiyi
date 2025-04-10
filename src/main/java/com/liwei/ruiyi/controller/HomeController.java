@@ -3,6 +3,7 @@ package com.liwei.ruiyi.controller;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.liwei.ruiyi.bo.TPermission;
+import com.liwei.ruiyi.bo.TUser;
 import com.liwei.ruiyi.service.PermissionService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
@@ -25,21 +26,19 @@ public class HomeController {
 
     @RequestMapping("/goHomePage")
     public String goHomePage() {
-        String dev = request.getParameter("dev");
-        if(StringUtils.isNotBlank(dev)){
-            request.getSession().setAttribute("dev", dev);
-        }else{
-            request.getSession().removeAttribute("dev");
-        }
-        JSONObject json = permissionService.getAllPermission();
+        TUser user = (TUser) request.getSession().getAttribute("user");
+        JSONObject json = permissionService.getPermissionsByDepartmentId(user.getDepartmentId());
         request.setAttribute("menuList", json.getJSONArray("data"));
+
         return "home";
     }
 
     @RequestMapping("/initMenu")
     @ResponseBody
     public String initMenu() {
-        JSONObject json = permissionService.getAllPermission();
+        TUser user = (TUser) request.getSession().getAttribute("user");
+        JSONObject json = permissionService.getPermissionsByDepartmentId(user.getDepartmentId());
+        System.out.println(json.toJSONString());
         return json.toJSONString();
     }
 

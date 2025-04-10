@@ -38,6 +38,16 @@ public class PermissionServiceImpl implements PermissionService {
         return result;
     }
 
+    @Override
+    public JSONObject getPermissionsByDepartmentId(Integer departmentId) {
+        List<TPermission> permissionList = permissionDao.getPermissionsByDepartmentId(departmentId);
+        JSONObject result = new JSONObject();
+        result.put("count", permissionList.size());
+        result.put("code", 0);
+        result.put("data", eachPermission(permissionList));
+        return result;
+    }
+
     private JSONArray eachPermission(List<TPermission> permissionList) {
         // 1. 按parentId分组缓存所有权限，提升查询效率
         Map<Integer, List<TPermission>> permissionMap = new HashMap<>();

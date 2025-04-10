@@ -9,6 +9,8 @@ import java.util.List;
 public interface TPermissionDao {
     List<TPermission> getAllPermission();
 
+    List<TPermission> getPermissionsByDepartmentId(Integer departmentId);
+
     boolean addRootMenu(String name);
 
     boolean updatePermission(String id, String field, String value);
@@ -16,4 +18,5 @@ public interface TPermissionDao {
     boolean deletePermission(String id);
 
     boolean addChildMenu(String parentId, String name);
+
 }

@@ -21,6 +21,12 @@ public class TPermissionDaoImpl implements TPermissionDao {
     }
 
     @Override
+    public List<TPermission> getPermissionsByDepartmentId(Integer departmentId) {
+        String sql = "select * from t_permission where id in (select permission_id from t_department_permission where department_id=? and has = 1)";
+        return jdbc.query(sql, new TPermissionMapper(), departmentId);
+    }
+
+    @Override
     public boolean addRootMenu(String name) {
         String sql = "insert into t_permission(name) values(?)";
         return jdbc.update(sql, name) > 0;
