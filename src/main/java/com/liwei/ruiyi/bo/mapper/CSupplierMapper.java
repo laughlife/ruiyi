@@ -10,9 +10,11 @@ public class CSupplierMapper implements RowMapper<CSupplier> {
         CSupplier obj = new CSupplier();
         obj.setId(rs.getInt("id"));
         obj.setName(rs.getString("name"));
+        obj.setFzr(rs.getString("fzr"));
         obj.setPhone(rs.getString("phone"));
         obj.setAddress(rs.getString("address"));
         obj.setOtherInfo(rs.getString("other_info"));
+        obj.setCreateTime(rs.getString("create_time"));
         return obj;
     }
 }

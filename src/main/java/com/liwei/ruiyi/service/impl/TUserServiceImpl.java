@@ -86,10 +86,10 @@ public class TUserServiceImpl implements TUserService {
         if(userDao.checkUsername(user.getUsername())){
             boolean result = userDao.addUser(user);
             rj.put("status", result);
-            rj.put("message", result ? "添加成功" : "添加失败，请查找原因");
+            rj.put("msg", result ? "添加成功" : "添加失败，请查找原因");
         }else{
             rj.put("status", false);
-            rj.put("message", "用户名已存在");
+            rj.put("msg", "用户名已存在");
         }
         return rj;
     }

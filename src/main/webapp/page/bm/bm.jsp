@@ -56,7 +56,7 @@
 <script type="text/html" id="bm-table-toolbar">
     <div class="layui-btn-container">
         <c:if test="${user.isAdmin eq 1}">
-            <button class="layui-btn layui-bg-blue layui-btn-sm" lay-event="addRootNode">添加一级部门${user.isAdmin}</button>
+            <button class="layui-btn layui-bg-blue layui-btn-sm" lay-event="addRootNode">添加一级部门</button>
         </c:if>
     </div>
 </script>

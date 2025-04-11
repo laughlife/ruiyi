@@ -36,8 +36,7 @@ public class HomeController {
     @RequestMapping("/initMenu")
     @ResponseBody
     public String initMenu() {
-        TUser user = (TUser) request.getSession().getAttribute("user");
-        JSONObject json = permissionService.getPermissionsByDepartmentId(user.getDepartmentId());
+        JSONObject json = permissionService.getAllPermission();
         return json.toJSONString();
     }
 

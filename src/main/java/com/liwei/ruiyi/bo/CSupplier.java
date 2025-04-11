@@ -8,7 +8,9 @@ import java.util.*;
 public class CSupplier {
     private Integer id;
     private String name;
+    private String fzr;
     private String phone;
     private String address;
     private String otherInfo;
+    private String createTime;
 }
