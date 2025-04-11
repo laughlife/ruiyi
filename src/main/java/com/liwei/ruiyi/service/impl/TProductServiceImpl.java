@@ -7,7 +7,7 @@ import com.liwei.ruiyi.config.LingxingConfig;
 import com.liwei.ruiyi.dao.TProHistoryDao;
 import com.liwei.ruiyi.dao.TProPerformanceDao;
 import com.liwei.ruiyi.dao.TSellerDao;
-import com.liwei.ruiyi.service.ProductService;
+import com.liwei.ruiyi.service.TProductService;
 import com.liwei.ruiyi.service.LingxingService;
 import com.liwei.ruiyi.utils.DateUtils;
 import com.liwei.ruiyi.utils.ListUtils;
@@ -21,10 +21,10 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-@Repository("productService")
-public class ProductServiceImpl implements ProductService {
+@Repository("tproductService")
+public class TProductServiceImpl implements TProductService {
 
-    private static final Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(TProductServiceImpl.class);
 
     @Autowired
     LingxingService lingxingService;
