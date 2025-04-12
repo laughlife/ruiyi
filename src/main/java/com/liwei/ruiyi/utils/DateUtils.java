@@ -41,6 +41,11 @@ public class DateUtils {
         return sdf.format(new Date());
     }
 
+    public static String getSystemMonth() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+        return sdf.format(new Date());
+    }
+
 
     /**
      * 将字符串日期转换为Date类型

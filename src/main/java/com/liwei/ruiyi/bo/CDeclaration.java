@@ -7,15 +7,21 @@ import java.util.*;
 @Data
 public class CDeclaration {
     private Integer id;
-    private Integer declarantId;
-    private String declarantName;
-    private String declarantPhone;
-    private Integer declareQuantity;
+    private Integer userId;
+    private String userName;
+    private String userPhone;
+    private String proName;
+    private String link;
+    private String asin;
+    private String imagePath;
     private Integer purchasePackages;
     private Integer perPackageQuantity;
     private Integer totalQuantity;
+    private String other;
     private Integer shippedQuantity;
     private Integer receivedQuantity;
+    private String declareTime;
+    private String confirmTime;
     private String purchaseTime;
     private String planShipTime;
     private String planReceiveTime;
