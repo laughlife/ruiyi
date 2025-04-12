@@ -85,7 +85,6 @@
                             onlyIconControl: true,
                             showCheckbox: true,
                             id: 'permission_tree',
-                            isJump: true,
                             oncheck: function(obj) {
                                 listenerPermissionTree();
                             }
