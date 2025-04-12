@@ -93,9 +93,10 @@
                 url: '/supplier/createSupplier',
                 type: 'post',
                 data: _save_date,
-                success: function (data) {
-                    layer.msg(data.message, {icon: data.icon, time: 1000});
-                    if(data.status){
+                dataType: 'json',
+                success: function (res) {
+                    layer.msg(res.msg);
+                    if(res.status){
                         var iframeIndex = parent.layer.getFrameIndex(window.name);
                         parent.layer.close(iframeIndex);
                     }

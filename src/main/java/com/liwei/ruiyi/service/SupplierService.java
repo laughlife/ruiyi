@@ -11,4 +11,6 @@ public interface SupplierService {
     boolean createSupplier(CSupplier supplier);
 
     boolean updateSupplier(String id, String field, String value);
+
+    boolean deleteSupplierById(String id);
 }

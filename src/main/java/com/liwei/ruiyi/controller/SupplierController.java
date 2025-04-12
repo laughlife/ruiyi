@@ -55,19 +55,22 @@ public class SupplierController {
     @RequestMapping("/deleteSupplier")
     @ResponseBody
     public String deleteSupplier(String id) {
-        JSONObject returnJson = new JSONObject();
-        return returnJson.toJSONString();
+        JSONObject rj = new JSONObject();
+        boolean status = supplierService.deleteSupplierById(id);
+        rj.put("status", status);
+        rj.put("msg", status ? "删除成功" : "删除失败");
+        return rj.toJSONString();
     }
 
     @RequestMapping("/createSupplier")
     @ResponseBody
     public String createSupplier(CSupplier supplier) {
         boolean status = supplierService.createSupplier(supplier);
-        JSONObject returnJson = new JSONObject();
-        returnJson.put("status", status);
-        returnJson.put("icon", status ? 1 : 2);
-        returnJson.put("msg", status ? "操作成功" : "操作失败");
-        return returnJson.toJSONString();
+        JSONObject rj = new JSONObject();
+        rj.put("status", status);
+        rj.put("icon", status ? 1 : 2);
+        rj.put("msg", status ? "操作成功" : "操作失败");//确认
+        return rj.toJSONString();
     }
 
     @RequestMapping("/updateSupplier")

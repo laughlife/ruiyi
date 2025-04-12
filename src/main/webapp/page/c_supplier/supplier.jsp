@@ -140,7 +140,9 @@
                         data: {
                             'id': _data.id
                         },
+                        dataType: 'json',
                         success: function (res) {
+                            layer.msg(res.msg);
                             supplierTable.reload();
                         }
                     });

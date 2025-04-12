@@ -59,11 +59,18 @@ public class CSupplierDaoImpl implements CSupplierDao {
 
     @Override
     public boolean updateSupplier(String id, String field, String value) {
-        if(StringUtils.isNotBlank(field) && field.equals("otherInfo")){
+        if (StringUtils.isNotBlank(field) && field.equals("otherInfo")) {
             field = "other_info";
         }
         String sql = "update c_supplier set " + field + " = ? where id = ?";
         int count = jdbc.update(sql, value, id);
+        return count > 0;
+    }
+
+    @Override
+    public boolean deleteSupplierById(String id) {
+        String sql = "delete from c_supplier where id = ?";
+        int count = jdbc.update(sql, id);
         return count > 0;
     }
 }

@@ -28,4 +28,9 @@ public class SupplierServiceImpl implements SupplierService {
     public boolean updateSupplier(String id, String field, String value) {
         return supplierDao.updateSupplier(id, field, value);
     }
+
+    @Override
+    public boolean deleteSupplierById(String id) {
+        return supplierDao.deleteSupplierById(id);
+    }
 }
