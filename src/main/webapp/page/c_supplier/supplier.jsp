@@ -78,6 +78,7 @@
             cols: [[
                 {type: 'numbers', title: '编号', width: 80},
                 {field: 'name', title: '名称', edit: 'text', width: 200},
+                {field: 'fzr', title: '联系人', edit: 'text', width: 280},
                 {field: 'phone', title: '联系方式', edit: 'text', width: 280},
                 {field: 'address', title: '联系地址', edit: 'text'},
                 {field: 'otherInfo', title: '其他信息', edit: 'text'},

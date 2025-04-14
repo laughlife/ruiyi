@@ -3,6 +3,7 @@ package com.liwei.ruiyi.controller;
 import com.alibaba.fastjson2.JSONObject;
 import com.liwei.ruiyi.bo.CProduct;
 import com.liwei.ruiyi.bo.CSupplier;
+import com.liwei.ruiyi.bo.TUser;
 import com.liwei.ruiyi.service.CProductService;
 import com.liwei.ruiyi.service.SupplierService;
 import com.liwei.ruiyi.service.TProductService;
@@ -172,6 +173,26 @@ public class ProductController {
         JSONObject rj = new JSONObject();
         rj.put("status", status);
         rj.put("msg", status ? "操作成功" : "操作失败");//确认
+        return rj.toJSONString();
+    }
+
+    @RequestMapping("/updateProduct")
+    @ResponseBody
+    public String updateProduct(CProduct product) {
+        TUser user = (TUser) request.getSession().getAttribute("user");
+        String history = "修改人：" + user.getUsername() + "，修改时间：" + DateUtils.getSystemDate();
+        product.setHistory(history);
+
+        boolean status = cproductService.updateProduct(product);
+        JSONObject rj = new JSONObject();
+        rj.put("status", status);
+        rj.put("msg", status ? "操作成功" : "操作失败");//确认
+        return rj.toJSONString();
+    }
+    @RequestMapping("/deleteProduct")
+    @ResponseBody
+    public String deleteProduct(String id) {
+        JSONObject rj = cproductService.deleteProduct(id);
         return rj.toJSONString();
     }
 }

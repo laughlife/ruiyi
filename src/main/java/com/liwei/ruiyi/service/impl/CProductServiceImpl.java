@@ -58,4 +58,14 @@ public class CProductServiceImpl implements CProductService {
     public CProduct queryProductById(String id) {
         return cproductDao.queryProductById(id);
     }
+
+    @Override
+    public boolean updateProduct(CProduct product) {
+        return cproductDao.updateProduct(product);
+    }
+
+    @Override
+    public JSONObject deleteProduct(String id) {
+        return cproductDao.deleteProduct(id);
+    }
 }

@@ -78,7 +78,7 @@
         <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete">
             <i class="fa-solid fa-trash"></i>删除
         </button>
-        <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="delete">
+        <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="history">
             <i class="fa-solid fa-eye"></i>变动历史
         </button>
     </div>
@@ -170,10 +170,24 @@
                         dataType: 'json',
                         success: function (res) {
                             layer.msg(res.msg);
-                            productTable.reload();
+                            if(res.status){
+                                productTable.reload();
+                            }
                         }
                     });
                 } else if (obj.event === 'update') {
+                    layer.open({
+                        title: '修改商品',
+                        type: 2,
+                        shade: 0.5,
+                        shadeClose: true,
+                        area: ['60%', '80%'],
+                        content: '/product/goUpdateProduct?id=' + _data.id,
+                        end: function () {
+                            productTable.reload();
+                        }
+                    });
+                } else if (obj.event === 'history') {
                     layer.open({
                         title: '修改商品',
                         type: 2,

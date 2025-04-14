@@ -1,5 +1,6 @@
 package com.liwei.ruiyi.service;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.liwei.ruiyi.bo.CProduct;
 import com.liwei.ruiyi.utils.PageUtils;
 import org.springframework.stereotype.Service;
@@ -11,4 +12,8 @@ public interface CProductService {
     boolean createProduct(CProduct product);
 
     CProduct queryProductById(String id);
+
+    boolean updateProduct(CProduct product);
+
+    JSONObject deleteProduct(String id);
 }

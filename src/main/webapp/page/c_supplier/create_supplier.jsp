@@ -30,7 +30,7 @@
                             </div>
                         </div>
                         <div class="layui-form-item">
-                            <label class="layui-form-label">采购商负责人</label>
+                            <label class="layui-form-label">联系人</label>
                             <div class="layui-input-block">
                                 <input type="text" name="fzr" autocomplete="off" placeholder="(非必填)"
                                        class="layui-input">
@@ -44,7 +44,7 @@
                             </div>
                         </div>
                         <div class="layui-form-item">
-                            <label class="layui-form-label">地址</label>
+                            <label class="layui-form-label">联系地址</label>
                             <div class="layui-input-block">
                                 <input type="text" name="address" autocomplete="off" placeholder="(非必填)"
                                        class="layui-input">

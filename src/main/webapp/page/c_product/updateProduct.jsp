@@ -27,6 +27,7 @@
                             <div class="layui-input-block">
                                 <input type="text" name="name" lay-verify="required" autocomplete="off"
                                        placeholder="商品名称(必填)" class="layui-input" value="${product.name}">
+                                <input type="hidden" name="id" value="${product.id}">
                             </div>
                         </div>
                         <div class="layui-form-item">
@@ -88,10 +89,6 @@
                                     class="layui-btn layui-btn-normal" lay-submit
                                     lay-filter="create_product_filter"><i class="fa-solid fa-plus"></i>确定修改
                             </button>
-                            <button type="reset" id="reset_form_btn"
-                                    class="layui-btn layui-btn-normal"><i
-                                    class="fa-solid fa-rotate-right fa-fw"></i>重置
-                            </button>
                             <button type="button" id="close_win_btn"
                                     class="layui-btn layui-btn-warm"><i class="fa-solid fa-circle-xmark fa-fw"></i>取消
                             </button>
@@ -124,8 +121,7 @@
             done: function (res) {
                 layer.msg(res.msg);
                 if (res.status) {
-                    console.info(res)
-                    $("#imagePath").val(res.src);
+                    $("#imageUrl").val(res.src);
                     <c:if test="${not empty(product.imageUrl)}">
                         $("#pro_img").attr("src", res.imagePath);
                     </c:if>
@@ -137,7 +133,7 @@
         form.on('submit(create_product_filter)', function (data) {
             var _save_date = data.field;
             $.ajax({
-                url: '/product/createProduct',
+                url: '/product/updateProduct',
                 type: 'post',
                 data: _save_date,
                 dataType: 'json',

@@ -80,4 +80,57 @@ public class CProductDaoImpl implements CProductDao {
         CProduct product = jdbc.queryForObject("select * from c_product where id = ?", new CProductMapper(), id);
         return product;
     }
+
+    @Override
+    public boolean updateProduct(CProduct product) {
+        boolean status = false;
+        //1. 首先备份现有状态到备份表中
+        try {
+            String sql = "INSERT INTO c_product_history (pro_id, name, link, image_url, supplier_id, " +
+                    "supplier_name, cost_price, is_active, create_time, update_time, " +
+                    "disable_time, unship_quantity, unship_price, other, history)" +
+                    "SELECT id, name, link, image_url, supplier_id, " +
+                    "supplier_name, cost_price, is_active, create_time, current_timestamp, " +
+                    "disable_time, unship_quantity, unship_price, other,history " +
+                    "FROM c_product where id = ?";
+            jdbc.update(sql, product.getId());
+
+            //2. 开始更新商品信息
+            sql = "select name from c_supplier where id = ?";
+            String supplierName = jdbc.queryForObject(sql, String.class, product.getSupplierId());
+            sql = "update c_product set name = ?,link = ?,image_url = ?,supplier_id = ?,supplier_name = ?," +
+                    "cost_price = ?,other = ?,update_time = current_timestamp where id = ?";
+            Object[] args = {product.getName(), product.getLink(), product.getImageUrl(), product.getSupplierId(), supplierName,
+                    product.getCostPrice(), product.getOther(), product.getId()};
+            jdbc.update(sql, args);
+
+            //3. 更新产品剩余价值
+            sql = "update c_product set unship_price = cost_price * unship_quantity where id = ?";
+            jdbc.update(sql, product.getId());
+            status = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return status;
+    }
+
+    @Override
+    public JSONObject deleteProduct(String id) {
+        JSONObject json = new JSONObject();
+        if(StringUtils.isNotBlank(id)){
+            String sql = "update c_product set is_active = 0,disable_time = current_timestamp where id = ?";
+            int count = jdbc.update(sql, id);
+            if(count > 0){
+                json.put("status", true);
+                json.put("msg", "删除成功。");
+            }else{
+                json.put("status", false);
+                json.put("msg", "删除失败，请刷新页面后重试。");
+            }
+        }else{
+            json.put("status", false);
+            json.put("msg", "删除失败，请刷新页面后重试。");
+        }
+        return json;
+    }
 }

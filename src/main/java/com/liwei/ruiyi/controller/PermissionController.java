@@ -47,7 +47,6 @@ public class PermissionController {
     public String getPermissionTree(String departmentId) {
         TUser user = (TUser) request.getSession().getAttribute("user");
         JSONArray ja = permissionService.getPermissionByDepartmentId(departmentId, user.getIsAdmin());
-        System.out.println(ja.toString());
         JSONObject jo = new JSONObject();
         jo.put("status", true);
         jo.put("data", ja);
