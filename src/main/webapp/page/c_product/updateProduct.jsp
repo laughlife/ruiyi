@@ -5,7 +5,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>新建商品信息</title>
+    <title>修改商品信息</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -26,23 +26,36 @@
                             <label class="layui-form-label">商品名称</label>
                             <div class="layui-input-block">
                                 <input type="text" name="name" lay-verify="required" autocomplete="off"
-                                       placeholder="商品名称(必填)" class="layui-input">
+                                       placeholder="商品名称(必填)" class="layui-input" value="${product.name}">
                             </div>
                         </div>
                         <div class="layui-form-item">
                             <label class="layui-form-label">采购链接</label>
                             <div class="layui-input-block">
                                 <input type="text" name="link" autocomplete="off" placeholder="(非必填，建议填写)"
-                                       class="layui-input">
+                                       class="layui-input" value="${product.link}">
                             </div>
                         </div>
+                        <c:if test="${not empty(product.imageUrl)}">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">商品图片</label>
+                                <div class="layui-input-inline layui-input-wrap">
+                                    <img src="${product.imagePath}" alt="商品图片" id="pro_img"
+                                         style="max-height: 600px">
+                                </div>
+                            </div>
+                        </c:if>
                         <div class="layui-form-item">
                             <label class="layui-form-label">商品图片</label>
                             <div class="layui-input-inline layui-input-wrap">
-                                <button type="button" class="layui-btn layui-btn-normal" id="id_upload_image_choose">选择图片</button>
-                                <input type="hidden" name="imageUrl" id="imageUrl">
+                                <button type="button" class="layui-btn layui-btn-normal" id="id_upload_image_choose">
+                                    选择图片
+                                </button>
+                                <input type="hidden" name="imageUrl" id="imageUrl" value="${product.imageUrl}">
                             </div>
-                            <div class="layui-form-mid layui-text-em" id="upload_image_result">(选填，方便后期维护知道是哪款商品)点击按钮选择图片</div>
+                            <div class="layui-form-mid layui-text-em" id="upload_image_result">
+                                (选填，方便后期维护知道是哪款商品)点击按钮选择图片
+                            </div>
                         </div>
                         <div class="layui-form-item">
                             <label class="layui-form-label">供应商</label>
@@ -50,7 +63,7 @@
                                 <select name="supplierId" id="supplierId" lay-search="" lay-verify="required">
                                     <option value="">--请选择或搜索--</option>
                                     <c:forEach items="${supplierList}" var="supplier">
-                                        <option value="${supplier.id}">${supplier.name}</option>
+                                        <option value="${supplier.id}" ${supplier.id eq product.supplierId ? 'selected' : ''}>${supplier.name}</option>
                                     </c:forEach>
                                 </select>
                             </div>
@@ -59,20 +72,21 @@
                         <div class="layui-form-item">
                             <label class="layui-form-label">采购成本</label>
                             <div class="layui-input-block">
-                                <input type="number" name="costPrice" autocomplete="off" placeholder="(必填)" lay-verify="required"
+                                <input type="number" name="costPrice" autocomplete="off" placeholder="(必填)"
+                                       lay-verify="required" value="${product.costPrice}"
                                        class="layui-input">
                             </div>
                         </div>
                         <div class="layui-form-item">
                             <label class="layui-form-label">其他信息</label>
                             <div class="layui-input-block">
-                                <textarea placeholder="(非必填)" name="other" class="layui-textarea"></textarea>
+                                <textarea placeholder="(非必填)" name="other" class="layui-textarea">${product.other}</textarea>
                             </div>
                         </div>
                         <div class="layui-form-item" style="text-align: center;">
-                            <button type="button" id="create_gd_btn"
+                            <button type="button"
                                     class="layui-btn layui-btn-normal" lay-submit
-                                    lay-filter="create_product_filter"><i class="fa-solid fa-plus"></i>确定添加
+                                    lay-filter="create_product_filter"><i class="fa-solid fa-plus"></i>确定修改
                             </button>
                             <button type="reset" id="reset_form_btn"
                                     class="layui-btn layui-btn-normal"><i
@@ -107,11 +121,14 @@
             accept: 'images',
             acceptMime: 'image/*',
             exts: 'jpg|png|gif|bmp|jpeg',
-            done: function(res){
+            done: function (res) {
                 layer.msg(res.msg);
-                if(res.status){
+                if (res.status) {
                     console.info(res)
                     $("#imagePath").val(res.src);
+                    <c:if test="${not empty(product.imageUrl)}">
+                        $("#pro_img").attr("src", res.imagePath);
+                    </c:if>
                     $("#upload_image_result").html(res.fileName);
                 }
             }
@@ -126,7 +143,7 @@
                 dataType: 'json',
                 success: function (res) {
                     layer.msg(res.msg);
-                    if(res.status){
+                    if (res.status) {
                         var iframeIndex = parent.layer.getFrameIndex(window.name);
                         parent.layer.close(iframeIndex);
                     }

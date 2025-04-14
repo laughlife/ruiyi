@@ -76,7 +76,7 @@ public class CSupplierDaoImpl implements CSupplierDao {
 
     @Override
     public List<CSupplier> queryAllSupplierForSearch() {
-        String sql = "select id,name from c_supplier";
+        String sql = "select * from c_supplier";
         List<CSupplier> supplierList = jdbc.query(sql, new CSupplierMapper());
         if (supplierList.size() > 0) {
             return supplierList;

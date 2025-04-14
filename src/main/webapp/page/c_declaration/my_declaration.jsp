@@ -72,7 +72,7 @@
     <div class="layui-btn-container">
         {{#  if(d.status == '已申报'){ }}
             <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="update">
-                <i class="fa-solid fa-share"></i>修改
+                <i class="fa-solid fa-rotate"></i>修改
             </button>
             <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete">
                 <i class="fa-solid fa-trash"></i>删除
@@ -85,7 +85,7 @@
     </div>
 </script>
 <script type="text/html" id="imageView">
-    <img src="{{d.image_path}}" style="max-height:200px; width:auto; display:block; margin:0 auto;">
+    <img src="{{d.image_path}}" style="max-height:80px; width:auto; display:block; margin:0 auto;">
 </script>
 <script>
     layui.use(function () {
@@ -103,7 +103,7 @@
         var declarationTable = table.render({
             elem: '#declarationTable',
             url: '/declaration/queryAllDeclaration',
-            lineStyle: 'height: 120px;',
+            lineStyle: 'height: 100px;',
             cols: [[
                 {type: 'numbers', title: '编号', width: 80},
                 {

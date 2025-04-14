@@ -35,10 +35,10 @@
                             <div class="layui-inline" id="laydate-rangeLinked">
                                 <label class="layui-form-label">供应商</label>
                                 <div class="layui-input-block">
-                                    <select name="supplier_name" id="supplier_name" lay-search="">
+                                    <select name="supplier_id" id="supplier_id" lay-search="">
                                         <option value="">--请选择或搜索--</option>
                                         <c:forEach items="${supplierList}" var="supplier">
-                                            <option value="${supplier.id}">${supplier.supplier_name}</option>
+                                            <option value="${supplier.id}">${supplier.name}</option>
                                         </c:forEach>
                                     </select>
                                 </div>
@@ -71,9 +71,9 @@
 
 <script type="text/html" id="productTableToolbar">
     <div class="layui-btn-container">
-<%--        {{#  if(d.status == '已申报'){ }}--%>
-        <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="delete">
-            <i class="fa-solid fa-share"></i>修改
+        <%--        {{#  if(d.status == '已申报'){ }}--%>
+        <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="update">
+            <i class="fa-solid fa-rotate"></i>修改
         </button>
         <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete">
             <i class="fa-solid fa-trash"></i>删除
@@ -84,7 +84,11 @@
     </div>
 </script>
 <script type="text/html" id="imageView">
-    <img src="{{d.image_path}}" style="max-height:200px; width:auto; display:block; margin:0 auto;">
+    {{#  if(d.image_url !== ''){ }}
+    <img src="{{d.image_url}}" style="max-height:80px; width:auto; display:block; margin:0 auto;">
+    {{#  }else{ }}
+    <i class="fa-solid fa-image" style="font-size: 30px; color: #FF5722;"></i>
+    {{#  } }}
 </script>
 <script>
     layui.use(function () {
@@ -95,33 +99,34 @@
         var productTable = table.render({
             elem: '#productTable',
             url: '/product/queryAllProduct',
-            lineStyle: 'height: 120px;',
+            lineStyle: 'height: 100px;',
             cols: [[
                 {type: 'numbers', title: '编号', width: 80},
                 {
                     field: 'image_path',
                     title: '图片',
                     width: 130,
+                    align: 'center',
                     templet: '#imageView'
                 },
                 {
-                    field: 'product_name',
+                    field: 'name',
                     title: '商品名称',
                     width: 200,
-                    templet: function(d){
+                    templet: function (d) {
                         return d.link ?
-                            '<a href="'+ d.link +'" target="_blank" style="color:#1890ff;">'+ d.pro_name +'</a>' :
-                            d.pro_name;
+                            '<a href="' + d.link + '" target="_blank" style="color:#1890ff;">' + d.name + '</a>' :
+                            d.name;
                     }
                 },
-                {field: 'supplier_name', title: '供应商',  width: 280},
-                {field: 'cost_price', title: '采购成本', width:120},
-                {field: 'create_time', title: '创建时间', width:120},
-                {field: 'update_time', title: '更新时间', width:120},
-                {field: 'unship_quantity', title: '未发货数', width:120},
-                {field: 'unship_price', title: '未发货价值', width:120},
+                {field: 'supplier_name', title: '供应商', width: 280},
+                {field: 'cost_price', title: '采购成本', width: 120},
+                {field: 'create_time', title: '创建时间', width: 120},
+                {field: 'update_time', title: '更新时间', width: 120},
+                {field: 'unship_quantity', title: '未发货数', width: 120},
+                {field: 'unship_price', title: '未发货价值', width: 120},
                 {field: 'other', title: '其他'},
-                {align: 'center', title: '操作', toolbar: '#productTableToolbar', width: 200}
+                {align: 'center', title: '操作', toolbar: '#productTableToolbar', width: 360}
             ]],
             page: true,
             limits: [50, 100, 200],
@@ -130,11 +135,11 @@
 
         $('#search_product_btn').click(function () {
             var key = $('#key').val();
-            var supplier_name = $('#supplier_name').val();
+            var supplier_id = $('#supplier_id').val();
             productTable.reload({
                 where: {
                     key: key,
-                    supplier_name: supplier_name
+                    supplier_id: supplier_id
                 }
             });
         });
@@ -168,14 +173,14 @@
                             productTable.reload();
                         }
                     });
-                }else if(obj.event === 'edit'){
+                } else if (obj.event === 'update') {
                     layer.open({
-                        title: '编辑商品',
+                        title: '修改商品',
                         type: 2,
                         shade: 0.5,
                         shadeClose: true,
-                        area: ['60%', '60%'],
-                        content: '/product/goCreateProduct',
+                        area: ['60%', '80%'],
+                        content: '/product/goUpdateProduct?id=' + _data.id,
                         end: function () {
                             productTable.reload();
                         }
