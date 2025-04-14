@@ -5,8 +5,9 @@ import java.math.BigDecimal;
 import java.util.*;
 
 @Data
-public class CProduct {
+public class CProductHistory {
     private Integer id;
+    private Integer proId;
     private String name;
     private String link;
     private String imageUrl;

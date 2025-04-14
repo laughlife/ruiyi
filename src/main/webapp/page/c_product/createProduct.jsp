@@ -5,7 +5,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>新建采购申报</title>
+    <title>新建商品信息</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -25,21 +25,14 @@
                         <div class="layui-form-item">
                             <label class="layui-form-label">商品名称</label>
                             <div class="layui-input-block">
-                                <input type="text" name="proName" lay-verify="required" autocomplete="off"
+                                <input type="text" name="name" lay-verify="required" autocomplete="off"
                                        placeholder="商品名称(必填)" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-form-item">
-                            <label class="layui-form-label">销售链接</label>
+                            <label class="layui-form-label">采购链接</label>
                             <div class="layui-input-block">
                                 <input type="text" name="link" autocomplete="off" placeholder="(非必填，建议填写)"
-                                       class="layui-input">
-                            </div>
-                        </div>
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">asin</label>
-                            <div class="layui-input-block">
-                                <input type="text" name="asin" autocomplete="off" placeholder="(非必填)"
                                        class="layui-input">
                             </div>
                         </div>
@@ -47,29 +40,27 @@
                             <label class="layui-form-label">商品图片</label>
                             <div class="layui-input-inline layui-input-wrap">
                                 <button type="button" class="layui-btn layui-btn-normal" id="id_upload_image_choose">选择图片</button>
-                                <input type="hidden" name="imagePath" id="imagePath">
+                                <input type="hidden" name="imageUrl" id="imageUrl">
                             </div>
-                            <div class="layui-form-mid layui-text-em" id="upload_image_result">(选填，如果没有对应的销售链接，可直接上传图片)点击按钮选择图片</div>
+                            <div class="layui-form-mid layui-text-em" id="upload_image_result">(选填，方便后期维护知道是哪款商品)点击按钮选择图片</div>
                         </div>
                         <div class="layui-form-item">
-                            <label class="layui-form-label">采购件数</label>
+                            <label class="layui-form-label">供应商</label>
                             <div class="layui-input-block">
-                                <input type="number" id="purchasePackages" name="purchasePackages" autocomplete="off" placeholder="(必填)"
+                                <select name="supplier_name" id="supplier_name" lay-search="">
+                                    <option value="">--请选择或搜索--</option>
+                                    <c:forEach items="${supplierList}" var="supplier">
+                                        <option value="${supplier.id}">${supplier.supplier_name}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">采购成本</label>
+                            <div class="layui-input-block">
+                                <input type="number" name="cost_price" autocomplete="off" placeholder="(必填)"
                                        class="layui-input">
-                            </div>
-                        </div>
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">单件数量</label>
-                            <div class="layui-input-block">
-                                <input type="number" id="perPackageQuantity" name="perPackageQuantity" autocomplete="off" placeholder="(必填)"
-                                       class="layui-input" value="1">
-                            </div>
-                        </div>
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">总采购量</label>
-                            <div class="layui-input-block">
-                                <input type="number" id="totalQuantity" name="totalQuantity" autocomplete="off" readonly
-                                       placeholder="(自动生成)" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-form-item">

@@ -4,7 +4,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>发货申报</title>
+    <title>本地商品</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport"
@@ -21,46 +21,47 @@
     <div class="layui-row layui-col-space15">
         <div class="layui-col-md12">
             <div class="layui-card">
-                <div class="layui-card-header">我的申报</div>
+                <div class="layui-card-header">商品维护</div>
                 <div class="layui-card-body">
                     <form class="layui-form layui-form-pane" action="">
                         <div class="layui-form-item">
                             <div class="layui-inline">
-                                <label class="layui-form-label">申报商品</label>
+                                <label class="layui-form-label">商品名称</label>
                                 <div class="layui-input-block">
                                     <input type="text" id="key" name="key" placeholder="请输入搜索提示信息"
                                            class="layui-input">
                                 </div>
                             </div>
                             <div class="layui-inline" id="laydate-rangeLinked">
-                                <label class="layui-form-label">申报时间</label>
-                                <div class="layui-input-inline" style="width: 180px;">
-                                    <input type="text" id="laydate-start" name="date_start" autocomplete="off" class="layui-input">
-                                </div>
-                                <div class="layui-form-mid">-</div>
-                                <div class="layui-input-inline" style="width: 180px;">
-                                    <input type="text" id="laydate-end" name="date_end" autocomplete="off" class="layui-input">
+                                <label class="layui-form-label">供应商</label>
+                                <div class="layui-input-block">
+                                    <select name="supplier_name" id="supplier_name" lay-search="">
+                                        <option value="">--请选择或搜索--</option>
+                                        <c:forEach items="${supplierList}" var="supplier">
+                                            <option value="${supplier.id}">${supplier.supplier_name}</option>
+                                        </c:forEach>
+                                    </select>
                                 </div>
                             </div>
                             <div class="layui-inline">
-                                <button type="button" id="search_declaration_btn"
+                                <button type="button" id="search_product_btn"
                                         class="layui-btn layui-bg-green"
                                         lay-filter="data-search-btn">
                                     <i class="fa-solid fa-magnifying-glass"></i> 搜索
                                 </button>
                             </div>
                             <div class="layui-inline">
-                                <button type="button" id="create_declaration_btn"
+                                <button type="button" id="create_product_btn"
                                         class="layui-btn layui-bg-blue"
                                         lay-filter="data-create-btn">
-                                    <i class="fa-solid fa-plus"></i> 新建采购申报
+                                    <i class="fa-solid fa-plus"></i> 新建商品
                                 </button>
                             </div>
                         </div>
                     </form>
                 </div>
                 <div class="layui-card-body">
-                    <table id="declarationTable" class="layui-hide" lay-filter="declarationTableFilter"></table>
+                    <table id="productTable" class="layui-hide" lay-filter="productTableFilter"></table>
                 </div>
             </div>
 
@@ -68,20 +69,18 @@
     </div>
 </div>
 
-<script type="text/html" id="declarationTableToolbar">
+<script type="text/html" id="productTableToolbar">
     <div class="layui-btn-container">
-        {{#  if(d.status == '已申报'){ }}
-            <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="update">
-                <i class="fa-solid fa-share"></i>修改
-            </button>
-            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete">
-                <i class="fa-solid fa-trash"></i>删除
-            </button>
-        {{#  } else { }}
-            <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="show_log">
-                <i class="fa-solid fa-eye"></i>查看进度
-            </button>
-        {{#  } }}
+<%--        {{#  if(d.status == '已申报'){ }}--%>
+        <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="delete">
+            <i class="fa-solid fa-share"></i>修改
+        </button>
+        <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete">
+            <i class="fa-solid fa-trash"></i>删除
+        </button>
+        <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="delete">
+            <i class="fa-solid fa-eye"></i>变动历史
+        </button>
     </div>
 </script>
 <script type="text/html" id="imageView">
@@ -92,17 +91,10 @@
         var table = layui.table;
         var layer = layui.layer;
         var $ = layui.jquery;
-        var laydate = layui.laydate;
-        // 日期范围 - 左右面板联动选择模式
-        laydate.render({
-            elem: '#laydate-rangeLinked',
-            range: ['#laydate-start', '#laydate-end'],
-            rangeLinked: true
-        });
 
-        var declarationTable = table.render({
-            elem: '#declarationTable',
-            url: '/declaration/queryAllDeclaration',
+        var productTable = table.render({
+            elem: '#productTable',
+            url: '/product/queryAllProduct',
             lineStyle: 'height: 120px;',
             cols: [[
                 {type: 'numbers', title: '编号', width: 80},
@@ -113,7 +105,7 @@
                     templet: '#imageView'
                 },
                 {
-                    field: 'pro_name',
+                    field: 'product_name',
                     title: '商品名称',
                     width: 200,
                     templet: function(d){
@@ -122,71 +114,50 @@
                             d.pro_name;
                     }
                 },
-                {field: 'asin', title: 'asin',  width: 280},
-                {field: 'other', title: '其他备注'},
-                {field: 'purchase_packages', title: '采购件数', width:120},
-                {field: 'per_package_quantity', title: '单件数量', width:120},
-                {field: 'total_quantity', title: '采购总量', width:120},
-                {field: 'declare_time', title: '申报时间', width:180},
-                {field: 'status', title: '状态', width:120},
-                {align: 'center', title: '操作', toolbar: '#declarationTableToolbar', width: 200}
+                {field: 'supplier_name', title: '供应商',  width: 280},
+                {field: 'cost_price', title: '采购成本', width:120},
+                {field: 'create_time', title: '创建时间', width:120},
+                {field: 'update_time', title: '更新时间', width:120},
+                {field: 'unship_quantity', title: '未发货数', width:120},
+                {field: 'unship_price', title: '未发货价值', width:120},
+                {field: 'other', title: '其他'},
+                {align: 'center', title: '操作', toolbar: '#productTableToolbar', width: 200}
             ]],
             page: true,
             limits: [50, 100, 200],
             limit: 50
         });
 
-        $('#search_declaration_btn').click(function () {
+        $('#search_product_btn').click(function () {
             var key = $('#key').val();
-            var date_start = $('#laydate-start').val();
-            var date_end = $('#laydate-end').val();
-            declarationTable.reload({
+            var supplier_name = $('#supplier_name').val();
+            productTable.reload({
                 where: {
                     key: key,
-                    date_start: date_start,
-                    date_end: date_end
+                    supplier_name: supplier_name
                 }
             });
         });
 
-        $('#create_declaration_btn').click(function () {
+        $('#create_product_btn').click(function () {
             layer.open({
-                title: '新建采购申报',
+                title: '新建商品',
                 type: 2,
                 shade: 0.5,
                 shadeClose: true,
                 area: ['60%', '60%'],
-                content: '/declaration/goCreateDeclaration',
+                content: '/product/goCreateProduct',
                 end: function () {
-                    declarationTable.reload();
+                    productTable.reload();
                 }
             });
         });
 
-        table.on('edit(declarationTableFilter)', function (obj) {
-            var data = obj.data;
-            var field = obj.field;
-            var value = obj.value;
-            $.ajax({
-                url: '/declaration/updateDeclaration',
-                type: 'POST',
-                data: {
-                    id: data.id,
-                    field: field,
-                    value: value
-                },
-                dataType: 'json',
-                success: function (res) {
-                    layer.msg(res.msg);
-                }
-            });
-        });
-
-        table.on('tool(declarationTableFilter)', function (obj) {
+        table.on('tool(productTableFilter)', function (obj) {
                 var _data = obj.data;
                 if (obj.event === 'delete') {
                     $.ajax({
-                        url: '/declaration/deleteDeclaration',
+                        url: '/product/deleteProduct',
                         type: 'POST',
                         data: {
                             'id': _data.id
@@ -194,13 +165,21 @@
                         dataType: 'json',
                         success: function (res) {
                             layer.msg(res.msg);
-                            declarationTable.reload();
+                            productTable.reload();
                         }
                     });
-                }else if(obj.event === 'update'){
-                    console.log("执行更新操作，暂未实现");
-                }else if(obj.event === 'show_log'){
-                    console.log("执行查看进度操作，暂未实现");
+                }else if(obj.event === 'edit'){
+                    layer.open({
+                        title: '编辑商品',
+                        type: 2,
+                        shade: 0.5,
+                        shadeClose: true,
+                        area: ['60%', '60%'],
+                        content: '/product/goCreateProduct',
+                        end: function () {
+                            productTable.reload();
+                        }
+                    });
                 }
             }
         );

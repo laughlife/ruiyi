@@ -33,4 +33,9 @@ public class SupplierServiceImpl implements SupplierService {
     public boolean deleteSupplierById(String id) {
         return supplierDao.deleteSupplierById(id);
     }
+
+    @Override
+    public List<CSupplier> queryAllSupplierForSearch() {
+        return supplierDao.queryAllSupplierForSearch();
+    }
 }

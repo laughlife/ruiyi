@@ -20,7 +20,7 @@ public class ListUtils {
             int end = Math.min(start + chunkSize, totalSize);
             chunks.add(list.subList(start, end)); // 获取子列表视图
         }
-        //供货商
+        //供应商
         return chunks;
     }
 }

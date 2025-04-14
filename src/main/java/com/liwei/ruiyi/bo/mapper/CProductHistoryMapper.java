@@ -1,14 +1,15 @@
 package com.liwei.ruiyi.bo.mapper;
 
-import com.liwei.ruiyi.bo.CProduct;
+import com.liwei.ruiyi.bo.CProductHistory;
 import org.springframework.jdbc.core.RowMapper;
 import java.sql.*;
 
-public class CProductMapper implements RowMapper<CProduct> {
+public class CProductHistoryMapper implements RowMapper<CProductHistory> {
     @Override
-    public CProduct mapRow(ResultSet rs, int rowNum) throws SQLException {
-        CProduct obj = new CProduct();
+    public CProductHistory mapRow(ResultSet rs, int rowNum) throws SQLException {
+        CProductHistory obj = new CProductHistory();
         obj.setId(rs.getInt("id"));
+        obj.setProId(rs.getInt("pro_id"));
         obj.setName(rs.getString("name"));
         obj.setLink(rs.getString("link"));
         obj.setImageUrl(rs.getString("image_url"));

@@ -73,4 +73,14 @@ public class CSupplierDaoImpl implements CSupplierDao {
         int count = jdbc.update(sql, id);
         return count > 0;
     }
+
+    @Override
+    public List<CSupplier> queryAllSupplierForSearch() {
+        String sql = "select id,name from c_supplier";
+        List<CSupplier> supplierList = jdbc.query(sql, new CSupplierMapper());
+        if (supplierList.size() > 0) {
+            return supplierList;
+        }
+        return List.of();
+    }
 }
