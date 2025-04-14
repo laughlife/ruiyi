@@ -60,9 +60,6 @@ public class TProductServiceImpl implements TProductService {
 
     public void analyzeProject(String day, List<Integer> sid) {
         for(Integer s : sid){
-//            JSONArray array = new JSONArray();
-//            array.add(s);
-
             JSONObject args = new JSONObject();
             args.put("offset", 0);
             //分页长度，最大10000,默认20
@@ -78,7 +75,9 @@ public class TProductServiceImpl implements TProductService {
             args.put("field", "volume");
             args.put("exp", "lt");
             args.put("from_value", 0);
+            System.out.println("数据请求时间："+DateUtils.getSystemTime());
             JSONObject pro_json = lingxingService.post(LingxingConfig.get_product_performance, args);
+            System.out.println("数据请求返回时间："+DateUtils.getSystemTime());
             if(pro_json.getInteger("code")==0){
                 //数据获取成功
                 JSONObject data = pro_json.getJSONObject("data");

@@ -1,197 +1,207 @@
-[
-  {
-    "id": 1,
-    "title": "<i class='fa-solid fa-atom'></i>应用",
-    "field": 1,
-    "spread": true,
-    "checked": true,
-    "children": [
-      {
-        "id": 24,
-        "title": "<i class='fa-solid fa-plane-up'></i>deepseek",
-        "field": 24,
-        "spread": true,
-        "checked": true
-      },
-      {
-        "id": 2,
-        "title": "<i class='fa-solid fa-image'></i>图片处理",
-        "field": 2,
-        "spread": true,
-        "checked": true,
-        "children": [
-          {
-            "id": 3,
-            "title": "<i class='fa-solid fa-images'></i>图片生成",
-            "field": 3,
-            "spread": true,
-            "checked": true
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": 25,
-    "title": "<i class='fa-solid fa-donate'></i>FBA",
-    "field": 25,
-    "spread": true,
-    "checked": true,
-    "children": [
-      {
-        "id": 29,
-        "title": "<i class='fa-solid fa-edit'></i>FBA采购申报",
-        "field": 29,
-        "spread": true,
-        "checked": true
-      }
-    ]
-  },
-  {
-    "id": 16,
-    "title": "<i class='fa-solid fa-users'></i>管理",
-    "field": 16,
-    "spread": true,
-    "checked": true,
-    "children": [
-      {
-        "id": 18,
-        "title": "<i class='fa-solid fa-sitemap'></i>部门管理",
-        "field": 18,
-        "spread": true,
-        "checked": true
-      },
-      {
-        "id": 19,
-        "title": "<i class='fa-solid fa-user-check'></i>人员管理",
-        "field": 19,
-        "spread": true,
-        "checked": true
-      },
-      {
-        "id": 20,
-        "title": "<i class='fa-solid fa-check-square'></i>权限分配",
-        "field": 20,
-        "spread": true,
-        "checked": true
-      }
-    ]
-  },
-  {
-    "id": 5,
-    "title": "<i class='fa-solid fa-screwdriver-wrench'></i>设置",
-    "field": 5,
-    "spread": true,
-    "checked": true,
-    "children": [
-      {
-        "id": 11,
-        "title": "基本资料",
-        "field": 11,
-        "spread": true,
-        "checked": true
-      },
-      {
-        "id": 12,
-        "title": "修改密码",
-        "field": 12,
-        "spread": true,
-        "checked": true
-      }
-    ]
-  },
-  {
-    "id": 27,
-    "title": "<i class='fa-solid fa-building-circle-check'></i>仓库",
-    "field": 27,
-    "spread": true,
-    "checked": true,
-    "children": [
-      {
-        "id": 28,
-        "title": "<i class='fa-solid fa-handshake-alt'></i>供应商",
-        "field": 28,
-        "spread": true,
-        "checked": true
-      },
-      {
-        "id": 30,
-        "title": "本地商品库",
-        "field": 30,
-        "spread": true,
-        "checked": false
-      }
-    ]
-  },
-  {
-    "id": 21,
-    "title": "<i class='fa-solid fa-chart-column'></i>数据",
-    "field": 21,
-    "spread": true,
-    "checked": false,
-    "children": [
-      {
-        "id": 22,
-        "title": "<i class='fa-solid fa-donate'></i>财务数据",
-        "field": 22,
-        "spread": true,
-        "checked": false,
-        "children": [
-          {
-            "id": 23,
-            "title": "工资数据",
-            "field": 23,
-            "spread": true,
-            "checked": false
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": 4,
-    "title": "<i class='fa-solid fa-laptop'></i>开发",
-    "field": 4,
-    "spread": true,
-    "checked": true,
-    "children": [
-      {
-        "id": 17,
-        "title": "菜单设置",
-        "field": 17,
-        "spread": true,
-        "checked": true
-      },
-      {
-        "id": 8,
-        "title": "图标",
-        "field": 8,
-        "spread": true,
-        "checked": true,
-        "children": [
-          {
-            "id": 9,
-            "title": "layui图标",
-            "field": 9,
-            "spread": true,
-            "checked": true
-          },
-          {
-            "id": 10,
-            "title": "fontawesome6",
-            "field": 10,
-            "spread": true,
-            "checked": true
-          }
-        ]
-      },
-      {
-        "id": 7,
-        "title": "功能测试",
-        "field": 7,
-        "spread": true,
-        "checked": true
-      }
-    ]
-  }
-]
+{
+  "status": true,
+  "data": [
+    {
+      "id": 1,
+      "name": "<i class='fa-solid fa-atom'></i>应用",
+      "pId": -1,
+      "open": true,
+      "checked": true,
+      "children": [
+        {
+          "id": 24,
+          "name": "<i class='fa-solid fa-plane-up'></i>deepseek",
+          "pId": 1,
+          "open": true,
+          "checked": true
+        },
+        {
+          "id": 2,
+          "name": "<i class='fa-solid fa-image'></i>图片处理",
+          "pId": 1,
+          "open": true,
+          "checked": true,
+          "children": [
+            {
+              "id": 3,
+              "name": "<i class='fa-solid fa-images'></i>图片生成",
+              "pId": 2,
+              "open": true,
+              "checked": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 25,
+      "name": "<i class='fa-solid fa-donate'></i>FBA",
+      "pId": -1,
+      "open": true,
+      "checked": false,
+      "children": [
+        {
+          "id": 29,
+          "name": "<i class='fa-solid fa-edit'></i>FBA采购申报",
+          "pId": 25,
+          "open": true,
+          "checked": false
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "name": "<i class='fa-solid fa-users'></i>管理",
+      "pId": -1,
+      "open": true,
+      "checked": true,
+      "children": [
+        {
+          "id": 18,
+          "name": "<i class='fa-solid fa-sitemap'></i>部门管理",
+          "pId": 16,
+          "open": true,
+          "checked": true
+        },
+        {
+          "id": 19,
+          "name": "<i class='fa-solid fa-user-check'></i>人员管理",
+          "pId": 16,
+          "open": true,
+          "checked": true
+        },
+        {
+          "id": 20,
+          "name": "<i class='fa-solid fa-check-square'></i>权限分配",
+          "pId": 16,
+          "open": true,
+          "checked": false
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "<i class='fa-solid fa-screwdriver-wrench'></i>设置",
+      "pId": -1,
+      "open": true,
+      "checked": true,
+      "children": [
+        {
+          "id": 11,
+          "name": "基本资料",
+          "pId": 5,
+          "open": true,
+          "checked": true
+        },
+        {
+          "id": 12,
+          "name": "修改密码",
+          "pId": 5,
+          "open": true,
+          "checked": true
+        }
+      ]
+    },
+    {
+      "id": 27,
+      "name": "<i class='fa-solid fa-building-circle-check'></i>仓库",
+      "pId": -1,
+      "open": true,
+      "checked": false,
+      "children": [
+        {
+          "id": 28,
+          "name": "<i class='fa-solid fa-handshake-alt'></i>供应商",
+          "pId": 27,
+          "open": true,
+          "checked": false
+        },
+        {
+          "id": 30,
+          "name": "<i class='fa-solid fa-cart-plus'></i>本地商品库",
+          "pId": 27,
+          "open": true,
+          "checked": false
+        },
+        {
+          "id": 31,
+          "name": "<i class='fa-solid fa-list-ol'></i>采购申请",
+          "pId": 27,
+          "open": true,
+          "checked": false
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "name": "<i class='fa-solid fa-chart-column'></i>数据",
+      "pId": -1,
+      "open": true,
+      "checked": false,
+      "children": [
+        {
+          "id": 22,
+          "name": "<i class='fa-solid fa-donate'></i>财务数据",
+          "pId": 21,
+          "open": true,
+          "checked": false,
+          "children": [
+            {
+              "id": 23,
+              "name": "工资数据",
+              "pId": 22,
+              "open": true,
+              "checked": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "<i class='fa-solid fa-laptop'></i>开发",
+      "pId": -1,
+      "open": true,
+      "checked": false,
+      "children": [
+        {
+          "id": 17,
+          "name": "菜单设置",
+          "pId": 4,
+          "open": true,
+          "checked": false
+        },
+        {
+          "id": 8,
+          "name": "图标",
+          "pId": 4,
+          "open": true,
+          "checked": false,
+          "children": [
+            {
+              "id": 9,
+              "name": "layui图标",
+              "pId": 8,
+              "open": true,
+              "checked": false
+            },
+            {
+              "id": 10,
+              "name": "fontawesome6",
+              "pId": 8,
+              "open": true,
+              "checked": false
+            }
+          ]
+        },
+        {
+          "id": 7,
+          "name": "功能测试",
+          "pId": 4,
+          "open": true,
+          "checked": false
+        }
+      ]
+    }
+  ]
+}

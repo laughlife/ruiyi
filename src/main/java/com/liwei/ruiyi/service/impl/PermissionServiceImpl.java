@@ -202,17 +202,12 @@ public class PermissionServiceImpl implements PermissionService {
     private JSONObject buildMenuTree(TPermission menu, Map<Integer, List<TPermission>> permissionMap,List<TDepartmentPermission> departmentPermissionList) {
         JSONObject jsonMenu = new JSONObject();
         String icon = menu.getIcon();
-        String title = "";
-        if(StringUtils.isNotBlank(icon)){
-            title = "<i class='"+icon+"'></i>"+menu.getName();
-        }else{
-            title = menu.getName();
-        }
         // 添加基础字段
         jsonMenu.put("id", menu.getId());
-        jsonMenu.put("title", title);
-        jsonMenu.put("field", menu.getId());
-        jsonMenu.put("spread", true);
+        jsonMenu.put("name", menu.getName());
+        jsonMenu.put("pId", menu.getParentId());
+        jsonMenu.put("icon", icon);
+        jsonMenu.put("open", true);
         //在这里查找权限是否可用，如果可用则设置checked为true，不可用则设置checked为false
         //判断规则:menu.getId()为权限ID，
         for(TDepartmentPermission departmentPermission:departmentPermissionList){

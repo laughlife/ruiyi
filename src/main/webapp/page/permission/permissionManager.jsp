@@ -13,6 +13,12 @@
     <link rel="stylesheet" href="/static/layui/css/layui.css" media="all">
     <link rel="stylesheet" href="/static/fontawesome6/css/all.min.css" media="all">
     <script src="/static/layui/layui.js"></script>
+
+
+    <link rel="stylesheet" href="/static/zTree/css/zTreeStyle/zTreeStyle.css" />
+    <script src="/static/zTree/js/jquery-1.4.4.min.js"></script>
+    <script src="/static/zTree/js/jquery.ztree.core.min.js"></script>
+    <script src="/static/zTree/js/jquery.ztree.excheck.min.js"></script>
 </head>
 <body>
 
@@ -29,7 +35,7 @@
         <div class="layui-col-md9">
             <div class="layui-card">
                 <div class="layui-card-header" id="permission_title_div">权限</div>
-                <div class="layui-card-body" id="permission_div">
+                <div class="layui-card-body ztree" id="permission_div">
 
                 </div>
             </div>
@@ -39,8 +45,6 @@
 <script>
     layui.use(function () {
         var tree = layui.tree;
-        var $ = layui.jquery;
-
         $(document).ready(function () {
             $.ajax({
                 url: '/permission/initDepartmentTree',
@@ -77,51 +81,8 @@
                     departmentId: departmentId
                 },
                 success: function (rt) {
-                    var listener = false;
                     if (rt.status) {
-                        var permissionTree = tree.render({
-                            elem: '#permission_div',
-                            data: rt.data,
-                            onlyIconControl: true,
-                            showCheckbox: true,
-                            id: 'permission_tree',
-                            oncheck: function(obj) {
-                                listenerPermissionTree();
-                            }
-                        });
-
-                        setTimeout(function() {
-                            listener = true;
-                        }, 1000);
-                        let arr = [];
-                        function listenerPermissionTree() {
-                            if (listener) {
-                                var checkData = permissionTree.getChecked('permission_tree');
-                                arr = [];
-                                checkNode(checkData);
-                                //遍历之后将 arr 赋值给后台
-                                $.ajax({
-                                    url: '/permission/updatePermission',
-                                    type: 'post',
-                                    dataType: 'json',
-                                    data: {
-                                        departmentId: departmentId,
-                                        permissionIds: arr
-                                    },
-                                    success: function (rt) {
-                                        layer.msg(rt.msg);
-                                    }
-                                });
-                            }
-                        }
-                        function checkNode(node) {
-                            for(var i = 0; i < node.length; i++){
-                                arr.push(node[i].id);
-                                if (node[i].children && node[i].children.length > 0) {
-                                    checkNode(node[i].children);
-                                }
-                            }
-                        }
+                        showPermissionTree(rt.data, departmentId);
                     }
                 }
             });
@@ -129,7 +90,51 @@
 
     });
 
+    function showPermissionTree(_data, departmentId) {
+        var setting = {
+            check: {
+                enable: true,
+                chkStyle: "checkbox",
+                chkboxType: { "Y": "ps", "N": "ps" }
+            },
+            data: {
+                simpleData: {
+                    enable: true,
+                    pIdKey: "pId",
+                    idKey: "id",
+                    rootPId: -1
+                },
+                key: {
+                    name: "name"
+                }
+            },
+            callback: {
+                onCheck: function(event, treeId, treeNode){
+                    var nodes = $.fn.zTree.getZTreeObj("permission_div").getCheckedNodes(true);
+                    var arr = nodes.map(function(node) {
+                        return node.id;
+                    });
 
+                    // 发送选中的权限数据到后台
+                    $.ajax({
+                        url: '/permission/updatePermission',
+                        type: 'post',
+                        dataType: 'json',
+                        data: {
+                            departmentId: departmentId,
+                            permissionIds: arr
+                        },
+                        success: function (rt) {
+                            layer.msg(rt.msg);
+                        }
+                    });
+                }
+            }
+        };
+
+        // 渲染 zTree
+        $.fn.zTree.init($("#permission_div"), setting, _data);
+    }
 
 </script>
 </body>
