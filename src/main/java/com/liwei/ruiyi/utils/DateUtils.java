@@ -12,7 +12,7 @@ public class DateUtils {
         String startDate = "";
         String endDate = "";
         endDate = DateUtils.getSystemDate();
-        startDate = DateUtils.addDay(endDate, -7);
+        startDate = DateUtils.addDay(endDate, -1);
         System.out.println(startDate + "  " + endDate);
     }
 

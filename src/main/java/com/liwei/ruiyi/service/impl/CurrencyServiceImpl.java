@@ -6,6 +6,7 @@ import com.liwei.ruiyi.bo.TCurrencyInfo;
 import com.liwei.ruiyi.bo.TExchangeRate;
 import com.liwei.ruiyi.service.CurrencyService;
 import com.liwei.ruiyi.dao.TCurrencyDao;
+import com.liwei.ruiyi.utils.DateUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
@@ -142,5 +143,11 @@ public class CurrencyServiceImpl implements CurrencyService {
         }
 
         currencyDao.saveOrUpdateRate(exchangeRate);
+    }
+
+    @Override
+    public boolean checkOrDownloadCurrency() {
+        boolean isGetCurrency = currencyDao.isGetCurrency();
+        return false;
     }
 }

@@ -53,4 +53,11 @@ public class CurrencyController {
             return rj.toJSONString();
         }
     }
+    @RequestMapping("/uploadCurrency")
+    @ResponseBody
+    public String checkOrDownloadCurrency() {
+        JSONObject rj = new JSONObject();
+        boolean status = currencyService.checkOrDownloadCurrency();
+        return rj.toJSONString();
+    }
 }

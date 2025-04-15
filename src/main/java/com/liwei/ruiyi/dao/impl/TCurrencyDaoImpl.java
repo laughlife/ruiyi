@@ -41,4 +41,11 @@ public class TCurrencyDaoImpl implements TCurrencyDao {
             jdbc.update(sql, args);
         }
     }
+
+    @Override
+    public boolean isGetCurrency() {
+        String sql = "select count(0) from t_exchange_rate where `date` = ?";
+        int count = jdbc.queryForObject(sql, Integer.class);
+        return false;
+    }
 }

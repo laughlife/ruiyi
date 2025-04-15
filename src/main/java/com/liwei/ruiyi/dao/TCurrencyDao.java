@@ -11,4 +11,6 @@ public interface TCurrencyDao {
     List<TCurrencyInfo> getCurrencyInfo();
 
     void saveOrUpdateRate(TExchangeRate exchangeRate);
+
+    boolean isGetCurrency();
 }
