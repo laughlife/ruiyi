@@ -53,7 +53,7 @@ public class CurrencyController {
             return rj.toJSONString();
         }
     }
-    @RequestMapping("/uploadCurrency")
+    @RequestMapping("/checkOrDownloadCurrency")
     @ResponseBody
     public String checkOrDownloadCurrency() {
         JSONObject rj = new JSONObject();

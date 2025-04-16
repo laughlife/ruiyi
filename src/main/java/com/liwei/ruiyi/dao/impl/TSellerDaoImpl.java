@@ -47,4 +47,16 @@ public class TSellerDaoImpl implements TSellerDao {
         String sql = "select * from t_seller";
         return jdbc.query(sql,new TSellerMapper());
     }
+
+    @Override
+    public List<TSeller> getUserSellers(String id) {
+        String sql = "select * from t_seller where sid in (select seller_id from t_user_seller where user_id = ?)";
+        return jdbc.query(sql, new TSellerMapper(), id);
+    }
+
+    @Override
+    public List<TSeller> queryUnbindShop() {
+        String sql = "select * from t_seller where sid not in (select distinct seller_id from t_user_seller)";
+        return jdbc.query(sql, new TSellerMapper());
+    }
 }

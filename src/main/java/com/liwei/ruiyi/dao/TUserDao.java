@@ -2,7 +2,9 @@ package com.liwei.ruiyi.dao;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.liwei.ruiyi.bo.TDepartment;
+import com.liwei.ruiyi.bo.TSeller;
 import com.liwei.ruiyi.bo.TUser;
+import com.liwei.ruiyi.bo.TUserSeller;
 import com.liwei.ruiyi.utils.PageUtils;
 import org.springframework.stereotype.Service;
 
@@ -37,4 +39,7 @@ public interface TUserDao {
     boolean updateAdmin(String id);
 
     boolean updateBan(String id);
+
+    List<TUser> queryAllUser();
+
 }

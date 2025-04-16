@@ -42,13 +42,7 @@ public class TUserServiceImpl implements TUserService {
             userJson.put("username", user.getUsername());
             userJson.put("name", user.getName());
             userJson.put("phone", user.getPhone());
-            Integer departmentId = user.getDepartmentId();
-            if (departmentId != null && departmentId > 0) {
-                TDepartment department = departmentDao.getBmById(String.valueOf(departmentId));
-                userJson.put("department", department.getName());
-            }else{
-                userJson.put("department", "");
-            }
+            userJson.put("department", user.getDepartmentName());
             if(user.getIsAdmin() == 1){
                 userJson.put("is_admin", "是");
             }else{

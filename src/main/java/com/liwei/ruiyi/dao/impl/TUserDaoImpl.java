@@ -2,8 +2,11 @@ package com.liwei.ruiyi.dao.impl;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.liwei.ruiyi.bo.TDepartment;
+import com.liwei.ruiyi.bo.TSeller;
 import com.liwei.ruiyi.bo.TUser;
+import com.liwei.ruiyi.bo.TUserSeller;
 import com.liwei.ruiyi.bo.mapper.TDepartmentMapper;
+import com.liwei.ruiyi.bo.mapper.TSellerMapper;
 import com.liwei.ruiyi.bo.mapper.TUserMapper;
 import com.liwei.ruiyi.dao.TUserDao;
 import com.liwei.ruiyi.utils.DateUtils;
@@ -130,11 +133,12 @@ public class TUserDaoImpl implements TUserDao {
     @Override
     public boolean updateUserMessage(TUser user) {
         Integer department_id = user.getDepartmentId();
-        String sql = "select code from t_department where id = ?";
-        String departmentCode = jdbc.queryForObject(sql, String.class, department_id);
+        String sql = "select * from t_department where id = ?";
+        TDepartment department = jdbc.queryForObject(sql, new TDepartmentMapper(), department_id);
 
-        sql = "update t_user set username=?,name = ?,phone = ?,department_code=?,department_id=? where id = ?";
-        Object[] args = {user.getUsername(), user.getName(), user.getPhone(), departmentCode, department_id, user.getId()};
+        sql = "update t_user set username=?,name = ?,phone = ?,department_code=?,department_id=?,department_name=? where id = ?";
+        Object[] args = {user.getUsername(), user.getName(), user.getPhone(), department.getCode(), department_id,
+                department.getName(),user.getId()};
         int count = 0;
         try {
             //这里添加try catch是因为这里有可能会出现索引冲突
@@ -194,4 +198,13 @@ public class TUserDaoImpl implements TUserDao {
         }
         return count > 0;
     }
+
+    @Override
+    public List<TUser> queryAllUser() {
+        String sql = "select * from t_user where is_ban = 0";
+        List<TUser> userList = jdbc.query(sql, new TUserMapper());
+        return userList;
+    }
+
+
 }

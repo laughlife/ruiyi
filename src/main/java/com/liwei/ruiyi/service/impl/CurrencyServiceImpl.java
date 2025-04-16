@@ -148,6 +148,7 @@ public class CurrencyServiceImpl implements CurrencyService {
     @Override
     public boolean checkOrDownloadCurrency() {
         boolean isGetCurrency = currencyDao.isGetCurrency();
+        //todo 更新对应的汇率信息
         return false;
     }
 }

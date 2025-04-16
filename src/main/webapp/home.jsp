@@ -75,7 +75,7 @@
                 </li>
                 <li class="layui-nav-item" lay-unselect>
                     <a href="javascript:;">
-                        <cite>${user.name}</cite>
+                        <cite>${user.departmentName}：${user.name}</cite>
                     </a>
                     <dl class="layui-nav-child">
                         <dd><a lay-href="/user/goUpdateOwnPage">基本资料</a></dd>

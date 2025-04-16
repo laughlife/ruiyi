@@ -51,6 +51,10 @@ public class TDepartmentDaoImpl implements TDepartmentDao {
         String value = bm.getString("value");
         String sql = "update t_department set " + field + " = ? where id = ?";
         try {
+            if(field.equals("name")){
+                String sql2 = "update t_user set department_name = ? where department_id = ?";
+                jdbc.update(sql2, value, id);
+            }
             return jdbc.update(sql, value, id) > 0;
         } catch (Exception e) {
             e.printStackTrace();
