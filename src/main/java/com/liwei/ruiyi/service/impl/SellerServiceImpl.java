@@ -11,11 +11,14 @@ import com.liwei.ruiyi.dao.TSellerDao;
 import com.liwei.ruiyi.dao.TUserDao;
 import com.liwei.ruiyi.service.LingxingService;
 import com.liwei.ruiyi.service.SellerService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository("sellerService")
 public class SellerServiceImpl implements SellerService {
@@ -106,6 +109,7 @@ public class SellerServiceImpl implements SellerService {
                 JSONObject s = new JSONObject();
                 s.put("id", seller.getSid());
                 s.put("name", seller.getName());
+                s.put("userId",id);
                 s.put("country", seller.getCountry());
                 result.add(s);
             }
@@ -115,35 +119,85 @@ public class SellerServiceImpl implements SellerService {
     }
 
     @Override
-    public List<JSONObject> queryUnbindShop(String userId) {
-        List<TSeller> sellers = sellerDao.queryUnbindShop();
-        if (sellers != null && sellers.size() > 0) {
-            List<JSONObject> result = new ArrayList<>();
-            for (TSeller seller : sellers) {
-                JSONObject s = new JSONObject();
-                s.put("id", seller.getSid());
-                s.put("name", seller.getName());
-                s.put("country", seller.getCountry());
-                s.put("userId", userId);
-                //0停止同步,1正常,2授权异常,3欠费停服
-                switch (seller.getStatus()) {
-                    case 0:
-                        s.put("status", "停止同步");
-                        break;
-                    case 1:
-                        s.put("status", "正常");
-                        break;
-                    case 2:
-                        s.put("status", "授权异常");
-                        break;
-                    case 3:
-                        s.put("status", "欠费停服");
-                        break;
-                }
-                result.add(s);
-            }
-            return result;
+    public List<JSONObject> queryShopToBind(String userId) {
+        List<TSeller> sellers = sellerDao.queryAllSellers();
+        List<JSONObject> user_seller = sellerDao.getAllUserSellersTies();
+
+        // 如果没有卖家信息，直接返回空列表
+        if (sellers == null || sellers.isEmpty()) {
+            return List.of();
         }
-        return List.of();
+
+        // 将 user_seller 转换为 Map，避免重复遍历
+        Map<Integer, String> sellerUserMap = new HashMap<>();
+        Map<Integer, Boolean> userCheckStatusMap = new HashMap<>();
+        for (JSONObject us : user_seller) {
+            Integer sellerId = us.getInteger("seller_id");
+            Integer currentUserId = us.getInteger("user_id");
+
+            // 拼接绑定信息
+            String bind = sellerUserMap.get(sellerId);
+            if (bind == null) {
+                sellerUserMap.put(sellerId, us.getString("name"));
+            } else {
+                sellerUserMap.put(sellerId, bind + " | " + us.getString("name"));
+            }
+
+            // 记录是否已绑定当前用户
+            if (currentUserId.equals(Integer.parseInt(userId))) {
+                userCheckStatusMap.put(sellerId, true);
+            }
+        }
+
+        // 构建结果
+        List<JSONObject> result = new ArrayList<>();
+        for (TSeller seller : sellers) {
+            JSONObject s = new JSONObject();
+            s.put("id", seller.getSid());
+            s.put("name", seller.getName());
+            s.put("country", seller.getCountry());
+            s.put("userId", userId);
+
+            // 设置同步状态
+            String status = switch (seller.getStatus()) {
+                case 0 -> "停止同步";
+                case 1 -> "正常";
+                case 2 -> "授权异常";
+                case 3 -> "欠费停服";
+                default -> "未知状态";
+            };
+            s.put("status", status);
+
+            // 设置绑定信息
+            String bind = sellerUserMap.get(seller.getSid());
+            if (bind != null) {
+                s.put("bind", bind);
+            }
+
+            // 设置 checkStatus
+            s.put("LAY_CHECKED", userCheckStatusMap.getOrDefault(seller.getSid(), false));
+
+            result.add(s);
+        }
+
+        return result;
+    }
+
+    @Override
+    public boolean bindSeller(String userId, JSONArray array) {
+        boolean rs = true;
+        sellerDao.clearUserSellers(userId);
+        for (int i = 0; i < array.size(); i++) {
+            String sellerId = array.getJSONObject(i).getString("id");
+            if(!sellerDao.saveNewUserSeller(userId, sellerId)){
+                rs = false;
+            }
+        }
+        return rs;
+    }
+
+    @Override
+    public boolean unbindShop(String userId, String sellerId) {
+        return sellerDao.unbindShop(userId, sellerId);
     }
 }

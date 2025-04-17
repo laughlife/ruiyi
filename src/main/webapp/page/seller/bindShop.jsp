@@ -20,7 +20,7 @@
     <div class="layui-row layui-col-space15">
         <div class="layui-col-md12">
             <div class="layui-card" id="showShop">
-                <div class="layui-card-header">店铺列表</div>
+                <div class="layui-card-header">${queryUser.name} —— 绑定店铺</div>
                 <div class="layui-card-body">
                     <table id="shopTable" class="layui-table" lay-filter="shopTableFilter"></table>
                 </div>
@@ -28,12 +28,24 @@
         </div>
     </div>
 </div>
-
-<script type="text/html" id="shopTableToolbar">
-    <div class="layui-btn-container">
-        <button class="layui-btn layui-bg-blue layui-btn-sm" lay-event="unbindShop">
-            <i class="fa-solid fa-user fa-fw"></i>绑定
-        </button>
+<script type="text/html" id="shopToolbar">
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">店铺：</label>
+            <div class="layui-input-block">
+                <input type="text" id="key" name="key" placeholder="请输入要搜索的店铺" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <button type="button" id="search_user_btn"
+                    class="layui-btn layui-btn-sm layui-bg-green"
+                    lay-event="search">
+                <i class="fa-solid fa-magnifying-glass"></i> 搜索
+            </button>
+            <button class="layui-btn layui-btn-sm" lay-event="getCheckData">
+                <i class="fa-solid fa-link"></i>绑定选定店铺
+            </button>
+        </div>
     </div>
 </script>
 <script>
@@ -44,39 +56,55 @@
 
         var shopTable = table.render({
             elem: '#shopTable',
-            url: '/seller/queryUnbindShop',
-            where: {'userId': '${userId}'},
+            url: '/seller/queryShopToBind',
+            where: {'userId': '${queryUser.id}'},
+            toolbar: '#shopToolbar',
             page: false,
             cols: [[
-                {type: 'numbers', title: '编号', width: 80},
+                {type: 'checkbox', fixed: 'left'},
                 {title: '店铺', width: 150, field: 'name'},
                 {title: '国家', width: 150, field: 'country'},
-                {align: 'center', title: '操作', toolbar: '#shopTableToolbar'},
-                {field: 'status', title: '状态', templet: function(d) {
+                {title: '绑定关系', field: 'bind'},
+                {field: 'status', title: '授权状态', templet: function(d) {
                         return d.status === '正常' ? '<span style="color:green">'+d.status+'</span>' : '<span style="color:red">'+d.status+'</span>';
                     }
                 }
             ]]
         });
 
-        table.on('tool(shopTableFilter)', function (obj) {
-                var _data = obj.data;
-                if (obj.event === 'query') {
-
-                }else if (obj.event === 'unbindShop') {
+        table.on('toolbar(shopTableFilter)', function(obj){
+            var id = obj.config.id;
+            var checkStatus = table.checkStatus(id);
+            var othis = lay(this);
+            switch(obj.event){
+                case 'getCheckData':
+                    var data = checkStatus.data;
+                    var requestData = {
+                        userId:"${queryUser.id}",
+                        sellers: JSON.stringify(data.map(item => ({ id: item.id })))
+                    };
                     $.ajax({
-                        url: '/bm/deleteBmcy',
+                        url: '/seller/bindSeller',
                         type: 'POST',
-                        data: {'id': _data.id},
+                        data: requestData,
                         dataType: 'json',
                         success: function (res) {
-                            bmcyTable.reload();
+                            if(res.status){
+                                layer.msg(res.msg, {icon: 1, time: 1000}, function () {
+                                    var index = parent.layer.getFrameIndex(window.name);
+                                    parent.layer.close(index);
+                                });
+                            }else{
+                                layer.msg(res.msg, {icon: 2, time: 1000});
+                            }
                         }
                     });
-                }
+                    break;
+                case 'search':
+                    layer.msg('搜索功能时间太紧先不开发', {icon: 2, time: 1000});
+                    break;
             }
-        );
-
+        });
 
     });
 </script>

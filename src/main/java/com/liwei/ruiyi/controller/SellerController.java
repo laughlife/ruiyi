@@ -1,17 +1,22 @@
 package com.liwei.ruiyi.controller;
 
+import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.liwei.ruiyi.bo.TUser;
 import com.liwei.ruiyi.service.MarketplaceService;
+import com.liwei.ruiyi.service.TUserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import com.liwei.ruiyi.service.SellerService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/seller")
@@ -22,6 +27,9 @@ public class SellerController {
 
     @Autowired
     SellerService sellerService;
+
+    @Autowired
+    TUserService userService;
 
     @RequestMapping("/seller_list")
     @ResponseBody
@@ -39,10 +47,12 @@ public class SellerController {
         //店铺绑定
         return "page/seller/shop";
     }
+
     @RequestMapping("/goBindSellerPage")
     public String goBindSellerPage(String userId) {
         //店铺绑定
-        request.getSession().setAttribute("userId",userId);
+        TUser user = userService.queryUserById(userId);
+        request.setAttribute("queryUser", user);
         return "page/seller/bindShop";
     }
 
@@ -79,16 +89,38 @@ public class SellerController {
         return rj.toJSONString();
     }
 
-    @RequestMapping("/queryUnbindShop")
+    @RequestMapping("/queryShopToBind")
     @ResponseBody
-    public String queryUnbindShop(String userId) {
+    public String queryShopToBind(String userId) {
         //查询用户绑定的店铺
-        List<JSONObject> userList = sellerService.queryUnbindShop(userId);
+        List<JSONObject> userList = sellerService.queryShopToBind(userId);
         JSONObject rj = new JSONObject();
         rj.put("code", 0);
         rj.put("msg", "操作成功");
         rj.put("count", userList.isEmpty() ? 0 : userList.size());
         rj.put("data", userList);
+        return rj.toJSONString();
+    }
+
+    @PostMapping("/bindSeller")
+    @ResponseBody
+    public String bindSeller(String userId, String sellers) {
+        //用户绑定店铺
+        JSONArray array = JSONArray.parseArray(sellers);
+        JSONObject rj = new JSONObject();
+        boolean status = sellerService.bindSeller(userId, array);
+        rj.put("status", status);
+        rj.put("msg", status ? "店铺绑定成功" : "店铺绑定失败");
+        return rj.toJSONString();
+    }
+    @PostMapping("/unbindShop")
+    @ResponseBody
+    public String unbindShop(String userId, String sellerId) {
+        //用户绑定店铺
+        JSONObject rj = new JSONObject();
+        boolean status = sellerService.unbindShop(userId, sellerId);
+        rj.put("status", status);
+        rj.put("msg", status ? "店铺绑定成功" : "店铺绑定失败");
         return rj.toJSONString();
     }
 

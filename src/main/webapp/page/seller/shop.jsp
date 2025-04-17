@@ -59,7 +59,7 @@
         var table = layui.table;
         var layer = layui.layer;
         var $ = layui.jquery;
-        var userTable;
+        var userTable,shopTable;
 
         var userTable = table.render({
             elem: '#userTable',
@@ -93,16 +93,16 @@
                     });
                 } else if (obj.event === 'query') {
                     $('#showShop').show();
-                    table.render({
+                    shopTable = table.render({
                         elem: '#shopTable',
                         url: '/seller/queryShop',
                         where: {'id': _data.id},
                         page: false,
                         cols: [[
                             {type: 'numbers', title: '编号', width: 80},
-                            {title: '店铺', width: 150, field: 'name'},
-                            {title: '国家', width: 150, field: 'country'},
-                            {align: 'center', title: '操作', toolbar: '#shopTableToolbar', width: 400}
+                            {title: '店铺',  field: 'name'},
+                            {title: '国家',  field: 'country'},
+                            {align: 'center', title: '操作', toolbar: '#shopTableToolbar'}
                         ]]
                     });
                 }
@@ -112,14 +112,21 @@
 
         table.on('tool(shopTableFilter)', function (obj) {
             var _data = obj.data;
+            var userId = _data.userId;
             if (obj.event === 'unbindShop') {
                 $.ajax({
-                    url: '/bm/deleteBmcy',
+                    url: '/seller/unbindShop',
                     type: 'POST',
-                    data: {'id': _data.id},
+                    data: {
+                        'sellerId': _data.id,
+                        'userId': userId
+                    },
                     dataType: 'json',
                     success: function (res) {
-                        bmcyTable.reload();
+                        userTable.reload();
+                        shopTable.reload({
+                            where: {'id': userId}
+                        });
                     }
                 });
             }

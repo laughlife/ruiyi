@@ -1,5 +1,6 @@
 package com.liwei.ruiyi.dao;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.liwei.ruiyi.bo.TSeller;
 import java.util.List;
 import org.springframework.stereotype.Service;
@@ -12,5 +13,11 @@ public interface TSellerDao {
 
     List<TSeller> getUserSellers(String id);
 
-    List<TSeller> queryUnbindShop();
+    List<JSONObject> getAllUserSellersTies();
+
+    void clearUserSellers(String userId);
+
+    boolean saveNewUserSeller(String userId, String sellerId);
+
+    boolean unbindShop(String userId, String sellerId);
 }
