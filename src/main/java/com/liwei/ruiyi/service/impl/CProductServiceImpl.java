@@ -61,7 +61,12 @@ public class CProductServiceImpl implements CProductService {
 
     @Override
     public boolean updateProduct(CProduct product) {
-        return cproductDao.updateProduct(product);
+        int newId = cproductDao.updateProduct(product);
+        if(newId != product.getId()){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     @Override

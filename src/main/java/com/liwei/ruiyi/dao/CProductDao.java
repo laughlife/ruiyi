@@ -13,7 +13,7 @@ public interface CProductDao {
 
     CProduct queryProductById(String id);
 
-    boolean updateProduct(CProduct product);
+    int updateProduct(CProduct product);
 
     JSONObject deleteProduct(String id);
 }

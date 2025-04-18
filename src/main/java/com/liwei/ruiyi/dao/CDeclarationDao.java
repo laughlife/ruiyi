@@ -17,4 +17,6 @@ public interface CDeclarationDao {
     CDeclaration queryDeclarationById(String id);
 
     boolean queren(String id);
+
+    boolean updatePurcacheMsg(CDeclaration dbDec);
 }

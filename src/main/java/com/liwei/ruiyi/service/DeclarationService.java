@@ -17,4 +17,6 @@ public interface DeclarationService {
     CDeclaration queryDeclarationById(String id);
 
     boolean queren(String id);
+
+    boolean buy(CDeclaration dec);
 }

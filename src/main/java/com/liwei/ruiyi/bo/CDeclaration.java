@@ -27,6 +27,7 @@ public class CDeclaration {
     private BigDecimal costAllPrice;
     private BigDecimal totalPrice;
     private Integer buyQuantity;
+    private Integer planTotalQuantity;
     private String other;
     private Integer shippedQuantity;
     private Integer receivedQuantity;
@@ -34,6 +35,7 @@ public class CDeclaration {
     private String confirmTime;
     private String purchaseTime;
     private String planShipTime;
+    private String shipTime;
     private String planReceiveTime;
     private String status;
 }

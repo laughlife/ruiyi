@@ -234,11 +234,11 @@ public class DeclarationController {
 
     @RequestMapping("/buy")
     @ResponseBody
-    public String buy(String id) {
-        boolean status = declarationService.queren(id);
+    public String buy(CDeclaration dec) {
+        boolean status = declarationService.buy(dec);
         JSONObject rj = new JSONObject();
         rj.put("status", status);
-        rj.put("msg", status ? "已确认，采购信息已锁定" : "操作失败，请联系开发人员排查错误原因，错误码/declaration/queren");//确认
+        rj.put("msg", status ? "采购信息已保存" : "采购信息保存失败，错误码/declaration/buy");//确认
         return rj.toJSONString();
     }
 

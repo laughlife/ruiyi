@@ -45,11 +45,11 @@ public class CDeclarationDaoImpl implements CDeclarationDao {
             sql = "select count(0) from c_declaration  where 1 = ? ";
             querySql = "select * from c_declaration where 1 = ? ";
             args.add(1);
-        }else if (StringUtils.isNotBlank(isLadder) && isLadder.equals("1")) {
+        } else if (StringUtils.isNotBlank(isLadder) && isLadder.equals("1")) {
             sql = "select count(0) from c_declaration where user_id in (select id from t_user where department_code like ?)";
             querySql = "select * from c_declaration where user_id in (select id from t_user where department_code like ?)";
             args.add(departmentCode + "%");
-        }else{
+        } else {
             args.add(user_id);
         }
 
@@ -103,9 +103,9 @@ public class CDeclarationDaoImpl implements CDeclarationDao {
                 "status,seller_id,seller_name,shc) values(?,?,?,?,?," +
                 "?,?,?,?,?," +
                 "?,?,?,?)";
-        Object[] args = {dec.getUserId(), dec.getUserName(), dec.getUserPhone(),dec.getProName(),dec.getAsin(),
-                dec.getImagePath(),dec.getPurchasePackages(),dec.getPerPackageQuantity(),dec.getTotalQuantity(),dec.getOther(),
-                "已申报",dec.getSellerId(),seller.getName(),dec.getShc()};
+        Object[] args = {dec.getUserId(), dec.getUserName(), dec.getUserPhone(), dec.getProName(), dec.getAsin(),
+                dec.getImagePath(), dec.getPurchasePackages(), dec.getPerPackageQuantity(), dec.getTotalQuantity(), dec.getOther(),
+                "已申报", dec.getSellerId(), seller.getName(), dec.getShc()};
         int count = jdbc.update(sql, args);
         return count > 0;
     }
@@ -118,9 +118,9 @@ public class CDeclarationDaoImpl implements CDeclarationDao {
         sql = "update c_declaration set pro_name = ?,link = ?,asin = ?,seller_id = ?,seller_name = ?," +
                 "shc = ?,image_path = ?,purchase_packages = ?,per_package_quantity = ?,total_quantity = ?," +
                 "other = ? where id = ?";
-        Object[] args = {dec.getProName(),dec.getLink(),dec.getAsin(),dec.getSellerId(),seller.getName(),
-                dec.getShc(),dec.getImagePath(),dec.getPurchasePackages(),dec.getPerPackageQuantity(),dec.getTotalQuantity(),
-                dec.getOther(),dec.getId()};
+        Object[] args = {dec.getProName(), dec.getLink(), dec.getAsin(), dec.getSellerId(), seller.getName(),
+                dec.getShc(), dec.getImagePath(), dec.getPurchasePackages(), dec.getPerPackageQuantity(), dec.getTotalQuantity(),
+                dec.getOther(), dec.getId()};
         int count = jdbc.update(sql, args);
         return count > 0;
     }
@@ -139,5 +139,18 @@ public class CDeclarationDaoImpl implements CDeclarationDao {
     public boolean queren(String id) {
         String sql = "update c_declaration set status = '已确认',confirm_time = current_timestamp where id = ?";
         return jdbc.update(sql, id) > 0;
+    }
+
+    @Override
+    public boolean updatePurcacheMsg(CDeclaration dbDec) {
+        String sql = "select * from t_seller where sid = ?";
+        TSeller seller = jdbc.queryForObject(sql, new TSellerMapper(), dbDec.getSellerId());
+
+        sql = "update c_declaration set cost_price = ?,cost_all_price = ?,total_price = ?,buy_quantity = ?,plan_total_quantity = ?," +
+                "purchase_time = current_timestamp,plan_ship_time = ?,seller_id = ?,seller_name = ?,status = '已采购' where id = ?";
+        Object[] args = {dbDec.getCostPrice(), dbDec.getCostAllPrice(), dbDec.getTotalPrice(), dbDec.getBuyQuantity(), dbDec.getPlanTotalQuantity(),
+                dbDec.getPlanShipTime(), dbDec.getSellerId(), seller.getName(), dbDec.getId()};
+        int count = jdbc.update(sql, args);
+        return count > 0;
     }
 }

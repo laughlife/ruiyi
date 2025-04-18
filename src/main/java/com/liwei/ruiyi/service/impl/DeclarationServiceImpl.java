@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -96,5 +97,63 @@ public class DeclarationServiceImpl implements DeclarationService {
     @Override
     public boolean queren(String id) {
         return declarationDao.queren(id);
+    }
+
+    @Override
+    public boolean buy(CDeclaration dec) {
+        //这里的逻辑比较复杂，需要逐条处理
+        //{"buyQuantity":200,
+        // "costPrice":2.3,
+        // "id":3,
+        // "planShipTime":"2025-04-23",
+        // "proId":4,
+        // "proName":"测试商品",
+        // "totalQuantity":200}
+
+        //数据库中的的采购信息
+        CDeclaration db_dec = declarationDao.queryDeclarationById(dec.getId().toString());
+        db_dec.setPlanShipTime(dec.getPlanShipTime());
+
+        //数据库中的商品信息
+        CProduct product = cproductDao.queryProductById(db_dec.getProId().toString());
+        //获取商品采购价格
+        BigDecimal costPrice = product.getCostPrice();
+        //如果商品的采购价格和本次的商品采购价格不相等的情况下，更新商品采购价格
+        BigDecimal pageCostPrice = dec.getCostPrice();
+        if(!costPrice.equals(pageCostPrice)){
+            product.setCostPrice(pageCostPrice);
+            int newId = cproductDao.updateProduct(product);
+            product = cproductDao.queryProductById(newId + "");
+            db_dec.setProId(newId);
+        }
+
+        //获取未发货商品数量
+        int unshipQuantity = product.getUnshipQuantity();
+        //获取未发货商品总价值
+        BigDecimal unshipPrice = product.getUnshipPrice();
+        //获取本次采购数量
+        int buyQuantity = dec.getBuyQuantity();
+        //本次采购数量 * 本次采购单价 = 本次采购总价值
+        BigDecimal buyPrice = pageCostPrice.multiply(new BigDecimal(buyQuantity));
+        //本次采购总价值 + 未发货商品总价值 = 本次发货总价值
+        BigDecimal totalPrice = buyPrice.add(unshipPrice);
+
+        //开始设置采购信息
+        //本次商品采购单价
+        db_dec.setCostPrice(pageCostPrice);
+        //本次商品采购总价
+        db_dec.setCostAllPrice(totalPrice);
+        //本次商品总价值
+        db_dec.setTotalPrice(totalPrice);
+        //本次采购量
+        db_dec.setBuyQuantity(buyQuantity);
+        //如果未发货商品数量 + 本次采购数量 >= 采购总量，则说明此次是足额发货，按照需求量发货，否则就按照库存+采购量发货
+        if(unshipQuantity + buyQuantity >= db_dec.getTotalQuantity()){
+            db_dec.setPlanTotalQuantity(db_dec.getTotalQuantity());
+        }else{
+            db_dec.setPlanTotalQuantity(unshipQuantity + buyQuantity);
+        }
+        //修改采购信息  purchase
+        return declarationDao.updatePurcacheMsg(db_dec);
     }
 }
