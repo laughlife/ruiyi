@@ -89,4 +89,10 @@ public class TSellerDaoImpl implements TSellerDao {
         String sql = "delete from t_user_seller where user_id = ? and seller_id = ?";
         return jdbc.update(sql, userId, sellerId) > 0;
     }
+
+    @Override
+    public List<TSeller> queryShopByDepartmentCode(String code) {
+        String sql = "select * from t_seller where sid in (select seller_id from t_user_seller where user_id in (select id from t_user where department_code like ?))";
+        return List.of();
+    }
 }

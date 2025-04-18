@@ -159,49 +159,48 @@
         });
 
         table.on('tool(productTableFilter)', function (obj) {
-                var _data = obj.data;
-                if (obj.event === 'delete') {
-                    $.ajax({
-                        url: '/product/deleteProduct',
-                        type: 'POST',
-                        data: {
-                            'id': _data.id
-                        },
-                        dataType: 'json',
-                        success: function (res) {
-                            layer.msg(res.msg);
-                            if(res.status){
-                                productTable.reload();
-                            }
-                        }
-                    });
-                } else if (obj.event === 'update') {
-                    layer.open({
-                        title: '修改商品',
-                        type: 2,
-                        shade: 0.5,
-                        shadeClose: true,
-                        area: ['60%', '80%'],
-                        content: '/product/goUpdateProduct?id=' + _data.id,
-                        end: function () {
+            var _data = obj.data;
+            if (obj.event === 'delete') {
+                $.ajax({
+                    url: '/product/deleteProduct',
+                    type: 'POST',
+                    data: {
+                        'id': _data.id
+                    },
+                    dataType: 'json',
+                    success: function (res) {
+                        layer.msg(res.msg);
+                        if(res.status){
                             productTable.reload();
                         }
-                    });
-                } else if (obj.event === 'history') {
-                    layer.open({
-                        title: '修改商品',
-                        type: 2,
-                        shade: 0.5,
-                        shadeClose: true,
-                        area: ['60%', '80%'],
-                        content: '/product/goUpdateProduct?id=' + _data.id,
-                        end: function () {
-                            productTable.reload();
-                        }
-                    });
-                }
+                    }
+                });
+            } else if (obj.event === 'update') {
+                layer.open({
+                    title: '修改商品',
+                    type: 2,
+                    shade: 0.5,
+                    shadeClose: true,
+                    area: ['60%', '80%'],
+                    content: '/product/goUpdateProduct?id=' + _data.id,
+                    end: function () {
+                        productTable.reload();
+                    }
+                });
+            } else if (obj.event === 'history') {
+                layer.open({
+                    title: '修改商品',
+                    type: 2,
+                    shade: 0.5,
+                    shadeClose: true,
+                    area: ['60%', '80%'],
+                    content: '/product/goUpdateProduct?id=' + _data.id,
+                    end: function () {
+                        productTable.reload();
+                    }
+                });
             }
-        );
+        });
 
     });
 </script>

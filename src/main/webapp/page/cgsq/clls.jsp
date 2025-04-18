@@ -4,7 +4,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>发货申报</title>
+    <title>采购历史</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport"
@@ -21,12 +21,12 @@
     <div class="layui-row layui-col-space15">
         <div class="layui-col-md12">
             <div class="layui-card">
-                <div class="layui-card-header">我的申报</div>
+                <div class="layui-card-header">采购历史</div>
                 <div class="layui-card-body">
                     <form class="layui-form layui-form-pane" action="">
                         <div class="layui-form-item">
                             <div class="layui-inline">
-                                <label class="layui-form-label">申报商品</label>
+                                <label class="layui-form-label">状态</label>
                                 <div class="layui-input-block">
                                     <input type="text" id="key" name="key" placeholder="请输入搜索提示信息"
                                            class="layui-input">
@@ -72,7 +72,7 @@
     <div class="layui-btn-container">
         {{#  if(d.status == '已申报'){ }}
             <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="update">
-                <i class="fa-solid fa-rotate"></i>修改
+                <i class="fa-solid fa-rotate"></i>确认
             </button>
             <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete">
                 <i class="fa-solid fa-trash"></i>删除
@@ -164,6 +164,25 @@
                 content: '/declaration/goCreateDeclaration',
                 end: function () {
                     declarationTable.reload();
+                }
+            });
+        });
+
+        table.on('edit(declarationTableFilter)', function (obj) {
+            var data = obj.data;
+            var field = obj.field;
+            var value = obj.value;
+            $.ajax({
+                url: '/declaration/updateDeclaration',
+                type: 'POST',
+                data: {
+                    id: data.id,
+                    field: field,
+                    value: value
+                },
+                dataType: 'json',
+                success: function (res) {
+                    layer.msg(res.msg);
                 }
             });
         });

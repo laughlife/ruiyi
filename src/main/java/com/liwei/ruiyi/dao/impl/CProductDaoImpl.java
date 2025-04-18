@@ -8,10 +8,18 @@ import com.liwei.ruiyi.bo.mapper.CSupplierMapper;
 import com.liwei.ruiyi.dao.CProductDao;
 import com.liwei.ruiyi.utils.PageUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -86,27 +94,37 @@ public class CProductDaoImpl implements CProductDao {
         boolean status = false;
         //1. 首先备份现有状态到备份表中
         try {
-            String sql = "INSERT INTO c_product_history (pro_id, name, link, image_url, supplier_id, " +
-                    "supplier_name, cost_price, is_active, create_time, update_time, " +
-                    "disable_time, unship_quantity, unship_price, other, history)" +
-                    "SELECT id, name, link, image_url, supplier_id, " +
-                    "supplier_name, cost_price, is_active, create_time, current_timestamp, " +
-                    "disable_time, unship_quantity, unship_price, other,history " +
-                    "FROM c_product where id = ?";
+            String sql = "update c_product set is_active = 0,disable_time = current_timestamp where id = ?";
             jdbc.update(sql, product.getId());
+            String insertSql = "INSERT INTO c_product (name, link, image_url, supplier_id, supplier_name, " +
+                    "cost_price, is_active, create_time, update_time, disable_time, " +
+                    "unship_quantity, unship_price, other, history)" +
+                    "SELECT name, link, image_url, supplier_id, supplier_name, " +
+                    "cost_price, 1, create_time, update_time, null, " +
+                    "unship_quantity, unship_price, other, history " +
+                    "FROM c_product " +
+                    "WHERE id = ?";
+            KeyHolder keyHolder = new GeneratedKeyHolder();
+            jdbc.update(connection -> {
+                PreparedStatement ps = connection.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS);
+                ps.setInt(1, product.getId());
+                return ps;
+            }, keyHolder);
 
+            int id = keyHolder.getKey().intValue();
             //2. 开始更新商品信息
             sql = "select name from c_supplier where id = ?";
             String supplierName = jdbc.queryForObject(sql, String.class, product.getSupplierId());
+
             sql = "update c_product set name = ?,link = ?,image_url = ?,supplier_id = ?,supplier_name = ?," +
                     "cost_price = ?,other = ?,update_time = current_timestamp where id = ?";
             Object[] args = {product.getName(), product.getLink(), product.getImageUrl(), product.getSupplierId(), supplierName,
-                    product.getCostPrice(), product.getOther(), product.getId()};
+                    product.getCostPrice(), product.getOther(), id};
             jdbc.update(sql, args);
 
             //3. 更新产品剩余价值
             sql = "update c_product set unship_price = cost_price * unship_quantity where id = ?";
-            jdbc.update(sql, product.getId());
+            jdbc.update(sql, id);
             status = true;
         } catch (Exception e) {
             e.printStackTrace();

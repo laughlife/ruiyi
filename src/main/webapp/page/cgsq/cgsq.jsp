@@ -4,7 +4,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>发货申报</title>
+    <title>采购申请</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport"
@@ -21,19 +21,19 @@
     <div class="layui-row layui-col-space15">
         <div class="layui-col-md12">
             <div class="layui-card">
-                <div class="layui-card-header">我的申报</div>
+                <div class="layui-card-header">采购申请</div>
                 <div class="layui-card-body">
                     <form class="layui-form layui-form-pane" action="">
                         <div class="layui-form-item">
                             <div class="layui-inline">
-                                <label class="layui-form-label">申报商品</label>
+                                <label class="layui-form-label">状态</label>
                                 <div class="layui-input-block">
                                     <input type="text" id="key" name="key" placeholder="请输入搜索提示信息"
                                            class="layui-input">
                                 </div>
                             </div>
                             <div class="layui-inline" id="laydate-rangeLinked">
-                                <label class="layui-form-label">申报时间</label>
+                                <label class="layui-form-label">确认时间</label>
                                 <div class="layui-input-inline" style="width: 180px;">
                                     <input type="text" id="laydate-start" name="date_start" autocomplete="off" class="layui-input">
                                 </div>
@@ -49,13 +49,6 @@
                                     <i class="fa-solid fa-magnifying-glass"></i> 搜索
                                 </button>
                             </div>
-                            <div class="layui-inline">
-                                <button type="button" id="create_declaration_btn"
-                                        class="layui-btn layui-bg-blue"
-                                        lay-filter="data-create-btn">
-                                    <i class="fa-solid fa-plus"></i> 新建采购申报
-                                </button>
-                            </div>
                         </div>
                     </form>
                 </div>
@@ -67,19 +60,29 @@
         </div>
     </div>
 </div>
-
+<!--
+<button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="update">
+                <i class="fa-solid fa-angle-double-down"></i>处理
+            </button>
+<button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="update">
+            <i class="fa-solid fa-check"></i>查看
+        </button>
+<button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="show_log">
+                <i class="fa-solid fa-eye"></i>查看进度
+            </button>
+-->
 <script type="text/html" id="declarationTableToolbar">
     <div class="layui-btn-container">
         {{#  if(d.status == '已申报'){ }}
-            <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="update">
-                <i class="fa-solid fa-rotate"></i>修改
+            <button class="layui-btn layui-btn-sm layui-bg-red" lay-event="queren">
+                <i class="fa-solid fa-check"></i>确认
             </button>
-            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete">
-                <i class="fa-solid fa-trash"></i>删除
+        {{#  } else if(d.status == '已确认') { }}
+            <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="chakan">
+                <i class="fa-solid fa-check"></i>查看
             </button>
-        {{#  } else { }}
-            <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="show_log">
-                <i class="fa-solid fa-eye"></i>查看进度
+            <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="chuli">
+                <i class="fa-solid fa-angle-double-down"></i>处理
             </button>
         {{#  } }}
     </div>
@@ -134,7 +137,7 @@
                 {field: 'declare_time', title: '申报时间', width:180},
                 {field: 'other', title: '其他备注'},
                 {field: 'status', title: '状态', width:120},
-                {align: 'center', title: '操作', toolbar: '#declarationTableToolbar', width: 200}
+                {align: 'center', title: '操作', toolbar: '#declarationTableToolbar', width: 350}
             ]],
             page: true,
             limits: [50, 100, 200],
@@ -154,25 +157,25 @@
             });
         });
 
-        $('#create_declaration_btn').click(function () {
-            layer.open({
-                title: '新建采购申报',
-                type: 2,
-                shade: 0.5,
-                shadeClose: true,
-                area: ['60%', '80%'],
-                content: '/declaration/goCreateDeclaration',
-                end: function () {
-                    declarationTable.reload();
-                }
-            });
-        });
+        // $('#create_declaration_btn').click(function () {
+        //     layer.open({
+        //         title: '新建采购申报',
+        //         type: 2,
+        //         shade: 0.5,
+        //         shadeClose: true,
+        //         area: ['60%', '80%'],
+        //         content: '/declaration/goCreateDeclaration',
+        //         end: function () {
+        //             declarationTable.reload();
+        //         }
+        //     });
+        // });
 
         table.on('tool(declarationTableFilter)', function (obj) {
                 var _data = obj.data;
-                if (obj.event === 'delete') {
+                if (obj.event === 'queren') {
                     $.ajax({
-                        url: '/declaration/deleteDeclaration',
+                        url: '/declaration/queren',
                         type: 'POST',
                         data: {
                             'id': _data.id
@@ -183,24 +186,30 @@
                             declarationTable.reload();
                         }
                     });
-                }else if(obj.event === 'update'){
+                }else if(obj.event === 'chakan'){
                     layer.open({
-                        title: '新建采购申报',
+                        title: '查看采购申报',
                         type: 2,
                         shade: 0.5,
                         shadeClose: true,
-                        area: ['60%', '80%'],
-                        content: '/declaration/goEditDeclaration?id='+_data.id,
+                        area: ['60%', '90%'],
+                        content: '/declaration/chakan?id='+_data.id
+                    });
+                }else if(obj.event === 'chuli'){
+                    layer.open({
+                        title: '处理采购申请',
+                        type: 2,
+                        shade: 0.5,
+                        shadeClose: true,
+                        area: ['60%', '90%'],
+                        content: '/declaration/chuli?id='+_data.id,
                         end: function () {
                             declarationTable.reload();
                         }
                     });
-                }else if(obj.event === 'show_log'){
-                    console.log("执行查看进度操作，暂未实现");
                 }
             }
         );
-
     });
 </script>
 </body>

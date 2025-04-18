@@ -12,5 +12,9 @@ public interface DeclarationService {
 
     boolean createDeclaration(CDeclaration declaration);
 
-    boolean updateDeclaration(String id, String field, String value);
+    boolean updateDeclaration(CDeclaration dec);
+
+    CDeclaration queryDeclarationById(String id);
+
+    boolean queren(String id);
 }

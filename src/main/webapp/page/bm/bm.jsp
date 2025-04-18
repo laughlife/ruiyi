@@ -15,7 +15,6 @@
     <script src="/static/layui/layui.js"></script>
 </head>
 <body>
-
 <div class="layui-fluid">
     <div class="layui-row layui-col-space15">
         <div class="layui-col-md12">

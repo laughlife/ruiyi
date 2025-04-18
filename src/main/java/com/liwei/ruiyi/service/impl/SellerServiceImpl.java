@@ -200,4 +200,24 @@ public class SellerServiceImpl implements SellerService {
     public boolean unbindShop(String userId, String sellerId) {
         return sellerDao.unbindShop(userId, sellerId);
     }
+
+    @Override
+    public List<TSeller> getAllSellerList() {
+        List<TSeller> sellers = sellerDao.queryAllSellers();
+        return sellers;
+    }
+
+    @Override
+    public List<TSeller> queryShopByDepartmentCode(String code) {
+        List<TSeller> sellers = sellerDao.queryShopByDepartmentCode(code);
+        if (sellers != null && sellers.size() > 0) {
+            return sellers;
+        }
+        return List.of();
+    }
+
+    @Override
+    public List<TSeller> getOwnSellerList(String s) {
+        return List.of();
+    }
 }

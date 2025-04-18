@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.liwei</groupId>
     <artifactId>ruiyi</artifactId>
-    <version>0.0.3</version>
+    <version>0.0.4</version>
     <packaging>war</packaging>
     <name>ruiyi</name>
     <description>ruiyi</description>

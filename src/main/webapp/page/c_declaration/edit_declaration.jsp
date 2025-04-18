@@ -5,7 +5,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>新建采购申报</title>
+    <title>编辑采购申报</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -25,31 +25,31 @@
                         <div class="layui-form-item">
                             <label class="layui-form-label">商品名称</label>
                             <div class="layui-input-block">
+                                <input type="hidden" name="id" value="${dec.id}">
                                 <input type="text" name="proName" lay-verify="required" autocomplete="off"
-                                       placeholder="商品名称(必填)" class="layui-input">
+                                       placeholder="商品名称(必填)" value="${dec.proName}" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-form-item">
                             <label class="layui-form-label">销售链接</label>
                             <div class="layui-input-block">
                                 <input type="text" name="link" autocomplete="off" placeholder="(非必填，建议填写)"
-                                       class="layui-input">
+                                       value="${dec.link}" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-form-item">
                             <label class="layui-form-label">asin</label>
                             <div class="layui-input-block">
                                 <input type="text" name="asin" autocomplete="off" placeholder="(非必填)"
-                                       class="layui-input">
+                                       value="${dec.asin}" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-form-item">
                             <label class="layui-form-label">店铺</label>
                             <div class="layui-input-block">
-                                <select name="supplierId" id="supplierId" lay-search="" lay-verify="required">
-                                    <option value="">--请选择或搜索--</option>
+                                <select name="sellerId" id="sellerId" lay-search="" lay-verify="required">
                                     <c:forEach items="${sellerList}" var="seller">
-                                        <option value="${seller.sid}">${seller.name}</option>
+                                        <option value="${seller.sid}" ${seller.sid eq dec.sellerId ? 'selected' : ''}>${seller.name}</option>
                                     </c:forEach>
                                 </select>
                             </div>
@@ -58,14 +58,22 @@
                             <label class="layui-form-label">收货仓</label>
                             <div class="layui-input-block">
                                 <input type="text" name="shc" id="shc" autocomplete="off" placeholder="(必填)"
-                                       class="layui-input" lay-verify="required">
+                                       class="layui-input" value="${dec.shc}" lay-verify="required">
                             </div>
                         </div>
+                        <c:if test="${!empty(dec.imagePath)}">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">商品图片</label>
+                                <div class="layui-input-inline layui-input-wrap">
+                                    <img src="${imageServiceUrl + dec.imagePath}" style="width: 100px;height: 100px">
+                                </div>
+                            </div>
+                        </c:if>
                         <div class="layui-form-item">
                             <label class="layui-form-label">商品图片</label>
                             <div class="layui-input-inline layui-input-wrap">
                                 <button type="button" class="layui-btn layui-btn-normal" id="id_upload_image_choose">选择图片</button>
-                                <input type="hidden" name="imagePath" id="imagePath">
+                                <input type="hidden" name="imagePath" id="imagePath" value="${dec.imagePath}">
                             </div>
                             <div class="layui-form-mid layui-text-em" id="upload_image_result">(选填，如果没有对应的销售链接，可直接上传图片)点击按钮选择图片</div>
                         </div>
@@ -73,37 +81,33 @@
                             <label class="layui-form-label">采购件数</label>
                             <div class="layui-input-block">
                                 <input type="number" id="purchasePackages" name="purchasePackages" lay-verify="required" autocomplete="off" placeholder="(必填)"
-                                       class="layui-input">
+                                       value="${dec.purchasePackages}" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-form-item">
                             <label class="layui-form-label">单件数量</label>
                             <div class="layui-input-block">
                                 <input type="number" id="perPackageQuantity" name="perPackageQuantity" autocomplete="off" placeholder="(必填)"
-                                       class="layui-input" value="1">
+                                      value="${dec.perPackageQuantity}" class="layui-input" value="1">
                             </div>
                         </div>
                         <div class="layui-form-item">
                             <label class="layui-form-label">总采购量</label>
                             <div class="layui-input-block">
                                 <input type="number" id="totalQuantity" name="totalQuantity" autocomplete="off" readonly
-                                       placeholder="(自动生成)" class="layui-input">
+                                      value="${dec.totalQuantity}" placeholder="(自动生成)" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-form-item">
                             <label class="layui-form-label">其他信息</label>
                             <div class="layui-input-block">
-                                <textarea placeholder="(非必填)" name="other" class="layui-textarea"></textarea>
+                                <textarea placeholder="(非必填)" name="other" class="layui-textarea">${dec.other}</textarea>
                             </div>
                         </div>
                         <div class="layui-form-item" style="text-align: center;">
                             <button type="button" id="create_gd_btn"
                                     class="layui-btn layui-btn-normal" lay-submit
-                                    lay-filter="create_declaration_filter"><i class="fa-solid fa-plus"></i>确定添加
-                            </button>
-                            <button type="reset" id="reset_form_btn"
-                                    class="layui-btn layui-btn-normal"><i
-                                    class="fa-solid fa-rotate-right fa-fw"></i>重置
+                                    lay-filter="create_declaration_filter"><i class="fa-solid fa-rotate"></i>修改
                             </button>
                             <button type="button" id="close_win_btn"
                                     class="layui-btn layui-btn-warm"><i class="fa-solid fa-circle-xmark fa-fw"></i>取消
@@ -165,7 +169,7 @@
         form.on('submit(create_declaration_filter)', function (data) {
             var _save_date = data.field;
             $.ajax({
-                url: '/declaration/createDeclaration',
+                url: '/declaration/updateDeclaration',
                 type: 'post',
                 data: _save_date,
                 dataType: 'json',

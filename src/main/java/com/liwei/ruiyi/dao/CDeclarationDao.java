@@ -8,9 +8,13 @@ import org.springframework.stereotype.Service;
 public interface CDeclarationDao {
     PageUtils queryMyDeclaration(PageUtils pageUtils);
 
-    boolean declarationDao(String id);
+    boolean delDdeclaration(String id);
 
     boolean createDeclaration(CDeclaration declaration);
 
-    boolean updateDeclaration(String id, String field, String value);
+    boolean updateDeclaration(CDeclaration dec);
+
+    CDeclaration queryDeclarationById(String id);
+
+    boolean queren(String id);
 }

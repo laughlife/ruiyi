@@ -20,4 +20,6 @@ public interface TSellerDao {
     boolean saveNewUserSeller(String userId, String sellerId);
 
     boolean unbindShop(String userId, String sellerId);
+
+    List<TSeller> queryShopByDepartmentCode(String code);
 }

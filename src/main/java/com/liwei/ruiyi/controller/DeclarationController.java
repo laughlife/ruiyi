@@ -3,14 +3,14 @@ package com.liwei.ruiyi.controller;
 import com.alibaba.fastjson2.JSONObject;
 import com.liwei.ruiyi.bo.CDeclaration;
 import com.liwei.ruiyi.bo.CSupplier;
+import com.liwei.ruiyi.bo.TSeller;
 import com.liwei.ruiyi.bo.TUser;
 import com.liwei.ruiyi.service.DeclarationService;
-import com.liwei.ruiyi.service.SupplierService;
+import com.liwei.ruiyi.service.SellerService;
 import com.liwei.ruiyi.utils.DateUtils;
 import com.liwei.ruiyi.utils.PageUtils;
 import com.liwei.ruiyi.utils.ReadProUtils;
 import jakarta.servlet.http.HttpServletRequest;
-import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,8 +20,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.util.UUID;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping("/declaration")
@@ -32,6 +32,9 @@ public class DeclarationController {
     @Autowired
     DeclarationService declarationService;
 
+    @Autowired
+    SellerService sellerService;
+
     private static final long MAX_SIZE = 1024 * 1024 * 20;
 
     @RequestMapping("/goDeclaration")
@@ -41,7 +44,43 @@ public class DeclarationController {
 
     @RequestMapping("/goCreateDeclaration")
     public String goCreateDeclaration() {
+        TUser user = (TUser) request.getSession().getAttribute("user");
+        List<TSeller> sellerList = new ArrayList<>();
+        if (user.getIsAdmin() == 1) {
+            sellerList = sellerService.getAllSellerList();
+        }else if (user.getIsLadder() == 1) {
+            sellerList = sellerService.queryShopByDepartmentCode(user.getId() + "");
+        }else{
+            sellerList = sellerService.getOwnSellerList(user.getId() + "");
+        }
+        request.setAttribute("sellerList", sellerList);
         return "page/c_declaration/create_declaration";
+    }
+
+    @RequestMapping("/cgsq")
+    public String cgsq() {
+        return "page/cgsq/cgsq";
+    }
+    @RequestMapping("/goEditDeclaration")
+    public String goEditDeclaration(String id) {
+        TUser user = (TUser) request.getSession().getAttribute("user");
+        List<TSeller> sellerList = new ArrayList<>();
+        if (user.getIsAdmin() == 1) {
+            sellerList = sellerService.getAllSellerList();
+        }else if (user.getIsLadder() == 1) {
+            sellerList = sellerService.queryShopByDepartmentCode(user.getId() + "");
+        }else{
+            sellerList = sellerService.getOwnSellerList(user.getId() + "");
+        }
+        request.setAttribute("sellerList", sellerList);
+
+        String imageServiceUrl = ReadProUtils.ReadProperties("imageServiceUrl", "conf.properties");
+        request.setAttribute("imageServiceUrl", imageServiceUrl);
+
+        CDeclaration declaration = declarationService.queryDeclarationById(id);
+        request.setAttribute("dec", declaration);
+
+        return "page/c_declaration/edit_declaration";
     }
 
     @RequestMapping("/uploadImage")
@@ -102,9 +141,7 @@ public class DeclarationController {
     @RequestMapping("/queryAllDeclaration")
     @ResponseBody
     public String queryAllDeclaration() {
-
         TUser user = (TUser) request.getSession().getAttribute("user");
-
         int nowPage = Integer.parseInt(request.getParameter("page"));
         int limit = Integer.parseInt(request.getParameter("limit"));
         PageUtils pageUtils = new PageUtils(nowPage, limit);
@@ -116,6 +153,9 @@ public class DeclarationController {
         params.put("date_start", date_start);
         params.put("date_end", date_end);
         params.put("user_id", user.getId());
+        params.put("is_admin", user.getIsAdmin());
+        params.put("is_ladder", user.getIsLadder());
+        params.put("departmentCode", user.getDepartmentCode());
         pageUtils.setSearchParams(params);
 
         PageUtils page = declarationService.queryMyDeclaration(pageUtils);
@@ -152,14 +192,54 @@ public class DeclarationController {
         rj.put("msg", status ? "申报成功，在仓库未确认之前，尚可修改" : "申报失败，请联系开发人员反馈此消息。");//确认
         return rj.toJSONString();
     }
-
     @RequestMapping("/updateDeclaration")
     @ResponseBody
-    public String updateDeclaration(String id, String field, String value) {
-        JSONObject json = new JSONObject();
-        boolean isSuccess = declarationService.updateDeclaration(id, field, value);
-        json.put("status", isSuccess);
-        json.put("msg", isSuccess ? "数据修改成功。" : "数据修改失败，请联系开发人员查找失败原因。");
-        return json.toJSONString();
+    public String updateDeclaration(CDeclaration declaration) {
+        boolean status = declarationService.updateDeclaration(declaration);
+        JSONObject rj = new JSONObject();
+        rj.put("status", status);
+        rj.put("msg", status ? "修改成功" : "修改失败");//确认
+        return rj.toJSONString();
     }
+    @RequestMapping("/queren")
+    @ResponseBody
+    public String queren(String id) {
+        boolean status = declarationService.queren(id);
+        JSONObject rj = new JSONObject();
+        rj.put("status", status);
+        rj.put("msg", status ? "已确认，采购信息已锁定" : "操作失败，请联系开发人员排查错误原因，错误码/declaration/queren");//确认
+        return rj.toJSONString();
+    }
+
+    @RequestMapping("/chakan")
+    public String chakan(String id) {
+        String imageServiceUrl = ReadProUtils.ReadProperties("imageServiceUrl", "conf.properties");
+        request.setAttribute("imageServiceUrl", imageServiceUrl);
+
+        CDeclaration declaration = declarationService.queryDeclarationById(id);
+        request.setAttribute("dec", declaration);
+
+        return "page/cgsq/chakan";
+    }
+    @RequestMapping("/chuli")
+    public String chuli(String id) {
+        String imageServiceUrl = ReadProUtils.ReadProperties("imageServiceUrl", "conf.properties");
+        request.setAttribute("imageServiceUrl", imageServiceUrl);
+
+        CDeclaration declaration = declarationService.queryDeclarationById(id);
+        request.setAttribute("dec", declaration);
+
+        return "page/cgsq/chuli";
+    }
+
+    @RequestMapping("/buy")
+    @ResponseBody
+    public String buy(String id) {
+        boolean status = declarationService.queren(id);
+        JSONObject rj = new JSONObject();
+        rj.put("status", status);
+        rj.put("msg", status ? "已确认，采购信息已锁定" : "操作失败，请联系开发人员排查错误原因，错误码/declaration/queren");//确认
+        return rj.toJSONString();
+    }
+
 }

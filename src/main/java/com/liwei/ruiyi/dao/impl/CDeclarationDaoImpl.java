@@ -4,8 +4,10 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.liwei.ruiyi.bo.CDeclaration;
 import com.liwei.ruiyi.bo.CSupplier;
+import com.liwei.ruiyi.bo.TSeller;
 import com.liwei.ruiyi.bo.mapper.CDeclarationMapper;
 import com.liwei.ruiyi.bo.mapper.CSupplierMapper;
+import com.liwei.ruiyi.bo.mapper.TSellerMapper;
 import com.liwei.ruiyi.dao.CDeclarationDao;
 import com.liwei.ruiyi.utils.PageUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -28,6 +30,9 @@ public class CDeclarationDaoImpl implements CDeclarationDao {
         String user_id = searchParams.getString("user_id");
         String date_start = searchParams.getString("date_start");
         String date_end = searchParams.getString("date_end");
+        String isAdmin = searchParams.getString("is_admin");
+        String isLadder = searchParams.getString("is_ladder");
+        String departmentCode = searchParams.getString("departmentCode");
 
         int pageStart = page.getPageStart();
         int limit = page.getLimit();
@@ -35,7 +40,19 @@ public class CDeclarationDaoImpl implements CDeclarationDao {
         String sql = "select count(0) from c_declaration where user_id = ?";
         String querySql = "select * from c_declaration where user_id = ? ";
         List<Object> args = new ArrayList<>();
-        args.add(user_id);
+
+        if (StringUtils.isNotBlank(isAdmin) && isAdmin.equals("1")) {
+            sql = "select count(0) from c_declaration  where 1 = ? ";
+            querySql = "select * from c_declaration where 1 = ? ";
+            args.add(1);
+        }else if (StringUtils.isNotBlank(isLadder) && isLadder.equals("1")) {
+            sql = "select count(0) from c_declaration where user_id in (select id from t_user where department_code like ?)";
+            querySql = "select * from c_declaration where user_id in (select id from t_user where department_code like ?)";
+            args.add(departmentCode + "%");
+        }else{
+            args.add(user_id);
+        }
+
 
         if (StringUtils.isNotBlank(key)) {
             key = "%" + key.trim() + "%";
@@ -70,56 +87,57 @@ public class CDeclarationDaoImpl implements CDeclarationDao {
     }
 
     @Override
-    public boolean declarationDao(String id) {
-        String sql = "delete from c_supplier where id = ?";
+    public boolean delDdeclaration(String id) {
+        String sql = "delete from c_declaration where id = ?";
         int count = jdbc.update(sql, id);
         return count > 0;
     }
 
     @Override
-    public boolean createDeclaration(CDeclaration declaration) {
-        String sql = "insert into c_declaration(user_id,user_name,user_phone,pro_name,asin," +
+    public boolean createDeclaration(CDeclaration dec) {
+        String sql = "select * from t_seller where sid = ?";
+        TSeller seller = jdbc.queryForObject(sql, new TSellerMapper(), dec.getSellerId());
+
+        sql = "insert into c_declaration(user_id,user_name,user_phone,pro_name,asin," +
                 "image_path,purchase_packages,per_package_quantity,total_quantity,other," +
-                "status) values(?,?,?,?,?," +
+                "status,seller_id,seller_name,shc) values(?,?,?,?,?," +
                 "?,?,?,?,?," +
-                "?)";
-        Object[] args = {declaration.getUserId(), declaration.getUserName(), declaration.getUserPhone(),declaration.getProName(),declaration.getAsin(),
-                declaration.getImagePath(),declaration.getPurchasePackages(),declaration.getPerPackageQuantity(),declaration.getTotalQuantity(),declaration.getOther(),
-                "已申报"};
+                "?,?,?,?)";
+        Object[] args = {dec.getUserId(), dec.getUserName(), dec.getUserPhone(),dec.getProName(),dec.getAsin(),
+                dec.getImagePath(),dec.getPurchasePackages(),dec.getPerPackageQuantity(),dec.getTotalQuantity(),dec.getOther(),
+                "已申报",dec.getSellerId(),seller.getName(),dec.getShc()};
         int count = jdbc.update(sql, args);
         return count > 0;
     }
 
     @Override
-    public boolean updateDeclaration(String id, String field, String value) {
-        switch (field){
-            case "purchasePackages":
-                field = "purchase_packages";
-                break;
-            case "perPackageQuantity":
-                field = "per_package_quantity";
-                break;
-            case "totalQuantity":
-                field = "total_quantity";
-                break;
-            case "shippedQuantity":
-                field = "shipped_quantity";
-                break;
-            case "receivedQuantity":
-                field = "received_quantity";
-                break;
-            case "imagePath":
-                field = "image_path";
-                break;
-            case "declareTime":
-                field = "declare_time";
-                break;
-            default:
-                break;
-        }
+    public boolean updateDeclaration(CDeclaration dec) {
+        String sql = "select * from t_seller where sid = ?";
+        TSeller seller = jdbc.queryForObject(sql, new TSellerMapper(), dec.getSellerId());
 
-        String sql = "update c_declaration set " + field + " = ? where id = ?";
-        int count = jdbc.update(sql, value, id);
+        sql = "update c_declaration set pro_name = ?,link = ?,asin = ?,seller_id = ?,seller_name = ?," +
+                "shc = ?,image_path = ?,purchase_packages = ?,per_package_quantity = ?,total_quantity = ?," +
+                "other = ? where id = ?";
+        Object[] args = {dec.getProName(),dec.getLink(),dec.getAsin(),dec.getSellerId(),seller.getName(),
+                dec.getShc(),dec.getImagePath(),dec.getPurchasePackages(),dec.getPerPackageQuantity(),dec.getTotalQuantity(),
+                dec.getOther(),dec.getId()};
+        int count = jdbc.update(sql, args);
         return count > 0;
+    }
+
+    @Override
+    public CDeclaration queryDeclarationById(String id) {
+        String sql = "select * from c_declaration where id = ?";
+        CDeclaration declaration = jdbc.queryForObject(sql, new CDeclarationMapper(), id);
+        if (declaration != null) {
+            return declaration;
+        }
+        return null;
+    }
+
+    @Override
+    public boolean queren(String id) {
+        String sql = "update c_declaration set status = '已确认',confirm_time = current_timestamp where id = ?";
+        return jdbc.update(sql, id) > 0;
     }
 }
