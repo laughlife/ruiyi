@@ -57,8 +57,8 @@
                         <div class="layui-form-item">
                             <label class="layui-form-label">收货仓</label>
                             <div class="layui-input-block">
-                                <input type="text" name="shc" id="shc" autocomplete="off" placeholder="(必填)"
-                                       class="layui-input" lay-verify="required">
+                                <input type="text" name="shc" id="shc" autocomplete="off" placeholder="(选填)"
+                                       class="layui-input">
                             </div>
                         </div>
                         <div class="layui-form-item">

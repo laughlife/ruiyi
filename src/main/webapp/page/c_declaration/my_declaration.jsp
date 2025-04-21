@@ -77,17 +77,20 @@
         <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="chakan">
             <i class="fa-solid fa-eye"></i>查看
         </button>
-        {{# if(d.status == '已申报'){ }}
-        <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="update">
-            <i class="fa-solid fa-rotate"></i>修改
-        </button>
-        <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete">
-            <i class="fa-solid fa-trash"></i>删除
-        </button>
-        {{# } else { }}
         <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="show_log">
-            <i class="fa-solid fa-eye"></i>查看进度
+            <i class="fa-solid fa-eye"></i>进度
         </button>
+        {{# if(d.status == '已申报'){ }}
+            <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="update">
+                <i class="fa-solid fa-rotate"></i>修改
+            </button>
+            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete">
+                <i class="fa-solid fa-trash"></i>删除
+            </button>
+        {{# } else if(d.status == '已采购' || d.status == '已到货'){ }}
+            <button class="layui-btn layui-btn-sm layui-bg-red" lay-event="upload">
+                <i class="fa-solid fa-file-upload"></i>发票、标签
+            </button>
         {{# } }}
     </div>
 </script>
@@ -133,15 +136,16 @@
                             d.pro_name;
                     }
                 },
-                {field: 'asin', title: 'asin', width: 280},
-                {field: 'shc', title: '收货仓', width: 280},
-                {field: 'purchase_packages', title: '需求件数', width: 120},
-                {field: 'per_package_quantity', title: '单件数量', width: 120},
-                {field: 'total_quantity', title: '采需求量', width: 120},
-                {field: 'declare_time', title: '申报时间', width: 180},
+                {field: 'asin', title: 'asin'},
+                {field: 'shc', title: '收货仓'},
+                {field: 'purchase_packages', title: '需求件数'},
+                {field: 'per_package_quantity', title: '单件数量'},
+                {field: 'total_quantity', title: '采需求量'},
+                {field: 'plan_total_quantity', title: '采购+库存'},
+                {field: 'declare_time', title: '申报时间'},
                 {field: 'other', title: '其他备注'},
-                {field: 'status', title: '状态', width: 120},
-                {align: 'center', title: '操作', toolbar: '#declarationTableToolbar', width: 200}
+                {field: 'status', title: '状态'},
+                {align: 'center', title: '操作', toolbar: '#declarationTableToolbar'}
             ]],
             page: true,
             limits: [50, 100, 200],
@@ -201,12 +205,24 @@
                     });
                 } else if (obj.event === 'update') {
                     layer.open({
-                        title: '新建采购申报',
+                        title: '修改采购申报',
                         type: 2,
                         shade: 0.5,
                         shadeClose: true,
                         area: ['60%', '80%'],
                         content: '/declaration/goEditDeclaration?id=' + _data.id,
+                        end: function () {
+                            declarationTable.reload();
+                        }
+                    });
+                } else if (obj.event === 'upload') {
+                    layer.open({
+                        title: '上传发票、标签',
+                        type: 2,
+                        shade: 0.5,
+                        shadeClose: true,
+                        area: ['60%', '90%'],
+                        content: '/declaration/goUploadDeclaration?id=' + _data.id,
                         end: function () {
                             declarationTable.reload();
                         }
@@ -243,6 +259,33 @@
         );
 
     });
+
+    function downloadFile(url, name) {
+        const ext = url.split('.').pop().split('?')[0].split('#')[0];
+        const filename = `\${name}.\${ext}`;
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('文件下载失败');
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                const blobUrl = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = blobUrl;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(blobUrl); // 清理对象URL
+            })
+            .catch(err => {
+                console.error('下载出错:', err);
+                alert('下载失败，请稍后重试');
+            });
+    }
+
 </script>
 </body>
 </html>

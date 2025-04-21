@@ -68,11 +68,11 @@
         </button>
         {{#  if(d.status == '已申报'){ }}
             <button class="layui-btn layui-btn-sm layui-bg-red" lay-event="queren">
-                <i class="fa-solid fa-check"></i>确认
+                <i class="fa-solid fa-check"></i>收到申报
             </button>
         {{#  } else if(d.status == '已确认') { }}
-            <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="chuli">
-                <i class="fa-solid fa-angle-double-down"></i>处理
+            <button class="layui-btn layui-btn-sm layui-bg-red" lay-event="chuli">
+                <i class="fa-solid fa-angle-double-down"></i>去处理
             </button>
         {{#  }else if(d.status == '已采购'){ }}
             <button class="layui-btn layui-btn-sm layui-bg-red" lay-event="confirm_arrival">
@@ -117,12 +117,12 @@
                             d.pro_name;
                     }
                 },
-                {field: 'asin', title: 'asin',  width: 280},
-                {field: 'shc', title: '收货仓',  width: 280},
-                {field: 'purchase_packages', title: '需求件数', width:120},
-                {field: 'per_package_quantity', title: '单件数量', width:120},
-                {field: 'total_quantity', title: '总需求量', width:120},
-                {field: 'declare_time', title: '申报时间', width:180},
+                {field: 'asin', title: 'asin'},
+                {field: 'shc', title: '收货仓'},
+                {field: 'purchase_packages', title: '需求件数'},
+                {field: 'per_package_quantity', title: '单件数量'},
+                {field: 'total_quantity', title: '总需求量'},
+                {field: 'declare_time', title: '申报时间'},
                 {field: 'other', title: '其他备注'},
                 {
                     field: 'status',
@@ -132,7 +132,11 @@
                         var status = {
                             '已申报': '<span class="layui-badge layui-bg-green">已申报</span>',
                             '已确认': '<span class="layui-badge layui-bg-blue">已确认</span>',
-                            '已采购': '<span class="layui-badge layui-bg-blue">已采购</span>'
+                            '已采购': '<span class="layui-badge layui-bg-blue">已采购</span>',
+                            '已到货': '<span class="layui-badge layui-bg-blue">已到货</span>',
+                            '已发出': '<span class="layui-badge layui-bg-blue">已发出</span>',
+                            '已完成': '<span class="layui-badge layui-bg-gray">已完成</span>',
+
                         };
                         return status[d.status];
                     }

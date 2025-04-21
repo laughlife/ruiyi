@@ -50,6 +50,7 @@ public class DeclarationServiceImpl implements DeclarationService {
             }
             j.put("purchase_packages", declaration.getPurchasePackages());
             j.put("per_package_quantity", declaration.getPerPackageQuantity());
+            j.put("plan_total_quantity", declaration.getPlanTotalQuantity());
             j.put("total_quantity", declaration.getTotalQuantity());
             j.put("other", declaration.getOther());
             j.put("shipped_quantity", declaration.getShippedQuantity());
@@ -114,6 +115,8 @@ public class DeclarationServiceImpl implements DeclarationService {
         //获取未发货商品数量
         int unshipQuantity = product.getUnshipQuantity();
 
+        db_dec.setShc(dec.getShc());//收货仓
+
         db_dec.setKcsl(unshipQuantity);//库存数量
         db_dec.setKcyl(dec.getKcyl());//库存用量
         db_dec.setKcdj(costPrice);//库存单价
@@ -128,7 +131,7 @@ public class DeclarationServiceImpl implements DeclarationService {
             int newId = cproductDao.updateProduct(product);
             product = cproductDao.queryProductById(newId + "");
             db_dec.setProId(newId);
-        }else{
+        } else {
             db_dec.setProId(dec.getProId());
         }
 
@@ -156,11 +159,26 @@ public class DeclarationServiceImpl implements DeclarationService {
         }
         //修改采购信息  purchase
         declarationDao.updatePurcacheMsg(db_dec);
-        if(db_dec.getKcyl()>0){
+        if (db_dec.getKcyl() > 0) {
             //商品库存扣减
-            
+            product.setHistory("扣减库存数量:" + db_dec.getKcyl() + "件");
+            //TODO 这里逻辑先不处理
         }
         return true;
+    }
+
+    @Override
+    public void uploadDeclaration(String id, String types, String src) {
+        switch (types) {
+            case "fapiao":
+                declarationDao.uploadDeclarationFaPiao(id, src);
+                break;
+            case "tips":
+                declarationDao.uploadDeclarationTips(id, src);
+                break;
+            default:
+                break;
+        }
     }
 
     @Override
@@ -168,6 +186,7 @@ public class DeclarationServiceImpl implements DeclarationService {
         JSONArray array = new JSONArray();
         CDeclaration dec = declarationDao.queryDeclarationById(id);
         //已申报/已确认/已采购/已发货/已完成
+        String imageServiceUrl = ReadProUtils.ReadProperties("imageServiceUrl");
 
         if (StringUtils.isNotEmpty(dec.getDeclareTime())) {
             JSONObject j = new JSONObject();
@@ -202,6 +221,26 @@ public class DeclarationServiceImpl implements DeclarationService {
                     dec.getBuyQuantity(),
                     dec.getKcsl(), dec.getBuyQuantity(), dec.getPlanTotalQuantity(),
                     dec.getPlanShipTime());
+            j.put("msg", msg);
+            array.add(j);
+        }
+
+        if (StringUtils.isNotEmpty(dec.getFapiaoTime())) {
+            JSONObject j = new JSONObject();
+            j.put("time", dec.getFapiaoTime());
+            String msg = """
+                    发票信息已上传,点击查看<a href="javascript:downloadFile('%s%s','%s——发票信息')" style='color:#1890ff;'>%s——发票信息</a>
+                    """.formatted(imageServiceUrl, dec.getFapiao(), dec.getProName(), dec.getProName());
+            j.put("msg", msg);
+            array.add(j);
+        }
+
+        if (StringUtils.isNotEmpty(dec.getTipsTime())) {
+            JSONObject j = new JSONObject();
+            j.put("time", dec.getTipsTime());
+            String msg = """
+                    发票信息已上传,点击查看<a href="javascript:downloadFile('%s%s','%s——标签信息')" style='color:#1890ff;'>%s——标签信息</a>
+                    """.formatted(imageServiceUrl, dec.getTips(), dec.getProName(), dec.getProName());
             j.put("msg", msg);
             array.add(j);
         }

@@ -42,6 +42,8 @@ public class CDeclarationMapper implements RowMapper<CDeclaration> {
         obj.setPurchaseTime(rs.getString("purchase_time"));
         obj.setPlanShipTime(rs.getString("plan_ship_time"));
         obj.setShipTime(rs.getString("ship_time"));
+        obj.setFapiaoTime(rs.getString("fapiao_time"));
+        obj.setTipsTime(rs.getString("tips_time"));
         obj.setPlanReceiveTime(rs.getString("plan_receive_time"));
         obj.setStatus(rs.getString("status"));
         return obj;

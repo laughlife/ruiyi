@@ -125,6 +125,48 @@ public class DeclarationController {
         return rj.toJSONString();
     }
 
+    @RequestMapping("/uploadFile")
+    @ResponseBody
+    public String uploadFile(@RequestParam("file") MultipartFile file,String id,String types) {
+        boolean upload = false;
+        String errorMessage = "";
+        String savePath = checkFile();
+        File saveDir = new File(savePath);
+        String imageServiceUrl = ReadProUtils.ReadProperties("imageServiceUrl", "conf.properties");
+        if (!saveDir.exists() && !saveDir.mkdirs()) {
+            errorMessage = "无法创建上传目录。";
+        }
+        // 检查文件大小
+        if (file.getSize() > MAX_SIZE) {
+            errorMessage = "上传文件大小超过限制。";
+        }
+        // 检查扩展名
+        String originalFileName = file.getOriginalFilename();
+        if (originalFileName == null || originalFileName.isEmpty()) {
+            errorMessage = "请选择文件。";
+        }
+        String fileExt = originalFileName.substring(originalFileName.lastIndexOf(".") + 1).toLowerCase();
+
+        String newFileName = com.liwei.ruiyi.utils.StringUtils.getRandomString() + "." + fileExt;
+        File uploadedFile = new File(savePath, newFileName);
+        JSONObject rj = new JSONObject();
+        try {
+            file.transferTo(uploadedFile);
+            String month = DateUtils.getSystemMonth();
+            String src = "/declaration/" + month + "/" + newFileName;
+            rj.put("src", src);
+            rj.put("href", imageServiceUrl + "declaration/" + month + "/" + newFileName);
+            upload = true;
+            declarationService.uploadDeclaration(id,types,src);
+        } catch (IOException e) {
+            errorMessage = "上传文件失败。";
+        }
+
+        rj.put("status", upload);
+        rj.put("msg", upload ? originalFileName + "上传成功" : errorMessage);
+        return rj.toJSONString();
+    }
+
     private String checkFile() {
         String savePath = ReadProUtils.ReadProperties("declarationImagePath", "conf.properties");
         File tempFile = new File(savePath);
@@ -221,6 +263,17 @@ public class DeclarationController {
         request.setAttribute("dec", declaration);
 
         return "page/cgsq/chakan";
+    }
+
+    @RequestMapping("/goUploadDeclaration")
+    public String goUploadDeclaration(String id) {
+        String imageServiceUrl = ReadProUtils.ReadProperties("imageServiceUrl", "conf.properties");
+        request.setAttribute("imageServiceUrl", imageServiceUrl);
+
+        CDeclaration declaration = declarationService.queryDeclarationById(id);
+        request.setAttribute("dec", declaration);
+
+        return "page/cgsq/upload";
     }
     @RequestMapping("/chuli")
     public String chuli(String id) {

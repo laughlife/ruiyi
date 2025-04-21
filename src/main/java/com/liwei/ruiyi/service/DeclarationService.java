@@ -22,4 +22,6 @@ public interface DeclarationService {
     boolean buy(CDeclaration dec);
 
     JSONArray queryDeclarationLog(String id);
+
+    void uploadDeclaration(String id, String types, String src);
 }

@@ -153,4 +153,16 @@ public class CDeclarationDaoImpl implements CDeclarationDao {
         int count = jdbc.update(sql, args);
         return count > 0;
     }
+
+    @Override
+    public void uploadDeclarationFaPiao(String id, String src) {
+        String sql = "update c_declaration set fapiao = ?,fapiao_time = current_timestamp where id = ?";
+        jdbc.update(sql, src, id);
+    }
+
+    @Override
+    public void uploadDeclarationTips(String id, String src) {
+        String sql = "update c_declaration set tips = ?,tips_time = current_timestamp where id = ?";
+        jdbc.update(sql, src, id);
+    }
 }

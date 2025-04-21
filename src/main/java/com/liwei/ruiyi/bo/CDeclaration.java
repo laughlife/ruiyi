@@ -40,6 +40,8 @@ public class CDeclaration {
     private String purchaseTime;
     private String planShipTime;
     private String shipTime;
+    private String fapiaoTime;
+    private String tipsTime;
     private String planReceiveTime;
     private String status;
 }

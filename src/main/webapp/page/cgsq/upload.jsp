@@ -26,6 +26,7 @@
                             <label class="layui-form-label">商品名称</label>
                             <div class="layui-input-block">
                                 <div class="layui-colla-content layui-show" style="font-weight: bold;">
+                                    <input type="hidden" id="pro_id" name="id" value="${dec.id}">
                                     <c:choose>
                                         <c:when test="${!empty(dec.link)}">
                                             <a href="${dec.link}" target="_blank" style="color:#1890ff;">${dec.proName}</a>
@@ -120,9 +121,8 @@
                                     </div>
                                 </div>
                             </div>
-                        </c:if>
-                        <c:if test="${!empty(dec.fapiao)}">
-                            <div class="layui-form-item" id="fapiao_div">
+
+                            <div class="layui-form-item" id="fapiao_div" style="${empty(dec.fapiao) ? 'display: none;' : ''}">
                                 <label class="layui-form-label">发票文件</label>
                                 <div class="layui-input-block">
                                     <div class="layui-colla-content layui-show" style="color:#333;font-weight: bold;">
@@ -130,9 +130,18 @@
                                     </div>
                                 </div>
                             </div>
-                        </c:if>
 
-                        <c:if test="${!empty(dec.tips)}">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">发票</label>
+                                <div class="layui-input-block">
+                                    <div class="layui-upload-drag" style="display: block;" id="ID-upload-fapiao-drag">
+                                        <i class="layui-icon layui-icon-upload"></i>
+                                        <div>上传、修改发票信息</div>
+                                        <input type="hidden" name="fapiao" value="${dec.fapiao}">
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="layui-form-item" id="tips_div" style="${empty(dec.tips) ? 'display: none;' : ''}">
                                 <label class="layui-form-label">标签</label>
                                 <div class="layui-input-block">
@@ -141,9 +150,22 @@
                                     </div>
                                 </div>
                             </div>
-                        </c:if>
 
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">标签</label>
+                                <div class="layui-input-block">
+                                    <div class="layui-upload-drag" style="display: block;" id="ID-upload-biaoqian-drag">
+                                        <i class="layui-icon layui-icon-upload"></i>
+                                        <div>上传、修改标签信息</div>
+                                        <input type="hidden" name="tips" value="${dec.tips}">
+                                    </div>
+                                </div>
+                            </div>
+                        </c:if>
                         <div class="layui-form-item" style="text-align: center;">
+                            <button type="button" id="update_dec_button"
+                                    class="layui-btn layui-bg-blue"><i class="fa-solid fa-check"></i>确定
+                            </button>
                             <button type="button" id="close_win_btn"
                                     class="layui-btn layui-btn-warm"><i class="fa-solid fa-circle-xmark fa-fw"></i>关闭
                             </button>
@@ -161,11 +183,61 @@
 <script>
     layui.use(function () {
         var $ = layui.jquery;
+        var upload = layui.upload;
 
+        $("#update_dec_button").click(function () {
+            var iframeIndex = parent.layer.getFrameIndex(window.name);
+            parent.layer.close(iframeIndex);
+        });
         $("#close_win_btn").click(function () {
             var iframeIndex = parent.layer.getFrameIndex(window.name);
             parent.layer.close(iframeIndex);
         });
+
+        upload.render({
+            elem: '#ID-upload-fapiao-drag',
+            url: '/declaration/uploadFile',
+            accept: 'file',
+            data: {
+                id: function () {
+                    return $("#pro_id").val();
+                },
+                types: 'fapiao'
+            },
+            dataType: 'json',
+            done: function(res){
+                layer.msg(res.msg);
+                if(res.status){
+                    $("#fapiao_div").show();
+                    $("#fapiao_link").attr("href", "javascript:downloadFile('"+res.href+"','${dec.proName}——发票信息')");
+                    $("input[name='fapiao']").val(res.src);
+                }
+            }
+        });
+
+        upload.render({
+            elem: '#ID-upload-biaoqian-drag',
+            url: '/declaration/uploadFile',
+            accept: 'file',
+            data: {
+                id: function () {
+                    return $("#pro_id").val();
+                },
+                types: 'tips'
+            },
+            dataType: 'json',
+            done: function(res){
+                layer.msg(res.msg);
+                if(res.status){
+                    $("#tips_div").show();
+                    $("#biaoqian_link").attr("href", "javascript:downloadFile('"+res.href+"','${dec.proName}——标签信息')");
+                    $("input[name='tips']").val(res.src);
+                }
+            }
+        });
+
+
+
     });
 
     function downloadFile(url, name) {

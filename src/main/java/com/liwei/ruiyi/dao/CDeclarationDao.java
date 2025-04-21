@@ -19,4 +19,8 @@ public interface CDeclarationDao {
     boolean queren(String id);
 
     boolean updatePurcacheMsg(CDeclaration dbDec);
+
+    void uploadDeclarationFaPiao(String id, String src);
+
+    void uploadDeclarationTips(String id, String src);
 }

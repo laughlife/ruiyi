@@ -55,14 +55,15 @@
                                 </div>
                             </div>
                         </div>
+
                         <div class="layui-form-item">
                             <label class="layui-form-label">收货仓</label>
                             <div class="layui-input-block">
-                                <div class="layui-colla-content layui-show" style="color:#333;font-weight: bold;">
-                                    ${dec.shc}
-                                </div>
+                                <input type="text" name="shc" id="shc" autocomplete="off" placeholder="(必填)"
+                                       class="layui-input" value="${dec.shc}" lay-verify="required">
                             </div>
                         </div>
+
                         <c:if test="${!empty(dec.imagePath)}">
                             <div class="layui-form-item">
                                 <label class="layui-form-label">商品图片</label>
