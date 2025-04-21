@@ -1,5 +1,6 @@
 package com.liwei.ruiyi.controller;
 
+import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.liwei.ruiyi.bo.CDeclaration;
 import com.liwei.ruiyi.bo.CSupplier;
@@ -240,6 +241,21 @@ public class DeclarationController {
         rj.put("status", status);
         rj.put("msg", status ? "采购信息已保存" : "采购信息保存失败，错误码/declaration/buy");//确认
         return rj.toJSONString();
+    }
+
+    @RequestMapping("/queryDeclarationLog")
+    @ResponseBody
+    public String queryDeclarationLog(String id) {
+        JSONObject json = new JSONObject();
+        JSONArray array = declarationService.queryDeclarationLog(id);
+        if(array.size() > 0){
+            json.put("status", true);
+            json.put("data", array);
+        }else{
+            json.put("status", false);
+            json.put("msg", "暂无采购记录");
+        }
+        return json.toJSONString();
     }
 
 }

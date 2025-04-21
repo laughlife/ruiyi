@@ -26,20 +26,22 @@
                     <form class="layui-form layui-form-pane" action="">
                         <div class="layui-form-item">
                             <div class="layui-inline">
-                                <label class="layui-form-label">状态</label>
+                                <label class="layui-form-label">商品名称</label>
                                 <div class="layui-input-block">
                                     <input type="text" id="key" name="key" placeholder="请输入搜索提示信息"
                                            class="layui-input">
                                 </div>
                             </div>
                             <div class="layui-inline" id="laydate-rangeLinked">
-                                <label class="layui-form-label">确认时间</label>
+                                <label class="layui-form-label">状态筛选</label>
                                 <div class="layui-input-inline" style="width: 180px;">
-                                    <input type="text" id="laydate-start" name="date_start" autocomplete="off" class="layui-input">
-                                </div>
-                                <div class="layui-form-mid">-</div>
-                                <div class="layui-input-inline" style="width: 180px;">
-                                    <input type="text" id="laydate-end" name="date_end" autocomplete="off" class="layui-input">
+                                    <select name="status" id="status" lay-verify="required"
+                                                    lay-search="">
+                                        <option value="">请选择状态</option>
+                                        <option value="已申报">已申报</option>
+                                        <option value="已确认">已确认</option>
+                                        <option value="已采购">已采购</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="layui-inline">
@@ -56,33 +58,25 @@
                     <table id="declarationTable" class="layui-hide" lay-filter="declarationTableFilter"></table>
                 </div>
             </div>
-
         </div>
     </div>
 </div>
-<!--
-<button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="update">
-                <i class="fa-solid fa-angle-double-down"></i>处理
-            </button>
-<button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="update">
-            <i class="fa-solid fa-check"></i>查看
-        </button>
-<button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="show_log">
-                <i class="fa-solid fa-eye"></i>查看进度
-            </button>
--->
 <script type="text/html" id="declarationTableToolbar">
     <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="chakan">
+            <i class="fa-solid fa-eye"></i>查看
+        </button>
         {{#  if(d.status == '已申报'){ }}
             <button class="layui-btn layui-btn-sm layui-bg-red" lay-event="queren">
                 <i class="fa-solid fa-check"></i>确认
             </button>
         {{#  } else if(d.status == '已确认') { }}
-            <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="chakan">
-                <i class="fa-solid fa-check"></i>查看
-            </button>
             <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="chuli">
                 <i class="fa-solid fa-angle-double-down"></i>处理
+            </button>
+        {{#  }else if(d.status == '已采购'){ }}
+            <button class="layui-btn layui-btn-sm layui-bg-red" lay-event="confirm_arrival">
+                <i class="fa-solid fa-check"></i>确认到货
             </button>
         {{#  } }}
     </div>
@@ -99,13 +93,7 @@
         var table = layui.table;
         var layer = layui.layer;
         var $ = layui.jquery;
-        var laydate = layui.laydate;
-        // 日期范围 - 左右面板联动选择模式
-        laydate.render({
-            elem: '#laydate-rangeLinked',
-            range: ['#laydate-start', '#laydate-end'],
-            rangeLinked: true
-        });
+
 
         var declarationTable = table.render({
             elem: '#declarationTable',
@@ -131,12 +119,24 @@
                 },
                 {field: 'asin', title: 'asin',  width: 280},
                 {field: 'shc', title: '收货仓',  width: 280},
-                {field: 'purchase_packages', title: '采购件数', width:120},
+                {field: 'purchase_packages', title: '需求件数', width:120},
                 {field: 'per_package_quantity', title: '单件数量', width:120},
-                {field: 'total_quantity', title: '采购总量', width:120},
+                {field: 'total_quantity', title: '总需求量', width:120},
                 {field: 'declare_time', title: '申报时间', width:180},
                 {field: 'other', title: '其他备注'},
-                {field: 'status', title: '状态', width:120},
+                {
+                    field: 'status',
+                    title: '状态',
+                    width:120,
+                    templet: function(d){
+                        var status = {
+                            '已申报': '<span class="layui-badge layui-bg-green">已申报</span>',
+                            '已确认': '<span class="layui-badge layui-bg-blue">已确认</span>',
+                            '已采购': '<span class="layui-badge layui-bg-blue">已采购</span>'
+                        };
+                        return status[d.status];
+                    }
+                },
                 {align: 'center', title: '操作', toolbar: '#declarationTableToolbar', width: 350}
             ]],
             page: true,
@@ -156,20 +156,6 @@
                 }
             });
         });
-
-        // $('#create_declaration_btn').click(function () {
-        //     layer.open({
-        //         title: '新建采购申报',
-        //         type: 2,
-        //         shade: 0.5,
-        //         shadeClose: true,
-        //         area: ['60%', '80%'],
-        //         content: '/declaration/goCreateDeclaration',
-        //         end: function () {
-        //             declarationTable.reload();
-        //         }
-        //     });
-        // });
 
         table.on('tool(declarationTableFilter)', function (obj) {
                 var _data = obj.data;

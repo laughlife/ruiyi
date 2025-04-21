@@ -128,13 +128,13 @@ public class DepartmentServiceImpl implements DepartmentService {
         boolean checkCouldDelete = departmentDao.checkCouldDelete(bmId);
         JSONObject returnJson = new JSONObject();
         if (checkCouldDelete) {
-            returnJson.put("status", false);
-            returnJson.put("msg", "部门信息删除失败，该部门下有子级部门或存在成员信息。");
-            return returnJson;
-        }else{
             boolean isDelete = departmentDao.deleteDepartmentById(bmId);
             returnJson.put("status", isDelete);
             returnJson.put("msg", isDelete?"删除成功。":"删除失败，请联系开发人员检查错误原因。");
+        }else{
+            returnJson.put("status", false);
+            returnJson.put("msg", "部门信息删除失败，该部门下有子级部门或存在成员信息。");
+            return returnJson;
         }
         return returnJson;
     }

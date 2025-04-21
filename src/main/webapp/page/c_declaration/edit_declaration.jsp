@@ -78,7 +78,7 @@
                             <div class="layui-form-mid layui-text-em" id="upload_image_result">(选填，如果没有对应的销售链接，可直接上传图片)点击按钮选择图片</div>
                         </div>
                         <div class="layui-form-item">
-                            <label class="layui-form-label">采购件数</label>
+                            <label class="layui-form-label">需求件数</label>
                             <div class="layui-input-block">
                                 <input type="number" id="purchasePackages" name="purchasePackages" lay-verify="required" autocomplete="off" placeholder="(必填)"
                                        value="${dec.purchasePackages}" class="layui-input">
@@ -92,7 +92,7 @@
                             </div>
                         </div>
                         <div class="layui-form-item">
-                            <label class="layui-form-label">总采购量</label>
+                            <label class="layui-form-label">总需求量</label>
                             <div class="layui-input-block">
                                 <input type="number" id="totalQuantity" name="totalQuantity" autocomplete="off" readonly
                                       value="${dec.totalQuantity}" placeholder="(自动生成)" class="layui-input">

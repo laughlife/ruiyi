@@ -141,10 +141,14 @@
                         url: '/department/deleteDepartment',
                         type: 'POST',
                         data: {
-                            'id': queryId
+                            'id': obj.data.id
                         },
+                        dataType: 'json',
                         success: function (res) {
-                            bmTable.reload();
+                            layer.msg(res.msg);
+                            if (res.status) {
+                                bmTable.reload();
+                            }
                         }
                     });
                 } else if (obj.event === 'query') {

@@ -100,12 +100,12 @@ public class CDeclarationDaoImpl implements CDeclarationDao {
 
         sql = "insert into c_declaration(user_id,user_name,user_phone,pro_name,asin," +
                 "image_path,purchase_packages,per_package_quantity,total_quantity,other," +
-                "status,seller_id,seller_name,shc) values(?,?,?,?,?," +
+                "status,seller_id,seller_name,shc,link) values(?,?,?,?,?," +
                 "?,?,?,?,?," +
-                "?,?,?,?)";
+                "?,?,?,?,?)";
         Object[] args = {dec.getUserId(), dec.getUserName(), dec.getUserPhone(), dec.getProName(), dec.getAsin(),
                 dec.getImagePath(), dec.getPurchasePackages(), dec.getPerPackageQuantity(), dec.getTotalQuantity(), dec.getOther(),
-                "已申报", dec.getSellerId(), seller.getName(), dec.getShc()};
+                "已申报", dec.getSellerId(), seller.getName(), dec.getShc(),dec.getLink()};
         int count = jdbc.update(sql, args);
         return count > 0;
     }

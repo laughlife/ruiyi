@@ -35,11 +35,13 @@
                             <div class="layui-inline" id="laydate-rangeLinked">
                                 <label class="layui-form-label">申报时间</label>
                                 <div class="layui-input-inline" style="width: 180px;">
-                                    <input type="text" id="laydate-start" name="date_start" autocomplete="off" class="layui-input">
+                                    <input type="text" id="laydate-start" name="date_start" autocomplete="off"
+                                           class="layui-input">
                                 </div>
                                 <div class="layui-form-mid">-</div>
                                 <div class="layui-input-inline" style="width: 180px;">
-                                    <input type="text" id="laydate-end" name="date_end" autocomplete="off" class="layui-input">
+                                    <input type="text" id="laydate-end" name="date_end" autocomplete="off"
+                                           class="layui-input">
                                 </div>
                             </div>
                             <div class="layui-inline">
@@ -62,6 +64,8 @@
                 <div class="layui-card-body">
                     <table id="declarationTable" class="layui-hide" lay-filter="declarationTableFilter"></table>
                 </div>
+                <div class="layui-card-body" id="show_log" style="display: none;line-height:30px;padding-top:30px;padding-left:30px;">
+                </div>
             </div>
 
         </div>
@@ -70,25 +74,28 @@
 
 <script type="text/html" id="declarationTableToolbar">
     <div class="layui-btn-container">
-        {{#  if(d.status == '已申报'){ }}
-            <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="update">
-                <i class="fa-solid fa-rotate"></i>修改
-            </button>
-            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete">
-                <i class="fa-solid fa-trash"></i>删除
-            </button>
-        {{#  } else { }}
-            <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="show_log">
-                <i class="fa-solid fa-eye"></i>查看进度
-            </button>
-        {{#  } }}
+        <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="chakan">
+            <i class="fa-solid fa-eye"></i>查看
+        </button>
+        {{# if(d.status == '已申报'){ }}
+        <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="update">
+            <i class="fa-solid fa-rotate"></i>修改
+        </button>
+        <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete">
+            <i class="fa-solid fa-trash"></i>删除
+        </button>
+        {{# } else { }}
+        <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="show_log">
+            <i class="fa-solid fa-eye"></i>查看进度
+        </button>
+        {{# } }}
     </div>
 </script>
 <script type="text/html" id="imageView">
     {{#  if(d.image_path && d.image_path != ''){ }}
-        <img src="{{d.image_path}}" style="max-height:80px; width:auto; display:block; margin:0 auto;">
+    <img src="{{d.image_path}}" style="max-height:80px; width:auto; display:block; margin:0 auto;">
     {{#  }else{ }}
-        <div style="text-align: center;">-</div>
+    <div style="text-align: center;">-</div>
     {{#  } }}
 </script>
 <script>
@@ -120,20 +127,20 @@
                     field: 'pro_name',
                     title: '商品名称',
                     width: 200,
-                    templet: function(d){
+                    templet: function (d) {
                         return d.link ?
-                            '<a href="'+ d.link +'" target="_blank" style="color:#1890ff;">'+ d.pro_name +'</a>' :
+                            '<a href="' + d.link + '" target="_blank" style="color:#1890ff;">' + d.pro_name + '</a>' :
                             d.pro_name;
                     }
                 },
-                {field: 'asin', title: 'asin',  width: 280},
-                {field: 'shc', title: '收货仓',  width: 280},
-                {field: 'purchase_packages', title: '采购件数', width:120},
-                {field: 'per_package_quantity', title: '单件数量', width:120},
-                {field: 'total_quantity', title: '采购总量', width:120},
-                {field: 'declare_time', title: '申报时间', width:180},
+                {field: 'asin', title: 'asin', width: 280},
+                {field: 'shc', title: '收货仓', width: 280},
+                {field: 'purchase_packages', title: '需求件数', width: 120},
+                {field: 'per_package_quantity', title: '单件数量', width: 120},
+                {field: 'total_quantity', title: '采需求量', width: 120},
+                {field: 'declare_time', title: '申报时间', width: 180},
                 {field: 'other', title: '其他备注'},
-                {field: 'status', title: '状态', width:120},
+                {field: 'status', title: '状态', width: 120},
                 {align: 'center', title: '操作', toolbar: '#declarationTableToolbar', width: 200}
             ]],
             page: true,
@@ -183,20 +190,54 @@
                             declarationTable.reload();
                         }
                     });
-                }else if(obj.event === 'update'){
+                } else if (obj.event === 'chakan') {
+                    layer.open({
+                        title: '查看采购申报',
+                        type: 2,
+                        shade: 0.5,
+                        shadeClose: true,
+                        area: ['60%', '90%'],
+                        content: '/declaration/chakan?id=' + _data.id
+                    });
+                } else if (obj.event === 'update') {
                     layer.open({
                         title: '新建采购申报',
                         type: 2,
                         shade: 0.5,
                         shadeClose: true,
                         area: ['60%', '80%'],
-                        content: '/declaration/goEditDeclaration?id='+_data.id,
+                        content: '/declaration/goEditDeclaration?id=' + _data.id,
                         end: function () {
                             declarationTable.reload();
                         }
                     });
-                }else if(obj.event === 'show_log'){
-                    console.log("执行查看进度操作，暂未实现");
+                } else if (obj.event === 'show_log') {
+                    $('#show_log').show();
+                    $.ajax({
+                        url: '/declaration/queryDeclarationLog',
+                        type: 'POST',
+                        data: {
+                            'id': _data.id
+                        },
+                        dataType: 'json',
+                        success: function (res) {
+                            if (res.status) {
+                                var _html = "";
+                                for (var i = 0; i < res.data.length; i++) {
+                                    _html += `<div class="layui-timeline-item">
+                                    <i class="layui-icon layui-timeline-axis layui-icon-face-smile"></i>
+                                    <div class="layui-timeline-content layui-text">
+                                      <div class="layui-timeline-title">` + res.data[i].time + '：' + res.data[i].msg + `</div>
+                                    </div>
+                                  </div>`;
+                                }
+                                $('#show_log').html(_html);
+                            } else {
+                                layer.msg(res.msg);
+                            }
+
+                        }
+                    });
                 }
             }
         );

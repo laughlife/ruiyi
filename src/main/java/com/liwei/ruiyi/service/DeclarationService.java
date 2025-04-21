@@ -1,5 +1,6 @@
 package com.liwei.ruiyi.service;
 
+import com.alibaba.fastjson2.JSONArray;
 import com.liwei.ruiyi.bo.CDeclaration;
 import com.liwei.ruiyi.utils.PageUtils;
 import org.springframework.stereotype.Service;
@@ -19,4 +20,6 @@ public interface DeclarationService {
     boolean queren(String id);
 
     boolean buy(CDeclaration dec);
+
+    JSONArray queryDeclarationLog(String id);
 }

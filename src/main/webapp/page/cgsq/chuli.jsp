@@ -67,7 +67,7 @@
                             <div class="layui-form-item">
                                 <label class="layui-form-label">商品图片</label>
                                 <div class="layui-input-inline layui-input-wrap">
-                                    <img src="${imageServiceUrl + dec.imagePath}" style="width: 100px;height: 100px">
+                                    <img src="${imageServiceUrl}${dec.imagePath}" style="width: 100px;height: 100px">
                                 </div>
                             </div>
                         </c:if>
@@ -108,6 +108,15 @@
                             <label class="layui-form-label">未发数</label>
                             <div class="layui-input-block">
                                 <div class="layui-colla-content layui-show" id="unship_count" style="color:#333;font-weight: bold;">
+                                    -
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">未发用量</label>
+                            <div class="layui-input-block">
+                                <input type="hidden" id="wfyl" name="kcyl" class="layui-input">
+                                <div class="layui-colla-content layui-show" id="wfyl_div" style="color:#333;font-weight: bold;">
                                     -
                                 </div>
                             </div>
@@ -184,7 +193,7 @@
                 shade: 0.2,
                 area: ['90%', '90%'],
                 shadeClose: true,
-                content: '/page/cgsq/choose_product.jsp'
+                content: '/product/goChooseProduct'
             });
         });
 
@@ -196,6 +205,12 @@
                 data: data.field,
                 dataType: "json",
                 success: function (res) {
+                    if(res.status){
+                        layer.msg(res.msg, {icon: 1, time: 1000}, function () {
+                            var iframeIndex = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(iframeIndex);
+                        });
+                    }
                 }
             });
             return false;
@@ -216,12 +231,18 @@
         var link = d.link ? '<a href="' + d.link + '" target="_blank" style="color:#1890ff;">' + d.link + '</a>' : "无采购链接";
         $("#buy_link").html(link);
         //需要购买数量
-        if (d.unship_quantity > 0 && d.unship_price <= totalQuantity) {
+        if (d.unship_quantity > 0 && d.unship_quantity >= totalQuantity) {
             $("#need_buy_count").html("剩余未发货数量大于需采购数量，无需采购");
-        }else if(d.unship_quantity > 0 && d.unship_price > totalQuantity){
-            $("#need_buy_count").html(totalQuantity +"(采购总量) - " + d.unship_price + "(未发货数量) = " + (totalQuantity - d.unship_price) + "个");
+            $("#wfyl").val(d.totalQuantity);
+            $("#wfyl_div").html(d.totalQuantity);
+        }else if(d.unship_quantity > 0 && d.unship_quantity < totalQuantity){
+            $("#need_buy_count").html(totalQuantity +"(采购总量) - " + d.unship_quantity + "(未发货数量) = " + (totalQuantity - d.unship_quantity) + "个");
+            $("#wfyl").val(d.unship_quantity);
+            $("#wfyl_div").html(d.unship_quantity);
         }else if(d.unship_quantity == 0){
             $("#need_buy_count").html(totalQuantity);
+            $("#wfyl").val(0);
+            $("#wfyl_div").html(0);
         }
         //本地未发货数量
         $("#unship_count").html(d.unship_quantity);

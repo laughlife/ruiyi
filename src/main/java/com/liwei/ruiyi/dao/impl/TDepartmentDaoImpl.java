@@ -90,11 +90,11 @@ public class TDepartmentDaoImpl implements TDepartmentDao {
     @Override
     public boolean deleteDepartmentById(String bmId) {
         String sql = "delete from t_department where id = ?";
-        try {
-            return jdbc.update(sql, bmId) > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
+        int count = jdbc.update(sql, bmId);
+        if(count > 0){
+            sql = "delete from t_department_permission where department_id = ?";
+            jdbc.update(sql, bmId);
         }
-        return false;
+        return count > 0;
     }
 }

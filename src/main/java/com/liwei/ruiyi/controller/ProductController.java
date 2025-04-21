@@ -59,6 +59,12 @@ public class ProductController {
         request.setAttribute("supplierList", supplierList);
         return "page/c_product/product";
     }
+    @RequestMapping("/goChooseProduct")
+    public String goChooseProduct() {
+        List<CSupplier> supplierList = supplierService.queryAllSupplierForSearch();
+        request.setAttribute("supplierList", supplierList);
+        return "page/cgsq/choose_product";
+    }
 
     @RequestMapping("/goCreateProduct")
     public String goCreateProduct() {
@@ -98,13 +104,12 @@ public class ProductController {
         pageUtils.setSearchParams(params);
 
         PageUtils page = cproductService.queryProductByPage(pageUtils);
-        JSONObject returnJson = new JSONObject();
-        returnJson.put("code", 0);
-        returnJson.put("msg", "操作成功");
-        returnJson.put("count", page.getTotal());
-        returnJson.put("data", page.getData());
-
-        return returnJson.toJSONString();
+        JSONObject rj = new JSONObject();
+        rj.put("code", 0);
+        rj.put("msg", "操作成功");
+        rj.put("count", page.getTotal());
+        rj.put("data", page.getData());
+        return rj.toJSONString();
     }
 
     @RequestMapping("/uploadImage")

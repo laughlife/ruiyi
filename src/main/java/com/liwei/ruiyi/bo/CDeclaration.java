@@ -23,10 +23,14 @@ public class CDeclaration {
     private Integer purchasePackages;
     private Integer perPackageQuantity;
     private Integer totalQuantity;
+    private Integer kcsl;
+    private Integer kcyl;
+    private BigDecimal kcdj;
+    private BigDecimal ksjz;
     private BigDecimal costPrice;
+    private Integer buyQuantity;
     private BigDecimal costAllPrice;
     private BigDecimal totalPrice;
-    private Integer buyQuantity;
     private Integer planTotalQuantity;
     private String other;
     private Integer shippedQuantity;

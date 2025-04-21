@@ -24,10 +24,21 @@
                     <form class="layui-form layui-form-pane" action="">
                         <div class="layui-form-item">
                             <div class="layui-inline">
-                                <label class="layui-form-label">商品名</label>
+                                <label class="layui-form-label">商品名称</label>
                                 <div class="layui-input-block">
                                     <input type="text" id="key" name="key" placeholder="请输入搜索提示信息"
                                            class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-inline" id="laydate-rangeLinked">
+                                <label class="layui-form-label">供应商</label>
+                                <div class="layui-input-block">
+                                    <select name="supplier_id" id="supplier_id" lay-search="">
+                                        <option value="">--请选择或搜索--</option>
+                                        <c:forEach items="${supplierList}" var="supplier">
+                                            <option value="${supplier.id}">${supplier.name}</option>
+                                        </c:forEach>
+                                    </select>
                                 </div>
                             </div>
                             <div class="layui-inline">
@@ -57,6 +68,13 @@
             <i class="fa-solid fa-check"></i>选择
         </button>
     </div>
+</script>
+<script type="text/html" id="imageView">
+    {{#  if(d.image_url && d.image_url != ''){ }}
+        <img src="{{d.image_url}}" style="max-height:80px; width:auto; display:block; margin:0 auto;">
+    {{#  }else{ }}
+        <div style="text-align: center;">-</div>
+    {{#  } }}
 </script>
 <script>
     layui.use(function () {
@@ -95,6 +113,15 @@
             page: true,
             limits: [50, 100, 200],
             limit: 50
+        });
+
+        $("#search_declaration_btn").click(function () {
+            productTable.reload({
+                where: {
+                    key: $("#key").val(),
+                    supplier_id: $("#supplier_id").val()
+                }
+            });
         });
 
         $("#close_win_btn").click(function () {

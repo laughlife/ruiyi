@@ -25,10 +25,14 @@ public class CDeclarationMapper implements RowMapper<CDeclaration> {
         obj.setPurchasePackages(rs.getInt("purchase_packages"));
         obj.setPerPackageQuantity(rs.getInt("per_package_quantity"));
         obj.setTotalQuantity(rs.getInt("total_quantity"));
+        obj.setKcsl(rs.getInt("kcsl"));
+        obj.setKcyl(rs.getInt("kcyl"));
+        obj.setKcdj(rs.getBigDecimal("kcdj"));
+        obj.setKsjz(rs.getBigDecimal("ksjz"));
         obj.setCostPrice(rs.getBigDecimal("cost_price"));
+        obj.setBuyQuantity(rs.getInt("buy_quantity"));
         obj.setCostAllPrice(rs.getBigDecimal("cost_all_price"));
         obj.setTotalPrice(rs.getBigDecimal("total_price"));
-        obj.setBuyQuantity(rs.getInt("buy_quantity"));
         obj.setPlanTotalQuantity(rs.getInt("plan_total_quantity"));
         obj.setOther(rs.getString("other"));
         obj.setShippedQuantity(rs.getInt("shipped_quantity"));

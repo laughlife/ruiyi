@@ -65,12 +65,12 @@
                             <div class="layui-form-item">
                                 <label class="layui-form-label">商品图片</label>
                                 <div class="layui-input-inline layui-input-wrap">
-                                    <img src="${imageServiceUrl + dec.imagePath}" style="width: 100px;height: 100px">
+                                    <img src="${imageServiceUrl}${dec.imagePath}" style="width: 100px;height: 100px">
                                 </div>
                             </div>
                         </c:if>
                         <div class="layui-form-item">
-                            <label class="layui-form-label">采购数量</label>
+                            <label class="layui-form-label">需求量</label>
                             <div class="layui-input-block">
                                 <div class="layui-colla-content layui-show" style="color:#333;font-weight: bold;">
                                     ${dec.purchasePackages}(件数) × ${dec.perPackageQuantity}(单件数量) = ${dec.totalQuantity} (总量)
@@ -83,6 +83,40 @@
                                 <div class="layui-input-block">
                                     <div class="layui-colla-content layui-show">
                                             ${dec.other}
+                                    </div>
+                                </div>
+                            </div>
+                        </c:if>
+                        <c:if test="${dec.status eq '已采购'}">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">采购时间</label>
+                                <div class="layui-input-block">
+                                    <div class="layui-colla-content layui-show" style="color:#333;font-weight: bold;">
+                                        ${dec.purchaseTime}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">采购数量</label>
+                                <div class="layui-input-block">
+                                    <div class="layui-colla-content layui-show" style="color:#333;font-weight: bold;">
+                                        ${dec.buyQuantity}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">计划发货</label>
+                                <div class="layui-input-block">
+                                    <div class="layui-colla-content layui-show" style="color:#333;font-weight: bold;">
+                                            ${dec.planTotalQuantity}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">发货时间</label>
+                                <div class="layui-input-block">
+                                    <div class="layui-colla-content layui-show" style="color:#333;font-weight: bold;">
+                                            ${dec.planShipTime}(预估)
                                     </div>
                                 </div>
                             </div>

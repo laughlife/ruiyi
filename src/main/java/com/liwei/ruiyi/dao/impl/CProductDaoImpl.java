@@ -120,9 +120,6 @@ public class CProductDaoImpl implements CProductDao {
                 product.getCostPrice(), product.getOther(), id};
         jdbc.update(sql, args);
 
-        //3. 更新产品剩余价值
-//        sql = "update c_product set unship_price = cost_price * unship_quantity where id = ?";
-//        jdbc.update(sql, id);
         return id;
     }
 

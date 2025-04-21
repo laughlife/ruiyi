@@ -139,6 +139,7 @@ public class DepartmentController {
     @ResponseBody
     public String deleteDepartment(String id) {
         JSONObject returnJson = departmentService.deleteDepartment(id);
+        System.out.println(returnJson.toJSONString());
         return returnJson.toJSONString();
     }
 
@@ -148,7 +149,7 @@ public class DepartmentController {
         boolean isDelete = departmentService.deleteBmcyById(id);
         JSONObject returnJson = new JSONObject();
         returnJson.put("status", isDelete ? "success" : "file");
-        returnJson.put("message", isDelete ? "部门信息删除成功。" : "部门信息删除失败，请查找原因。");
+        returnJson.put("msg", isDelete ? "部门信息删除成功。" : "部门信息删除失败，请查找原因。");
         return JSON.toJSONString(returnJson);
     }
     @RequestMapping("/setld")

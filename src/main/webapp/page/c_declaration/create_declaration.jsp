@@ -46,7 +46,7 @@
                         <div class="layui-form-item">
                             <label class="layui-form-label">店铺</label>
                             <div class="layui-input-block">
-                                <select name="supplierId" id="supplierId" lay-search="" lay-verify="required">
+                                <select name="sellerId" id="sellerId" lay-search="" lay-verify="required">
                                     <option value="">--请选择或搜索--</option>
                                     <c:forEach items="${sellerList}" var="seller">
                                         <option value="${seller.sid}">${seller.name}</option>
@@ -70,7 +70,7 @@
                             <div class="layui-form-mid layui-text-em" id="upload_image_result">(选填，如果没有对应的销售链接，可直接上传图片)点击按钮选择图片</div>
                         </div>
                         <div class="layui-form-item">
-                            <label class="layui-form-label">采购件数</label>
+                            <label class="layui-form-label">需求件数</label>
                             <div class="layui-input-block">
                                 <input type="number" id="purchasePackages" name="purchasePackages" lay-verify="required" autocomplete="off" placeholder="(必填)"
                                        class="layui-input">
@@ -84,7 +84,7 @@
                             </div>
                         </div>
                         <div class="layui-form-item">
-                            <label class="layui-form-label">总采购量</label>
+                            <label class="layui-form-label">总需求量</label>
                             <div class="layui-input-block">
                                 <input type="number" id="totalQuantity" name="totalQuantity" autocomplete="off" readonly
                                        placeholder="(自动生成)" class="layui-input">
