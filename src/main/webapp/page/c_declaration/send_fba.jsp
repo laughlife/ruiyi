@@ -141,7 +141,8 @@
                             <label class="layui-form-label">发出数量</label>
                             <div class="layui-input-block">
                                 <input type="hidden" name="id" value="${dec.id}">
-                                <input type="number" name="sendQuantity" lay-verify="required" autocomplete="off" placeholder="实际商品发出数量(必填)"
+                                <input type="hidden" id="plan_total_quantity" name="planTotalQuantity" value="${dec.planTotalQuantity}">
+                                <input type="number" id="send_quantity" name="sendQuantity" lay-verify="required" autocomplete="off" placeholder="实际商品发出数量(必填)"
                                        class="layui-input">
                             </div>
                         </div>
@@ -182,6 +183,13 @@
         });
 
         form.on('submit(confirm_send_fba_filter)', function (data) {
+            var send_quantity = $("#send_quantity").val();
+            var plan_total_quantity = $("#plan_total_quantity").val();
+
+            if(send_quantity > plan_total_quantity){
+                layer.msg("实际发出数量不能大于预估发出数量", {icon: 2, time: 1000});
+                return false;
+            }
             //采购
             $.ajax({
                 url: "/declaration/send_to_fba",

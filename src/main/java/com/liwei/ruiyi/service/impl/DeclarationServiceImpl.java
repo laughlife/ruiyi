@@ -3,6 +3,7 @@ package com.liwei.ruiyi.service.impl;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.liwei.ruiyi.bo.CDeclaration;
+import com.liwei.ruiyi.bo.CFbaReceive;
 import com.liwei.ruiyi.bo.CProduct;
 import com.liwei.ruiyi.dao.CProductDao;
 import com.liwei.ruiyi.service.DeclarationService;
@@ -257,6 +258,37 @@ public class DeclarationServiceImpl implements DeclarationService {
             array.add(j);
         }
 
+        if (StringUtils.isNotEmpty(dec.getSendTime())) {
+            JSONObject j = new JSONObject();
+            j.put("time", dec.getSendTime());
+            String msg = """
+                    商品已标发FBA仓，发货数量%s，剩余未发货数量%s。
+                    """.formatted(dec.getShippedQuantity(), dec.getUnshippedQuantity());
+            j.put("msg", msg);
+            array.add(j);
+        }
+
+        List<CFbaReceive> fbaReceiveList = declarationDao.queryFbaReceiveList(id);
+        for (CFbaReceive fbaReceive : fbaReceiveList) {
+            JSONObject j = new JSONObject();
+            j.put("time", fbaReceive.getReceiveTime());
+            String msg = """
+                    FBA仓已收到商品，本次收货数量：%s。
+                    """.formatted(fbaReceive.getReceiveQuantity());
+            j.put("msg", msg);
+            array.add(j);
+        }
+
+        if (StringUtils.isNotEmpty(dec.getReceiveTime())) {
+            JSONObject j = new JSONObject();
+            j.put("time", dec.getReceiveTime());
+            String msg = """
+                    FBA仓已确定签收，签收误差为%s。
+                    """.formatted(dec.getErrorQuantity());
+            j.put("msg", msg);
+            array.add(j);
+        }
+
         return array;
     }
 
@@ -268,5 +300,25 @@ public class DeclarationServiceImpl implements DeclarationService {
     @Override
     public boolean sendToFba(JSONObject params) {
         return declarationDao.sendToFba(params);
+    }
+
+    @Override
+    public boolean fbaReceive(JSONObject params) {
+        return declarationDao.fbaReceive(params);
+    }
+
+    @Override
+    public boolean deleteFbaReceive(String id) {
+        return declarationDao.deleteFbaReceive(id);
+    }
+
+    @Override
+    public List<CFbaReceive> queryFbaReceiveList(String id) {
+        return declarationDao.queryFbaReceiveList(id);
+    }
+
+    @Override
+    public boolean signOrderFinish(String id) {
+        return declarationDao.signOrderFinish(id);
     }
 }

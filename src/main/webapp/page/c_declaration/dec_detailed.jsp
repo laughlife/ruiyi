@@ -116,7 +116,20 @@
                                     <td>${dec.shipTime}</td>
                                 </tr>
                             </c:if>
-
+                            <c:if test="${!empty(dec.sendTime)}">
+                                <tr>
+                                    <td class="text-title">实际发货量：</td>
+                                    <td>${dec.shippedQuantity}</td>
+                                    <td class="text-title">剩余未发：</td>
+                                    <td>${dec.unshippedQuantity}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-title">发FBA时间：</td>
+                                    <td>${dec.sendTime}</td>
+                                    <td class="text-title">预估到货时间：</td>
+                                    <td>${dec.shipTime}</td>
+                                </tr>
+                            </c:if>
                         </tbody>
                     </table>
                 </div>

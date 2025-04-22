@@ -157,13 +157,11 @@
 
         $('#search_declaration_btn').click(function () {
             var key = $('#key').val();
-            var date_start = $('#laydate-start').val();
-            var date_end = $('#laydate-end').val();
+            var status = $('#status').val();
             declarationTable.reload({
                 where: {
                     key: key,
-                    date_start: date_start,
-                    date_end: date_end
+                    status: status
                 }
             });
         });

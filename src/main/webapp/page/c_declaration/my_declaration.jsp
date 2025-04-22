@@ -32,16 +32,19 @@
                                            class="layui-input">
                                 </div>
                             </div>
-                            <div class="layui-inline" id="laydate-rangeLinked">
-                                <label class="layui-form-label">申报时间</label>
+                            <div class="layui-inline">
+                                <label class="layui-form-label">状态筛选</label>
                                 <div class="layui-input-inline" style="width: 180px;">
-                                    <input type="text" id="laydate-start" name="date_start" autocomplete="off"
-                                           class="layui-input">
-                                </div>
-                                <div class="layui-form-mid">-</div>
-                                <div class="layui-input-inline" style="width: 180px;">
-                                    <input type="text" id="laydate-end" name="date_end" autocomplete="off"
-                                           class="layui-input">
+                                    <select name="status" id="status" lay-verify="required"
+                                            lay-search="">
+                                        <option value="">请选择状态</option>
+                                        <option value="已申报">已申报</option>
+                                        <option value="已确认">已确认</option>
+                                        <option value="已采购">已采购</option>
+                                        <option value="已到货">已到货</option>
+                                        <option value="已发出">已发出</option>
+                                        <option value="已完成">已完成</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="layui-inline">
@@ -73,21 +76,23 @@
 <script type="text/html" id="declarationTableToolbar">
     <div class="layui-btn-container">
         <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="show_log">
-            <i class="fa-solid fa-eye"></i>进度
+            <i class="fa-solid fa-eye"></i> 进度
         </button>
         {{# if(d.status == '已申报'){ }}
             <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="update">
-                <i class="fa-solid fa-rotate"></i>修改
+                <i class="fa-solid fa-rotate"></i> 修改
             </button>
             <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete">
-                <i class="fa-solid fa-trash"></i>删除
+                <i class="fa-solid fa-trash"></i> 删除
             </button>
         {{# } else if(d.status == '已采购' || d.status == '已到货'){ }}
             <button class="layui-btn layui-btn-sm layui-bg-red" lay-event="upload">
-                <i class="fa-solid fa-file-upload"></i>发票、标签
+                <i class="fa-solid fa-file-upload"></i> 发票、标签
             </button>
-        {{# } else if(d.status == '已采购' || d.status == '已到货'){ }}
-
+        {{# } else if(d.status == '已发出'){ }}
+            <button class="layui-btn layui-btn-sm layui-bg-red" lay-event="fba_receive">
+                <i class="fa-solid fa-truck-plane"></i> FBA追踪
+            </button>
         {{# } }}
     </div>
 </script>
@@ -103,13 +108,6 @@
         var table = layui.table;
         var layer = layui.layer;
         var $ = layui.jquery;
-        var laydate = layui.laydate;
-        // 日期范围 - 左右面板联动选择模式
-        laydate.render({
-            elem: '#laydate-rangeLinked',
-            range: ['#laydate-start', '#laydate-end'],
-            rangeLinked: true
-        });
 
         var declarationTable = table.render({
             elem: '#declarationTable',
@@ -141,7 +139,19 @@
                 {field: 'plan_total_quantity', title: '采购+库存'},
                 {field: 'declare_time', title: '申报时间'},
                 {field: 'other', title: '其他备注'},
-                {field: 'status', title: '状态'},
+                {field: 'status', title: '状态',templet: function(d){
+                        var status = {
+                            '已申报': '<span class="layui-badge layui-bg-green">已申报</span>',
+                            '已确认': '<span class="layui-badge layui-bg-blue">已确认</span>',
+                            '已采购': '<span class="layui-badge layui-bg-blue">已采购</span>',
+                            '已到货': '<span class="layui-badge layui-bg-blue">已到货</span>',
+                            '已发出': '<span class="layui-badge layui-bg-blue">已发出</span>',
+                            '已完成': '<span class="layui-badge layui-bg-gray">已完成</span>',
+
+                        };
+                        return status[d.status];
+                    }
+                },
                 {field: 'fapiao', title: '发票',templet: function(d) {
                         return d.fapiao ? '<span style="color:green">√</span>' : '<span style="color:red">×</span>';
                     }},
@@ -157,13 +167,11 @@
 
         $('#search_declaration_btn').click(function () {
             var key = $('#key').val();
-            var date_start = $('#laydate-start').val();
-            var date_end = $('#laydate-end').val();
+            var status = $('#status').val();
             declarationTable.reload({
                 where: {
                     key: key,
-                    date_start: date_start,
-                    date_end: date_end
+                    status: status
                 }
             });
         });
@@ -229,6 +237,15 @@
                         shadeClose: true,
                         area: ['60%', '90%'],
                         content: '/declaration/queryDeclarationLog?id=' + _data.id
+                    });
+                } else if (obj.event === 'fba_receive') {
+                    layer.open({
+                        title: 'FBA货物追踪',
+                        type: 2,
+                        shade: 0.5,
+                        shadeClose: true,
+                        area: ['60%', '90%'],
+                        content: '/declaration/goFbaReceivePage?id=' + _data.id
                     });
                 }
             }

@@ -3,9 +3,11 @@ package com.liwei.ruiyi.dao.impl;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.liwei.ruiyi.bo.CDeclaration;
+import com.liwei.ruiyi.bo.CFbaReceive;
 import com.liwei.ruiyi.bo.CSupplier;
 import com.liwei.ruiyi.bo.TSeller;
 import com.liwei.ruiyi.bo.mapper.CDeclarationMapper;
+import com.liwei.ruiyi.bo.mapper.CFbaReceiveMapper;
 import com.liwei.ruiyi.bo.mapper.CSupplierMapper;
 import com.liwei.ruiyi.bo.mapper.TSellerMapper;
 import com.liwei.ruiyi.dao.CDeclarationDao;
@@ -29,8 +31,7 @@ public class CDeclarationDaoImpl implements CDeclarationDao {
         JSONObject searchParams = page.getSearchParams();
         String key = searchParams.getString("key");
         String user_id = searchParams.getString("user_id");
-        String date_start = searchParams.getString("date_start");
-        String date_end = searchParams.getString("date_end");
+        String status = searchParams.getString("status");
         String isAdmin = searchParams.getString("is_admin");
         String isLadder = searchParams.getString("is_ladder");
         String departmentCode = searchParams.getString("departmentCode");
@@ -61,17 +62,10 @@ public class CDeclarationDaoImpl implements CDeclarationDao {
             querySql += " and pro_name like ?";
             args.add(key);
         }
-        if (StringUtils.isNotBlank(date_start)) {
-            date_start = date_start.trim() + " 00:00:00";
-            sql += " and declare_time >= ?";
-            querySql += " and declare_time >= ?";
-            args.add(date_start);
-        }
-        if (StringUtils.isNotBlank(date_end)) {
-            date_end = date_end.trim() + " 23:59:59";
-            sql += " and declare_time <= ?";
-            querySql += " and declare_time <= ?";
-            args.add(date_end);
+        if (StringUtils.isNotBlank(status)) {
+            sql += " and status = ? ";
+            querySql += " and status = ?";
+            args.add(status);
         }
 
         int count = jdbc.queryForObject(sql, Integer.class, args.toArray());
@@ -106,7 +100,7 @@ public class CDeclarationDaoImpl implements CDeclarationDao {
                 "?,?,?,?,?)";
         Object[] args = {dec.getUserId(), dec.getUserName(), dec.getUserPhone(), dec.getProName(), dec.getAsin(),
                 dec.getImagePath(), dec.getPurchasePackages(), dec.getPerPackageQuantity(), dec.getTotalQuantity(), dec.getOther(),
-                "已申报", dec.getSellerId(), seller.getName(), dec.getShc(),dec.getLink()};
+                "已申报", dec.getSellerId(), seller.getName(), dec.getShc(), dec.getLink()};
         int count = jdbc.update(sql, args);
         return count > 0;
     }
@@ -183,26 +177,89 @@ public class CDeclarationDaoImpl implements CDeclarationDao {
         //检查实际发货量
         int actualQuantity = params.getInteger("sendQuantity");
 
-        if (planQuantity > actualQuantity) {
+
+        if (actualQuantity > planQuantity) {
             //如果实际发货量大于计划发货量，逻辑会出现问题的，暂时不发货
             return false;
-        }else if (planQuantity == actualQuantity){
+        } else if (planQuantity == actualQuantity) {
             String sql = "update c_declaration set `status` = '已发货',send_time = current_timestamp,plan_receive_time = ?,send_quantity = ? where id = ?";
             Object[] args = {planReceiveTime, actualQuantity, id};
             return jdbc.update(sql, args) > 0;
-        }else{
+        } else {
             int wfsl = planQuantity - actualQuantity;
             int spid = dec.getProId();
             BigDecimal costPrice = dec.getCostPrice();
             BigDecimal unshipPrice = costPrice.multiply(new BigDecimal(wfsl));
+
             //先更新库存
             String sql = "update c_product set unship_quantity = unship_quantity + ?,unship_price = unship_price + ? where id = ?";
             Object[] args = {wfsl, unshipPrice, spid};
-            jdbc.update(sql, args);
+            jdbc.update(sql, args);//未发货数量
 
-            sql = "update c_declaration set `status` = '已发货',send_time = current_timestamp,plan_receive_time = ?,send_quantity = ? where id = ?";
-            Object[] args2 = {planReceiveTime, actualQuantity, id};
+            sql = "update c_declaration set `status` = '已发出',send_time = current_timestamp,plan_receive_time = ?,shipped_quantity = ?,unshipped_quantity = ? where id = ?";
+            Object[] args2 = {planReceiveTime, actualQuantity, wfsl, id};
             return jdbc.update(sql, args2) > 0;
         }
+    }
+
+    @Override
+    public boolean fbaReceive(JSONObject params) {
+        String id = params.getString("id");
+        int receiveQuantity = params.getInteger("receiveQuantity");
+        String receiveTime = params.getString("receiveTime");
+        String sql = "insert into c_fba_receive(dec_id,receive_quantity,receive_time)" +
+                "values (?,?,?)";
+        Object[] args = {id, receiveQuantity, receiveTime};
+        int count = 0; //误差
+        count = jdbc.update(sql, args);
+        if(count > 0){
+            //计算签收误差
+            receiveError(id);
+        }
+        return count > 0;
+    }
+
+    @Override
+    public boolean deleteFbaReceive(String id) {
+        CFbaReceive receive = queryFbaReceiveById(id);
+        String sql = "delete from c_fba_receive where id = ?";
+        if(jdbc.update(sql, id) > 0){
+            receiveError(receive.getDecId()+"");
+            return true;
+        }
+        return false;
+    }
+
+    private CFbaReceive queryFbaReceiveById(String id) {
+        String sql = "select * from c_fba_receive where id = ?";
+        return jdbc.queryForObject(sql, new CFbaReceiveMapper(), id);
+    }
+
+    public void receiveError(String id){
+        String sql = "select sum(receive_quantity) from c_fba_receive where dec_id = ?";
+        int receiveQuantity = jdbc.queryForObject(sql, Integer.class, id);
+
+        sql = "select shipped_quantity from c_declaration where id = ?";
+        int shippedQuantity = jdbc.queryForObject(sql, Integer.class, id);
+
+        int receiverQuantity = receiveQuantity - shippedQuantity;
+        sql = "update c_declaration set received_quantity = ?,error_quantity = ? where id = ?";
+        Object[] args = {receiveQuantity, receiverQuantity, id};
+        jdbc.update(sql, args);
+    }
+
+    @Override
+    public List<CFbaReceive> queryFbaReceiveList(String id) {
+        String sql = "select * from c_fba_receive where dec_id = ? order by receive_time asc";
+        return jdbc.query(sql, new CFbaReceiveMapper(), id);
+    }
+
+    @Override
+    public boolean signOrderFinish(String id) {
+        String sql = "update c_declaration set status = '已完成',receive_time = current_timestamp where id = ?";
+        if(jdbc.update(sql, id) > 0){
+            return true;
+        }
+        return false;
     }
 }

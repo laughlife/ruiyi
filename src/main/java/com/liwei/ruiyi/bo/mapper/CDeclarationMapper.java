@@ -36,7 +36,9 @@ public class CDeclarationMapper implements RowMapper<CDeclaration> {
         obj.setPlanTotalQuantity(rs.getInt("plan_total_quantity"));
         obj.setOther(rs.getString("other"));
         obj.setShippedQuantity(rs.getInt("shipped_quantity"));
+        obj.setUnshippedQuantity(rs.getInt("unshipped_quantity"));
         obj.setReceivedQuantity(rs.getInt("received_quantity"));
+        obj.setErrorQuantity(rs.getInt("error_quantity"));
         obj.setDeclareTime(rs.getString("declare_time"));
         obj.setConfirmTime(rs.getString("confirm_time"));
         obj.setPurchaseTime(rs.getString("purchase_time"));
@@ -45,8 +47,8 @@ public class CDeclarationMapper implements RowMapper<CDeclaration> {
         obj.setFapiaoTime(rs.getString("fapiao_time"));
         obj.setTipsTime(rs.getString("tips_time"));
         obj.setSendTime(rs.getString("send_time"));
-        obj.setSendQuantity(rs.getInt("send_quantity"));
         obj.setPlanReceiveTime(rs.getString("plan_receive_time"));
+        obj.setReceiveTime(rs.getString("receive_time"));
         obj.setStatus(rs.getString("status"));
         return obj;
     }

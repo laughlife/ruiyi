@@ -34,7 +34,9 @@ public class CDeclaration {
     private Integer planTotalQuantity;
     private String other;
     private Integer shippedQuantity;
+    private Integer unshippedQuantity;
     private Integer receivedQuantity;
+    private Integer errorQuantity;
     private String declareTime;
     private String confirmTime;
     private String purchaseTime;
@@ -43,7 +45,7 @@ public class CDeclaration {
     private String fapiaoTime;
     private String tipsTime;
     private String sendTime;
-    private Integer sendQuantity;
     private String planReceiveTime;
+    private String receiveTime;
     private String status;
 }

@@ -2,10 +2,7 @@ package com.liwei.ruiyi.controller;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.liwei.ruiyi.bo.CDeclaration;
-import com.liwei.ruiyi.bo.CSupplier;
-import com.liwei.ruiyi.bo.TSeller;
-import com.liwei.ruiyi.bo.TUser;
+import com.liwei.ruiyi.bo.*;
 import com.liwei.ruiyi.service.DeclarationService;
 import com.liwei.ruiyi.service.SellerService;
 import com.liwei.ruiyi.utils.DateUtils;
@@ -189,12 +186,10 @@ public class DeclarationController {
         int limit = Integer.parseInt(request.getParameter("limit"));
         PageUtils pageUtils = new PageUtils(nowPage, limit);
         String key = request.getParameter("key");
-        String date_start = request.getParameter("date_start");
-        String date_end = request.getParameter("date_end");
+        String status = request.getParameter("status");
         JSONObject params = new JSONObject();
         params.put("key", key);
-        params.put("date_start", date_start);
-        params.put("date_end", date_end);
+        params.put("status", status);
         params.put("user_id", user.getId());
         params.put("is_admin", user.getIsAdmin());
         params.put("is_ladder", user.getIsLadder());
@@ -343,4 +338,67 @@ public class DeclarationController {
 
         return rj.toJSONString();
     }
+
+    @RequestMapping("/goFbaReceivePage")
+    public String goFbaReceivePage(String id) {
+        String imageServiceUrl = ReadProUtils.ReadProperties("imageServiceUrl", "conf.properties");
+        request.setAttribute("imageServiceUrl", imageServiceUrl);
+
+        CDeclaration declaration = declarationService.queryDeclarationById(id);
+        request.setAttribute("dec", declaration);
+
+        List<CFbaReceive> receiveList = declarationService.queryFbaReceiveList(id);
+        request.setAttribute("receiveList", receiveList);
+        return "page/c_declaration/receive_fba";
+    }
+
+    @RequestMapping("/fba_receive")
+    @ResponseBody
+    public String fbaReceive(String id,Integer receiveQuantity,String receiveTime) {
+        JSONObject rj = new JSONObject();
+        JSONObject params = new JSONObject();
+        params.put("id",id);
+        params.put("receiveQuantity",receiveQuantity);
+        params.put("receiveTime",receiveTime);
+
+        if(declarationService.fbaReceive(params)){
+            rj.put("status", true);
+            rj.put("msg", "签收成功");
+        }else{
+            rj.put("status", false);
+            rj.put("msg", "签收失败，请联系开发人员排查错误原因，错误码/declaration/sendToFba");
+        }
+
+        return rj.toJSONString();
+    }
+
+    @RequestMapping("/delete_fba_receive")
+    @ResponseBody
+    public String deleteFbaReceive(String id) {
+        JSONObject rj = new JSONObject();
+        if(declarationService.deleteFbaReceive(id)){
+            rj.put("status", true);
+            rj.put("msg", "删除成功");
+        }else{
+            rj.put("status", false);
+            rj.put("msg", "删除失败，请联系开发人员排查错误原因，错误码/declaration/sendToFba");
+        }
+
+        return rj.toJSONString();
+    }
+    @RequestMapping("/sign_order_finish")
+    @ResponseBody
+    public String signOrderFinish(String id) {
+        JSONObject rj = new JSONObject();
+        if(declarationService.signOrderFinish(id)){
+            rj.put("status", true);
+            rj.put("msg", "订单标记发货成功");
+        }else{
+            rj.put("status", false);
+            rj.put("msg", "订单标记发货成功，请联系开发人员排查错误原因，错误码/declaration/sendToFba");
+        }
+
+        return rj.toJSONString();
+    }
+
 }
