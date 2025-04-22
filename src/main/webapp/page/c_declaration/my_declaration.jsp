@@ -64,8 +64,6 @@
                 <div class="layui-card-body">
                     <table id="declarationTable" class="layui-hide" lay-filter="declarationTableFilter"></table>
                 </div>
-                <div class="layui-card-body" id="show_log" style="display: none;line-height:30px;padding-top:30px;padding-left:30px;">
-                </div>
             </div>
 
         </div>
@@ -74,9 +72,6 @@
 
 <script type="text/html" id="declarationTableToolbar">
     <div class="layui-btn-container">
-        <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="chakan">
-            <i class="fa-solid fa-eye"></i>查看
-        </button>
         <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="show_log">
             <i class="fa-solid fa-eye"></i>进度
         </button>
@@ -91,14 +86,16 @@
             <button class="layui-btn layui-btn-sm layui-bg-red" lay-event="upload">
                 <i class="fa-solid fa-file-upload"></i>发票、标签
             </button>
+        {{# } else if(d.status == '已采购' || d.status == '已到货'){ }}
+
         {{# } }}
     </div>
 </script>
 <script type="text/html" id="imageView">
     {{#  if(d.image_path && d.image_path != ''){ }}
-    <img src="{{d.image_path}}" style="max-height:80px; width:auto; display:block; margin:0 auto;">
+        <img src="{{d.image_path}}" style="max-height:80px; width:auto; display:block; margin:0 auto;">
     {{#  }else{ }}
-    <div style="text-align: center;">-</div>
+        <div style="text-align: center;">-</div>
     {{#  } }}
 </script>
 <script>
@@ -145,7 +142,7 @@
                 {field: 'declare_time', title: '申报时间'},
                 {field: 'other', title: '其他备注'},
                 {field: 'status', title: '状态'},
-                {align: 'center', title: '操作', toolbar: '#declarationTableToolbar'}
+                {align: 'center', width:400,title: '操作', toolbar: '#declarationTableToolbar'}
             ]],
             page: true,
             limits: [50, 100, 200],
@@ -194,16 +191,7 @@
                             declarationTable.reload();
                         }
                     });
-                } else if (obj.event === 'chakan') {
-                    layer.open({
-                        title: '查看采购申报',
-                        type: 2,
-                        shade: 0.5,
-                        shadeClose: true,
-                        area: ['60%', '90%'],
-                        content: '/declaration/chakan?id=' + _data.id
-                    });
-                } else if (obj.event === 'update') {
+                }  else if (obj.event === 'update') {
                     layer.open({
                         title: '修改采购申报',
                         type: 2,
@@ -228,31 +216,13 @@
                         }
                     });
                 } else if (obj.event === 'show_log') {
-                    $('#show_log').show();
-                    $.ajax({
-                        url: '/declaration/queryDeclarationLog',
-                        type: 'POST',
-                        data: {
-                            'id': _data.id
-                        },
-                        dataType: 'json',
-                        success: function (res) {
-                            if (res.status) {
-                                var _html = "";
-                                for (var i = 0; i < res.data.length; i++) {
-                                    _html += `<div class="layui-timeline-item">
-                                    <i class="layui-icon layui-timeline-axis layui-icon-face-smile"></i>
-                                    <div class="layui-timeline-content layui-text">
-                                      <div class="layui-timeline-title">` + res.data[i].time + '：' + res.data[i].msg + `</div>
-                                    </div>
-                                  </div>`;
-                                }
-                                $('#show_log').html(_html);
-                            } else {
-                                layer.msg(res.msg);
-                            }
-
-                        }
+                    layer.open({
+                        title: '查看流程',
+                        type: 2,
+                        shade: 0.5,
+                        shadeClose: true,
+                        area: ['60%', '90%'],
+                        content: '/declaration/queryDeclarationLog?id=' + _data.id
                     });
                 }
             }

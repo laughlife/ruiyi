@@ -24,4 +24,6 @@ public interface DeclarationService {
     JSONArray queryDeclarationLog(String id);
 
     void uploadDeclaration(String id, String types, String src);
+
+    boolean arrival(String id);
 }

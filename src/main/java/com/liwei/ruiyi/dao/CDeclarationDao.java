@@ -23,4 +23,6 @@ public interface CDeclarationDao {
     void uploadDeclarationFaPiao(String id, String src);
 
     void uploadDeclarationTips(String id, String src);
+
+    boolean arrival(String id);
 }

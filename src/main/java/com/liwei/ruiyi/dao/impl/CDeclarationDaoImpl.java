@@ -165,4 +165,10 @@ public class CDeclarationDaoImpl implements CDeclarationDao {
         String sql = "update c_declaration set tips = ?,tips_time = current_timestamp where id = ?";
         jdbc.update(sql, src, id);
     }
+
+    @Override
+    public boolean arrival(String id) {
+        String sql = "update c_declaration set status = '已到货',ship_time = current_timestamp where id = ?";
+        return jdbc.update(sql, id) > 0;
+    }
 }

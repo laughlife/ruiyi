@@ -239,12 +239,27 @@ public class DeclarationServiceImpl implements DeclarationService {
             JSONObject j = new JSONObject();
             j.put("time", dec.getTipsTime());
             String msg = """
-                    发票信息已上传,点击查看<a href="javascript:downloadFile('%s%s','%s——标签信息')" style='color:#1890ff;'>%s——标签信息</a>
+                    标签信息已上传,点击查看<a href="javascript:downloadFile('%s%s','%s——标签信息')" style='color:#1890ff;'>%s——标签信息</a>
                     """.formatted(imageServiceUrl, dec.getTips(), dec.getProName(), dec.getProName());
             j.put("msg", msg);
             array.add(j);
         }
 
+        if (StringUtils.isNotEmpty(dec.getShipTime())) {
+            JSONObject j = new JSONObject();
+            j.put("time", dec.getShipTime());
+            String msg = """
+                    采购商品已到库，准备贴标发FBA仓。
+                    """;
+            j.put("msg", msg);
+            array.add(j);
+        }
+
         return array;
+    }
+
+    @Override
+    public boolean arrival(String id) {
+        return declarationDao.arrival(id);
     }
 }

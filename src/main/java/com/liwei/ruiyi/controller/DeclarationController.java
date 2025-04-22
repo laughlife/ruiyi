@@ -254,16 +254,6 @@ public class DeclarationController {
         return rj.toJSONString();
     }
 
-    @RequestMapping("/chakan")
-    public String chakan(String id) {
-        String imageServiceUrl = ReadProUtils.ReadProperties("imageServiceUrl", "conf.properties");
-        request.setAttribute("imageServiceUrl", imageServiceUrl);
-
-        CDeclaration declaration = declarationService.queryDeclarationById(id);
-        request.setAttribute("dec", declaration);
-
-        return "page/cgsq/chakan";
-    }
 
     @RequestMapping("/goUploadDeclaration")
     public String goUploadDeclaration(String id) {
@@ -297,18 +287,27 @@ public class DeclarationController {
     }
 
     @RequestMapping("/queryDeclarationLog")
-    @ResponseBody
     public String queryDeclarationLog(String id) {
-        JSONObject json = new JSONObject();
         JSONArray array = declarationService.queryDeclarationLog(id);
-        if(array.size() > 0){
-            json.put("status", true);
-            json.put("data", array);
-        }else{
-            json.put("status", false);
-            json.put("msg", "暂无采购记录");
-        }
-        return json.toJSONString();
+        request.setAttribute("array", array);
+
+        String imageServiceUrl = ReadProUtils.ReadProperties("imageServiceUrl", "conf.properties");
+        request.setAttribute("imageServiceUrl", imageServiceUrl);
+
+        CDeclaration declaration = declarationService.queryDeclarationById(id);
+        request.setAttribute("dec", declaration);
+
+        return "page/c_declaration/dec_detailed";
+    }
+
+    @RequestMapping("/arrival")
+    @ResponseBody
+    public String arrival(String id) {
+        boolean status = declarationService.arrival(id);
+        JSONObject rj = new JSONObject();
+        rj.put("status", status);
+        rj.put("msg", status ? "信息已确认" : "操作失败，请联系开发人员排查错误原因，错误码/declaration/arrival");//确认
+        return rj.toJSONString();
     }
 
 }

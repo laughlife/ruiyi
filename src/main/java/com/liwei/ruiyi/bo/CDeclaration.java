@@ -42,6 +42,8 @@ public class CDeclaration {
     private String shipTime;
     private String fapiaoTime;
     private String tipsTime;
+    private String sendTime;
+    private Integer sendQuantity;
     private String planReceiveTime;
     private String status;
 }

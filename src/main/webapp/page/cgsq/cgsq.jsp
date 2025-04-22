@@ -41,6 +41,9 @@
                                         <option value="已申报">已申报</option>
                                         <option value="已确认">已确认</option>
                                         <option value="已采购">已采购</option>
+                                        <option value="已到货">已到货</option>
+                                        <option value="已发出">已发出</option>
+                                        <option value="已完成">已完成</option>
                                     </select>
                                 </div>
                             </div>
@@ -63,8 +66,8 @@
 </div>
 <script type="text/html" id="declarationTableToolbar">
     <div class="layui-btn-container">
-        <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="chakan">
-            <i class="fa-solid fa-eye"></i>查看
+        <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="show_log">
+            <i class="fa-solid fa-eye"></i>进度
         </button>
         {{#  if(d.status == '已申报'){ }}
             <button class="layui-btn layui-btn-sm layui-bg-red" lay-event="queren">
@@ -141,7 +144,7 @@
                         return status[d.status];
                     }
                 },
-                {align: 'center', title: '操作', toolbar: '#declarationTableToolbar', width: 350}
+                {align: 'center', title: '操作', toolbar: '#declarationTableToolbar', width: 400}
             ]],
             page: true,
             limits: [50, 100, 200],
@@ -176,14 +179,14 @@
                             declarationTable.reload();
                         }
                     });
-                }else if(obj.event === 'chakan'){
+                }else if(obj.event === 'show_log'){
                     layer.open({
-                        title: '查看采购申报',
+                        title: '查看流程',
                         type: 2,
                         shade: 0.5,
                         shadeClose: true,
                         area: ['60%', '90%'],
-                        content: '/declaration/chakan?id='+_data.id
+                        content: '/declaration/queryDeclarationLog?id=' + _data.id
                     });
                 }else if(obj.event === 'chuli'){
                     layer.open({
@@ -194,6 +197,19 @@
                         area: ['60%', '90%'],
                         content: '/declaration/chuli?id='+_data.id,
                         end: function () {
+                            declarationTable.reload();
+                        }
+                    });
+                }else if(obj.event === 'confirm_arrival'){
+                    $.ajax({
+                        url: '/declaration/arrival',
+                        type: 'POST',
+                        data: {
+                            'id': _data.id
+                        },
+                        dataType: 'json',
+                        success: function (res) {
+                            layer.msg(res.msg);
                             declarationTable.reload();
                         }
                     });
