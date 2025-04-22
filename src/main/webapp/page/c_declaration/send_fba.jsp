@@ -5,7 +5,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>编辑采购申报</title>
+    <title>发货确认</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -75,7 +75,7 @@
                                 <td class="text-title">需求量：</td>
                                 <td>
                                     ${dec.purchasePackages} × ${dec.perPackageQuantity} = ${dec.totalQuantity} <br />
-                                    (件数) × (单件数量) = (总量)
+                                        (件数) × (单件数量) = (总量)
                                 </td>
                                 <td class="text-title">申请时间：</td>
                                 <td>${dec.declareTime}</td>
@@ -84,7 +84,7 @@
                                 <tr>
                                     <td class="text-title">备注信息：</td>
                                     <td colspan="3">
-                                            ${dec.other}
+                                        ${dec.other}
                                     </td>
                                 </tr>
                             </c:if>
@@ -116,55 +116,45 @@
                                     <td>${dec.shipTime}</td>
                                 </tr>
                             </c:if>
+                            <c:if test="${!empty(dec.fapiao)}">
+                                <tr>
+                                    <td class="text-title">发票：</td>
+                                    <td colspan="3">
+                                        <a href="javascript:downloadFile('${imageServiceUrl}${dec.fapiao}','${dec.proName}——发票文件')" download="" style="color:#1890ff;">${dec.proName}——发票文件</a>
+                                    </td>
+                                </tr>
+                            </c:if>
+                            <c:if test="${!empty(dec.tips)}">
+                                <tr>
+                                    <td class="text-title">标签：</td>
+                                    <td colspan="3">
+                                        <a href="javascript:downloadFile('${imageServiceUrl}${dec.tips}','${dec.proName}——标签文件')" download="" style="color:#1890ff;">${dec.proName}——标签文件</a>
+                                    </td>
+                                </tr>
+                            </c:if>
                         </tbody>
                     </table>
                 </div>
                 <div class="layui-card-body">
                     <form class="layui-form layui-form-pane" action="">
-                        <c:if test="${dec.status eq '已采购' || dec.status eq '已到货'}">
-                            <div class="layui-form-item" id="fapiao_div" style="${empty(dec.fapiao) ? 'display: none;' : ''}">
-                                <label class="layui-form-label">发票文件</label>
-                                <div class="layui-input-block">
-                                    <div class="layui-colla-content layui-show" style="color:#333;font-weight: bold;">
-                                        <a id="fapiao_link" href="javascript:downloadFile('${imageServiceUrl}${dec.fapiao}','${dec.proName}——发票文件')" download="" style="color:#1890ff;">${dec.proName}——发票文件</a>
-                                    </div>
-                                </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">发出数量</label>
+                            <div class="layui-input-block">
+                                <input type="hidden" name="id" value="${dec.id}">
+                                <input type="number" name="sendQuantity" lay-verify="required" autocomplete="off" placeholder="实际商品发出数量(必填)"
+                                       class="layui-input">
                             </div>
-
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">发票</label>
-                                <div class="layui-input-block">
-                                    <div class="layui-upload-drag" style="display: block;" id="ID-upload-fapiao-drag">
-                                        <i class="layui-icon layui-icon-upload"></i>
-                                        <div>上传、修改发票信息</div>
-                                        <input type="hidden" name="fapiao" value="${dec.fapiao}">
-                                    </div>
-                                </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">到达时间</label>
+                            <div class="layui-input-block">
+                                <input type="text" id="plan_receive_time" name="planReceiveTime" placeholder="预估商品到FBA仓时间，点击选择"
+                                       class="layui-input" lay-verify="required" readonly>
                             </div>
-
-                            <div class="layui-form-item" id="tips_div" style="${empty(dec.tips) ? 'display: none;' : ''}">
-                                <label class="layui-form-label">标签</label>
-                                <div class="layui-input-block">
-                                    <div class="layui-colla-content layui-show" style="color:#333;font-weight: bold;">
-                                        <a id="biaoqian_link" href="javascript:downloadFile('${imageServiceUrl}${dec.tips}','${dec.proName}——标签文件')" download="" style="color:#1890ff;">${dec.proName}——标签文件</a>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">标签</label>
-                                <div class="layui-input-block">
-                                    <div class="layui-upload-drag" style="display: block;" id="ID-upload-biaoqian-drag">
-                                        <i class="layui-icon layui-icon-upload"></i>
-                                        <div>上传、修改标签信息</div>
-                                        <input type="hidden" name="tips" value="${dec.tips}">
-                                    </div>
-                                </div>
-                            </div>
-                        </c:if>
+                        </div>
                         <div class="layui-form-item" style="text-align: center;">
-                            <button type="button" id="update_dec_button"
-                                    class="layui-btn layui-bg-blue"><i class="fa-solid fa-check"></i>确定
+                            <button type="button" class="layui-btn layui-bg-blue" lay-submit lay-filter="confirm_send_fba_filter">
+                                <i class="fa-solid fa-check"></i>确认发出
                             </button>
                             <button type="button" id="close_win_btn"
                                     class="layui-btn layui-btn-warm"><i class="fa-solid fa-circle-xmark fa-fw"></i>关闭
@@ -183,61 +173,39 @@
 <script>
     layui.use(function () {
         var $ = layui.jquery;
-        var upload = layui.upload;
-
-        $("#update_dec_button").click(function () {
-            var iframeIndex = parent.layer.getFrameIndex(window.name);
-            parent.layer.close(iframeIndex);
+        var form = layui.form;
+        var layer = layui.layer;
+        var laydate = layui.laydate;
+        // 渲染
+        laydate.render({
+            elem: '#plan_receive_time'
         });
+
+        form.on('submit(confirm_send_fba_filter)', function (data) {
+            //采购
+            $.ajax({
+                url: "/declaration/send_to_fba",
+                type: "post",
+                data: data.field,
+                dataType: "json",
+                success: function (res) {
+                    if(res.status){
+                        layer.msg(res.msg, {icon: 1, time: 1000}, function () {
+                            var iframeIndex = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(iframeIndex);
+                        });
+                    }else{
+                        layer.msg(res.msg, {icon: 2, time: 1000});
+                    }
+                }
+            });
+            return false;
+        });
+
         $("#close_win_btn").click(function () {
             var iframeIndex = parent.layer.getFrameIndex(window.name);
             parent.layer.close(iframeIndex);
         });
-
-        upload.render({
-            elem: '#ID-upload-fapiao-drag',
-            url: '/declaration/uploadFile',
-            accept: 'file',
-            data: {
-                id: function () {
-                    return $("#pro_id").val();
-                },
-                types: 'fapiao'
-            },
-            dataType: 'json',
-            done: function(res){
-                layer.msg(res.msg);
-                if(res.status){
-                    $("#fapiao_div").show();
-                    $("#fapiao_link").attr("href", "javascript:downloadFile('"+res.href+"','${dec.proName}——发票信息')");
-                    $("input[name='fapiao']").val(res.src);
-                }
-            }
-        });
-
-        upload.render({
-            elem: '#ID-upload-biaoqian-drag',
-            url: '/declaration/uploadFile',
-            accept: 'file',
-            data: {
-                id: function () {
-                    return $("#pro_id").val();
-                },
-                types: 'tips'
-            },
-            dataType: 'json',
-            done: function(res){
-                layer.msg(res.msg);
-                if(res.status){
-                    $("#tips_div").show();
-                    $("#biaoqian_link").attr("href", "javascript:downloadFile('"+res.href+"','${dec.proName}——标签信息')");
-                    $("input[name='tips']").val(res.src);
-                }
-            }
-        });
-
-
-
     });
 
     function downloadFile(url, name) {

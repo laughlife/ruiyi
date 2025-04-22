@@ -142,6 +142,12 @@
                 {field: 'declare_time', title: '申报时间'},
                 {field: 'other', title: '其他备注'},
                 {field: 'status', title: '状态'},
+                {field: 'fapiao', title: '发票',templet: function(d) {
+                        return d.fapiao ? '<span style="color:green">√</span>' : '<span style="color:red">×</span>';
+                    }},
+                {field: 'tips', title: '标签',templet: function(d) {
+                        return d.tips ? '<span style="color:green">√</span>' : '<span style="color:red">×</span>';
+                    }},
                 {align: 'center', width:400,title: '操作', toolbar: '#declarationTableToolbar'}
             ]],
             page: true,

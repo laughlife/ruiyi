@@ -310,4 +310,37 @@ public class DeclarationController {
         return rj.toJSONString();
     }
 
+
+    @RequestMapping("/confirmSendFba")
+    public String confirmSendFba(String id) {
+        JSONArray array = declarationService.queryDeclarationLog(id);
+        request.setAttribute("array", array);
+
+        String imageServiceUrl = ReadProUtils.ReadProperties("imageServiceUrl", "conf.properties");
+        request.setAttribute("imageServiceUrl", imageServiceUrl);
+
+        CDeclaration declaration = declarationService.queryDeclarationById(id);
+        request.setAttribute("dec", declaration);
+
+        return "page/c_declaration/send_fba";
+    }
+    @RequestMapping("/send_to_fba")
+    @ResponseBody
+    public String sendToFba(String id,Integer sendQuantity,String planReceiveTime) {
+        JSONObject rj = new JSONObject();
+        JSONObject params = new JSONObject();
+        params.put("id",id);
+        params.put("sendQuantity",sendQuantity);
+        params.put("planReceiveTime",planReceiveTime);
+
+        if(declarationService.sendToFba(params)){
+            rj.put("status", true);
+            rj.put("msg", "发货成功");
+        }else{
+            rj.put("status", false);
+            rj.put("msg", "发货失败，请联系开发人员排查错误原因，错误码/declaration/sendToFba");
+        }
+
+        return rj.toJSONString();
+    }
 }

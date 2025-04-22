@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -170,5 +171,38 @@ public class CDeclarationDaoImpl implements CDeclarationDao {
     public boolean arrival(String id) {
         String sql = "update c_declaration set status = '已到货',ship_time = current_timestamp where id = ?";
         return jdbc.update(sql, id) > 0;
+    }
+
+    @Override
+    public boolean sendToFba(JSONObject params) {
+        String id = params.getString("id");
+        String planReceiveTime = params.getString("planReceiveTime");
+        CDeclaration dec = queryDeclarationById(params.getString("id"));
+        //获取计划发货量
+        int planQuantity = dec.getPlanTotalQuantity();
+        //检查实际发货量
+        int actualQuantity = params.getInteger("sendQuantity");
+
+        if (planQuantity > actualQuantity) {
+            //如果实际发货量大于计划发货量，逻辑会出现问题的，暂时不发货
+            return false;
+        }else if (planQuantity == actualQuantity){
+            String sql = "update c_declaration set `status` = '已发货',send_time = current_timestamp,plan_receive_time = ?,send_quantity = ? where id = ?";
+            Object[] args = {planReceiveTime, actualQuantity, id};
+            return jdbc.update(sql, args) > 0;
+        }else{
+            int wfsl = planQuantity - actualQuantity;
+            int spid = dec.getProId();
+            BigDecimal costPrice = dec.getCostPrice();
+            BigDecimal unshipPrice = costPrice.multiply(new BigDecimal(wfsl));
+            //先更新库存
+            String sql = "update c_product set unship_quantity = unship_quantity + ?,unship_price = unship_price + ? where id = ?";
+            Object[] args = {wfsl, unshipPrice, spid};
+            jdbc.update(sql, args);
+
+            sql = "update c_declaration set `status` = '已发货',send_time = current_timestamp,plan_receive_time = ?,send_quantity = ? where id = ?";
+            Object[] args2 = {planReceiveTime, actualQuantity, id};
+            return jdbc.update(sql, args2) > 0;
+        }
     }
 }

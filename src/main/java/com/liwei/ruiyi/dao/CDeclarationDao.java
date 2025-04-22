@@ -1,5 +1,6 @@
 package com.liwei.ruiyi.dao;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.liwei.ruiyi.bo.CDeclaration;
 import com.liwei.ruiyi.utils.PageUtils;
 import org.springframework.stereotype.Service;
@@ -25,4 +26,6 @@ public interface CDeclarationDao {
     void uploadDeclarationTips(String id, String src);
 
     boolean arrival(String id);
+
+    boolean sendToFba(JSONObject params);
 }

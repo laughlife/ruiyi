@@ -152,9 +152,9 @@
                             </div>
                         </div>
                         <div class="layui-form-item">
-                            <label class="layui-form-label">预估发货</label>
+                            <label class="layui-form-label">预估到仓</label>
                             <div class="layui-input-block">
-                                <input type="text" id="planShipTime" name="planShipTime" placeholder="预估发货时间，点击选择"
+                                <input type="text" id="planShipTime" name="planShipTime" placeholder="预估倒仓时间，点击选择"
                                        class="layui-input" readonly>
                             </div>
                         </div>

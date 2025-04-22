@@ -56,6 +56,8 @@ public class DeclarationServiceImpl implements DeclarationService {
             j.put("shipped_quantity", declaration.getShippedQuantity());
             j.put("received_quantity", declaration.getReceivedQuantity());
             j.put("declare_time", declaration.getDeclareTime());
+            j.put("fapiao", declaration.getFapiao());
+            j.put("tips", declaration.getTips());
             j.put("status", declaration.getStatus());
             declarationList.add(j);
         }
@@ -261,5 +263,10 @@ public class DeclarationServiceImpl implements DeclarationService {
     @Override
     public boolean arrival(String id) {
         return declarationDao.arrival(id);
+    }
+
+    @Override
+    public boolean sendToFba(JSONObject params) {
+        return declarationDao.sendToFba(params);
     }
 }

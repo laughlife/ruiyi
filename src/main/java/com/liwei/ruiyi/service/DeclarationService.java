@@ -1,6 +1,7 @@
 package com.liwei.ruiyi.service;
 
 import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import com.liwei.ruiyi.bo.CDeclaration;
 import com.liwei.ruiyi.utils.PageUtils;
 import org.springframework.stereotype.Service;
@@ -26,4 +27,6 @@ public interface DeclarationService {
     void uploadDeclaration(String id, String types, String src);
 
     boolean arrival(String id);
+
+    boolean sendToFba(JSONObject params);
 }

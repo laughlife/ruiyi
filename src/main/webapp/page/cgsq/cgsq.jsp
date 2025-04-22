@@ -81,6 +81,10 @@
             <button class="layui-btn layui-btn-sm layui-bg-red" lay-event="confirm_arrival">
                 <i class="fa-solid fa-check"></i>确认到货
             </button>
+        {{#  }else if(d.status == '已到货'){ }}
+            <button class="layui-btn layui-btn-sm layui-bg-red" lay-event="confirm_send_fba">
+                <i class="fa-solid fa-sailboat"></i>发货
+            </button>
         {{#  } }}
     </div>
 </script>
@@ -210,6 +214,18 @@
                         dataType: 'json',
                         success: function (res) {
                             layer.msg(res.msg);
+                            declarationTable.reload();
+                        }
+                    });
+                }else if(obj.event === 'confirm_send_fba'){
+                    layer.open({
+                        title: '处理采购申请',
+                        type: 2,
+                        shade: 0.5,
+                        shadeClose: true,
+                        area: ['60%', '90%'],
+                        content: '/declaration/confirmSendFba?id='+_data.id,
+                        end: function () {
                             declarationTable.reload();
                         }
                     });
