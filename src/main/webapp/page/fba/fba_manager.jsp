@@ -21,7 +21,7 @@
     <div class="layui-row layui-col-space15">
         <div class="layui-col-md12">
             <div class="layui-card">
-                <div class="layui-card-header">申报信息</div>
+                <div class="layui-card-header">FBA发货管理</div>
                 <div class="layui-card-body">
                     <form class="layui-form layui-form-pane" action="">
                         <div class="layui-form-item">
@@ -54,13 +54,7 @@
                                     <i class="fa-solid fa-magnifying-glass"></i> 搜索
                                 </button>
                             </div>
-                            <div class="layui-inline">
-                                <button type="button" id="create_declaration_btn"
-                                        class="layui-btn layui-bg-blue"
-                                        lay-filter="data-create-btn">
-                                    <i class="fa-solid fa-plus"></i> 新建采购申报
-                                </button>
-                            </div>
+
                         </div>
                     </form>
                 </div>
@@ -172,20 +166,6 @@
                 where: {
                     key: key,
                     status: status
-                }
-            });
-        });
-
-        $('#create_declaration_btn').click(function () {
-            layer.open({
-                title: '新建采购申报',
-                type: 2,
-                shade: 0.5,
-                shadeClose: true,
-                area: ['60%', '80%'],
-                content: '/declaration/goCreateDeclaration',
-                end: function () {
-                    declarationTable.reload();
                 }
             });
         });

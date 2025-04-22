@@ -55,6 +55,14 @@ public class DeclarationController {
         return "page/c_declaration/create_declaration";
     }
 
+    @RequestMapping("/goFbaManager")
+    public String goFbaManager() {
+        TUser user = (TUser) request.getSession().getAttribute("user");
+        List<TSeller> sellerList = sellerService.getAllSellerList();
+        request.setAttribute("sellerList", sellerList);
+        return "page/fba/fba_manager";
+    }
+
     @RequestMapping("/cgsq")
     public String cgsq() {
         return "page/cgsq/cgsq";
