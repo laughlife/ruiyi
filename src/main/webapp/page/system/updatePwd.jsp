@@ -22,7 +22,7 @@
             <div class="layui-card">
                 <div class="layui-card-header">修改密码</div>
                 <div class="layui-card-body">
-                    <form class="layui-form" lay-filter="passwordForm" action="/admin/updatePwd"
+                    <form class="layui-form" lay-filter="passwordForm" action="/user/updatePwd"
                           method="post">
                         <div class="layui-form">
                             <div class="layui-form-item">

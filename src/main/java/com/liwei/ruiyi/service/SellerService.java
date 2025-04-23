@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.liwei.ruiyi.bo.TSeller;
 import com.liwei.ruiyi.bo.TUser;
+import com.liwei.ruiyi.utils.PageUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,7 +19,7 @@ public interface SellerService {
 
     List<JSONObject> queryShopByUserId(String id);
 
-    List<JSONObject> queryShopToBind(String userId);
+    PageUtils queryShopByPageToBind(PageUtils page);
 
     boolean bindSeller(String userId, JSONArray array);
 

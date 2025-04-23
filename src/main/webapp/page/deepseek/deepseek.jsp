@@ -1,6 +1,10 @@
 <%@ page import="com.liwei.ruiyi.model.SocketMessage" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
+<%
+    String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/";
+    request.setAttribute("basePath", basePath);
+%>
+<!DOCTYPE html>
 <head>
     <meta charset="utf-8">
     <title>睿翼</title>

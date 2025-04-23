@@ -11,6 +11,7 @@ import com.liwei.ruiyi.dao.TSellerDao;
 import com.liwei.ruiyi.dao.TUserDao;
 import com.liwei.ruiyi.service.LingxingService;
 import com.liwei.ruiyi.service.SellerService;
+import com.liwei.ruiyi.utils.PageUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -77,13 +78,13 @@ public class SellerServiceImpl implements SellerService {
             u.put("name", user.getName());
             u.put("phone", user.getPhone());
             u.put("department", user.getDepartmentName());
-            List<TSeller> sellers = sellerDao.getUserSellers(user.getId()+"");
+            List<TSeller> sellers = sellerDao.getUserSellers(user.getId() + "");
             String shops = "";
             if (sellers != null && sellers.size() > 0) {
                 for (int i = 0; i < sellers.size(); i++) {
-                    if(i < sellers.size() - 1){
+                    if (i < sellers.size() - 1) {
                         shops += sellers.get(i).getName() + " | ";
-                    }else{
+                    } else {
                         shops += sellers.get(i).getName();
                     }
                 }
@@ -96,7 +97,7 @@ public class SellerServiceImpl implements SellerService {
 
     @Override
     public List<JSONObject> queryUserAndShopByDepartmentId(String departmentCode) {
-        List<TUser> users = userDao.queryAllUser();
+        List<TUser> users = userDao.queryUserByDepartmentCode(departmentCode);
         return formatUserShop(users);
     }
 
@@ -109,7 +110,7 @@ public class SellerServiceImpl implements SellerService {
                 JSONObject s = new JSONObject();
                 s.put("id", seller.getSid());
                 s.put("name", seller.getName());
-                s.put("userId",id);
+                s.put("userId", id);
                 s.put("country", seller.getCountry());
                 result.add(s);
             }
@@ -119,13 +120,17 @@ public class SellerServiceImpl implements SellerService {
     }
 
     @Override
-    public List<JSONObject> queryShopToBind(String userId) {
-        List<TSeller> sellers = sellerDao.queryAllSellers();
+    public PageUtils queryShopByPageToBind(PageUtils page) {
+
+        PageUtils queryPage = sellerDao.queryAllSellersByPage(page);
+        List<TSeller> sellers = queryPage.getData();
         List<JSONObject> user_seller = sellerDao.getAllUserSellersTies();
 
-        // 如果没有卖家信息，直接返回空列表
+        String userId = page.getSearchParams().getString("userId");
+
+        // 如果没有店铺信息，直接返回空列表
         if (sellers == null || sellers.isEmpty()) {
-            return List.of();
+            return queryPage;
         }
 
         // 将 user_seller 转换为 Map，避免重复遍历
@@ -144,7 +149,7 @@ public class SellerServiceImpl implements SellerService {
             }
 
             // 记录是否已绑定当前用户
-            if (currentUserId.equals(Integer.parseInt(userId))) {
+            if (currentUserId == Integer.parseInt(userId)) {
                 userCheckStatusMap.put(sellerId, true);
             }
         }
@@ -179,8 +184,8 @@ public class SellerServiceImpl implements SellerService {
 
             result.add(s);
         }
-
-        return result;
+        queryPage.setData(result);
+        return queryPage;
     }
 
     @Override
@@ -189,7 +194,7 @@ public class SellerServiceImpl implements SellerService {
         sellerDao.clearUserSellers(userId);
         for (int i = 0; i < array.size(); i++) {
             String sellerId = array.getJSONObject(i).getString("id");
-            if(!sellerDao.saveNewUserSeller(userId, sellerId)){
+            if (!sellerDao.saveNewUserSeller(userId, sellerId)) {
                 rs = false;
             }
         }
@@ -218,6 +223,6 @@ public class SellerServiceImpl implements SellerService {
 
     @Override
     public List<TSeller> getOwnSellerList(String s) {
-        return List.of();
+        return sellerDao.getOwnSellerList(s);
     }
 }

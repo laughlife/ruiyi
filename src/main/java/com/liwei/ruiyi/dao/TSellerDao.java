@@ -3,6 +3,8 @@ package com.liwei.ruiyi.dao;
 import com.alibaba.fastjson2.JSONObject;
 import com.liwei.ruiyi.bo.TSeller;
 import java.util.List;
+
+import com.liwei.ruiyi.utils.PageUtils;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,4 +24,8 @@ public interface TSellerDao {
     boolean unbindShop(String userId, String sellerId);
 
     List<TSeller> queryShopByDepartmentCode(String code);
+
+    List<TSeller> getOwnSellerList(String s);
+
+    PageUtils queryAllSellersByPage(PageUtils page);
 }

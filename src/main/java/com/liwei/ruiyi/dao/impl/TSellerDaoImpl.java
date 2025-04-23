@@ -4,10 +4,13 @@ import com.alibaba.fastjson2.JSONObject;
 import com.liwei.ruiyi.bo.TSeller;
 import com.liwei.ruiyi.bo.mapper.TSellerMapper;
 import com.liwei.ruiyi.dao.TSellerDao;
+import com.liwei.ruiyi.utils.PageUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository("sellerDao")
@@ -93,6 +96,48 @@ public class TSellerDaoImpl implements TSellerDao {
     @Override
     public List<TSeller> queryShopByDepartmentCode(String code) {
         String sql = "select * from t_seller where sid in (select seller_id from t_user_seller where user_id in (select id from t_user where department_code like ?))";
+        try {
+            return jdbc.query(sql, new TSellerMapper(), "%" + code + "%");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return List.of();
+    }
+
+    @Override
+    public List<TSeller> getOwnSellerList(String s) {
+        try {
+            String sql = "select * from t_seller where sid in (select seller_id from t_user_seller where user_id = ?)";
+            return jdbc.query(sql, new TSellerMapper(), s);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return List.of();
+    }
+
+    @Override
+    public PageUtils queryAllSellersByPage(PageUtils page) {
+        JSONObject params = page.getSearchParams();
+        String name = params.getString("name");
+
+        String sql = "select count(0) from t_seller where 1 = ?";
+        String querySql = "select * from t_seller where 1 = ? ";
+        List<Object> args = new ArrayList<>();
+        args.add(1);
+        if (StringUtils.isNotBlank(name)) {
+            name = "%" + name.trim() + "%";
+            sql += " and  name like ?";
+            querySql += " and  name like ?";
+            args.add(name);
+        }
+        int count = jdbc.queryForObject(sql, Integer.class, args.toArray());
+        page.setTotal(count);
+        querySql += " limit ?,?";
+        args.add(page.getPageStart());
+        args.add(page.getLimit());
+        List<TSeller> supplierList = jdbc.query(querySql, new TSellerMapper(), args.toArray());
+        page.setData(supplierList);
+
+        return page;
     }
 }

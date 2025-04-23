@@ -5,6 +5,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.liwei.ruiyi.bo.TUser;
 import com.liwei.ruiyi.service.MarketplaceService;
 import com.liwei.ruiyi.service.TUserService;
+import com.liwei.ruiyi.utils.PageUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -51,8 +52,8 @@ public class SellerController {
     @RequestMapping("/goBindSellerPage")
     public String goBindSellerPage(String userId) {
         //店铺绑定
-        TUser user = userService.queryUserById(userId);
-        request.setAttribute("queryUser", user);
+        TUser queryUser =  userService.queryUserById(userId);
+        request.setAttribute("queryUser", queryUser);
         return "page/seller/bindShop";
     }
 
@@ -66,7 +67,7 @@ public class SellerController {
             //如果是管理员，则查询所有的用户信息
             userList = sellerService.queryAllUserAndShop();
         } else {
-            userList = sellerService.queryUserAndShopByDepartmentId(user.getDepartmentId() + "");
+            userList = sellerService.queryUserAndShopByDepartmentId(user.getDepartmentCode() + "");
         }
         JSONObject rj = new JSONObject();
         rj.put("code", 0);
@@ -93,12 +94,22 @@ public class SellerController {
     @ResponseBody
     public String queryShopToBind(String userId) {
         //查询用户绑定的店铺
-        List<JSONObject> userList = sellerService.queryShopToBind(userId);
+        int nowPage = Integer.parseInt(request.getParameter("page"));
+        int limit = Integer.parseInt(request.getParameter("limit"));
+        PageUtils page = new PageUtils(nowPage, limit);
+        String key = request.getParameter("key");
+        JSONObject params = new JSONObject();
+        params.put("userId", userId);
+        params.put("name", key);
+
+        page.setSearchParams(params);
+
+        PageUtils queryPage = sellerService.queryShopByPageToBind(page);
         JSONObject rj = new JSONObject();
         rj.put("code", 0);
         rj.put("msg", "操作成功");
-        rj.put("count", userList.isEmpty() ? 0 : userList.size());
-        rj.put("data", userList);
+        rj.put("count", queryPage.getTotal());
+        rj.put("data", queryPage.getData());
         return rj.toJSONString();
     }
 

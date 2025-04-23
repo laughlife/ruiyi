@@ -104,7 +104,7 @@
 
         var declarationTable = table.render({
             elem: '#declarationTable',
-            url: '/declaration/queryAllDeclaration',
+            url: '/declaration/queryAllDecRequest',
             lineStyle: 'height: 100px;',
             cols: [[
                 {type: 'numbers', title: '编号', width: 80},

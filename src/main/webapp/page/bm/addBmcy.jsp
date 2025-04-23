@@ -1,11 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%
-    String path = request.getContextPath();
-    String basePath = request.getScheme() + "://"
-            + request.getServerName() + ":" + request.getServerPort()
-            + path + "/";
-%>
 <html>
 <head>
     <meta charset="utf-8">
@@ -13,12 +7,12 @@
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link rel="stylesheet" href="<%=basePath%>lib/layui-v2.6.3/css/layui.css" media="all">
-    <link rel="stylesheet" href="<%=basePath%>/css/public.css" media="all">
-    <link rel="stylesheet" href="<%=basePath%>lib/font-awesome-6.6/css/all.min.css" media="all">
-    <script src="<%=basePath%>/lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
-    <script src="<%=basePath%>/js/lay-config.js?v=2.0.4" charset="utf-8"></script>
-    <script src="<%=basePath%>/lib/jquery-3.4.1/jquery-3.4.1.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="/lib/layui-v2.6.3/css/layui.css" media="all">
+    <link rel="stylesheet" href="//css/public.css" media="all">
+    <link rel="stylesheet" href="/lib/font-awesome-6.6/css/all.min.css" media="all">
+    <script src="//lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
+    <script src="//js/lay-config.js?v=2.0.4" charset="utf-8"></script>
+    <script src="//lib/jquery-3.4.1/jquery-3.4.1.min.js" charset="utf-8"></script>
 </head>
 <body>
 <div class="layuimini-container">
@@ -105,7 +99,7 @@
     $("#search_user_btn").click(function () {
         var _search_date = $("#yg_input").val();
         $.ajax({
-            url: '<%=basePath%>bm/searchUser',
+            url: '/bm/searchUser',
             type: 'post',
             data: {"id": "${id}", "key": _search_date},
             dataType: 'json',
@@ -140,7 +134,7 @@
 
         // 如果需要提交到后台
         $.ajax({
-            url: '<%=basePath%>bm/updateUsers',
+            url: '/bm/updateUsers',
             type: 'post',
             data: {
                 'newUserIds': selectedNewUsers, // 新添加的用户 ID

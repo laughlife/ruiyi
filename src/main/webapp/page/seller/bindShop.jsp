@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="/static/layui/css/layui.css" media="all">
     <link rel="stylesheet" href="/static/fontawesome6/css/all.min.css" media="all">
     <script src="/static/layui/layui.js"></script>
+    <script src="/static/jquery/jquery-3.7.1.min.js"></script>
 </head>
 <body>
 
@@ -37,7 +38,7 @@
             </div>
         </div>
         <div class="layui-inline">
-            <button type="button" id="search_user_btn"
+            <button type="button" id="search_shop_btn"
                     class="layui-btn layui-btn-sm layui-bg-green"
                     lay-event="search">
                 <i class="fa-solid fa-magnifying-glass"></i> 搜索
@@ -59,7 +60,9 @@
             url: '/seller/queryShopToBind',
             where: {'userId': '${queryUser.id}'},
             toolbar: '#shopToolbar',
-            page: false,
+            page: true,
+            limits: [20, 50, 100],
+            limit: 20,
             cols: [[
                 {type: 'checkbox', fixed: 'left'},
                 {title: '店铺', width: 150, field: 'name'},
@@ -71,6 +74,7 @@
                 }
             ]]
         });
+
 
         table.on('toolbar(shopTableFilter)', function(obj){
             var id = obj.config.id;
@@ -101,7 +105,17 @@
                     });
                     break;
                 case 'search':
-                    layer.msg('搜索功能时间太紧先不开发', {icon: 2, time: 1000});
+                    var key = $("#key").val();
+                    var searchParams = {
+                        key: key,
+                        'userId': '${queryUser.id}'
+                    };
+                    shopTable.reload({
+                        where: searchParams,
+                        page: {
+                            curr: 1
+                        }
+                    });
                     break;
             }
         });

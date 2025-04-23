@@ -22,7 +22,6 @@ public class LoginFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
-        request.getSession().setAttribute("basePath", ReadProUtils.ReadProperties("basePath"));
         String url = request.getRequestURI();
         if (isUrlAllowed(url) || isUserLoggedIn(request) || url.startsWith("/static/")) {
             filterChain.doFilter(request, response);

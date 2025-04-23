@@ -85,7 +85,7 @@
                         type: 2,
                         shade: 0.5,
                         shadeClose: true,
-                        area: ['60%', '60%'],
+                        area: ['60%', '90%'],
                         content: '/seller/goBindSellerPage?userId=' + _data.id,
                         end: function () {
                             userTable.reload();

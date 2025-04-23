@@ -106,16 +106,14 @@ public class TUserDaoImpl implements TUserDao {
     @Override
     public boolean addUser(TUser user) {
         Integer department_id = user.getDepartmentId();
-        String sql = "select code from t_department where id = ?";
-        String departmentCode = jdbc.queryForObject(sql, String.class, department_id);
+        String sql = "select * from t_department where id = ?";
+        TDepartment department = jdbc.queryForObject(sql, new TDepartmentMapper(), department_id);
         sql = "insert into t_user(username,password,name,phone,department_id," +
-                "department_code,is_ladder,is_admin,create_time,delete_time," +
-                "is_ban) values(?,?,?,?,?," +
-                "?,?,?,?,?," +
-                "?)";
+                "department_code,department_name,is_ladder,is_admin,create_time," +
+                "delete_time,is_ban) values(?,?,?,?,?," +
+                "?,?,?,?,current_timestamp,null,?)";
         Object[] args = {user.getUsername(), user.getPassword(), user.getName(), user.getPhone(), department_id,
-                departmentCode, 0, 0, DateUtils.getSystemTime(), null,
-                0};
+                department.getCode(), department.getName(), 0, 0, 0};
         int count = jdbc.update(sql, args);
         return count > 0;
     }
@@ -138,7 +136,7 @@ public class TUserDaoImpl implements TUserDao {
 
         sql = "update t_user set username=?,name = ?,phone = ?,department_code=?,department_id=?,department_name=? where id = ?";
         Object[] args = {user.getUsername(), user.getName(), user.getPhone(), department.getCode(), department_id,
-                department.getName(),user.getId()};
+                department.getName(), user.getId()};
         int count = 0;
         try {
             //这里添加try catch是因为这里有可能会出现索引冲突
@@ -203,6 +201,13 @@ public class TUserDaoImpl implements TUserDao {
     public List<TUser> queryAllUser() {
         String sql = "select * from t_user where is_ban = 0";
         List<TUser> userList = jdbc.query(sql, new TUserMapper());
+        return userList;
+    }
+
+    @Override
+    public List<TUser> queryUserByDepartmentCode(String departmentCode) {
+        String sql = "select * from t_user where department_code like ?";
+        List<TUser> userList = jdbc.query(sql, new TUserMapper(), departmentCode + "%");
         return userList;
     }
 

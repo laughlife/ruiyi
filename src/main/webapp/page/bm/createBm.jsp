@@ -49,7 +49,7 @@
                                 </c:when>
                                 <c:otherwise>
                                     <div class="layui-input-inline" style="width: 100px;">
-                                        <input type="text" lay-verify="required"
+                                        <input type="text" lay-verify="required" readonly
                                                autocomplete="off" value="${sjbm.code}" class="layui-input">
                                     </div>
                                     <div class="layui-input-inline">

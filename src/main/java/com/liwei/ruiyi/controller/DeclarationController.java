@@ -214,6 +214,34 @@ public class DeclarationController {
         return returnJson.toJSONString();
     }
 
+    @RequestMapping("/queryAllDecRequest")
+    @ResponseBody
+    public String queryAllDecRequest() {
+        //申请
+        TUser user = (TUser) request.getSession().getAttribute("user");
+        int nowPage = Integer.parseInt(request.getParameter("page"));
+        int limit = Integer.parseInt(request.getParameter("limit"));
+        PageUtils pageUtils = new PageUtils(nowPage, limit);
+        String key = request.getParameter("key");
+        String status = request.getParameter("status");
+        JSONObject params = new JSONObject();
+        params.put("key", key);
+        params.put("status", status);
+        params.put("is_admin", "1");
+        params.put("is_ladder", user.getIsLadder());
+        params.put("departmentCode", user.getDepartmentCode());
+        pageUtils.setSearchParams(params);
+
+        PageUtils page = declarationService.queryMyDeclaration(pageUtils);
+        JSONObject returnJson = new JSONObject();
+        returnJson.put("code", 0);
+        returnJson.put("msg", "操作成功");
+        returnJson.put("count", page.getTotal());
+        returnJson.put("data", page.getData());
+
+        return returnJson.toJSONString();
+    }
+
     @RequestMapping("/deleteDeclaration")
     @ResponseBody
     public String deleteDeclaration(String id) {
