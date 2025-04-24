@@ -7,12 +7,22 @@
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link rel="stylesheet" href="/lib/layui-v2.6.3/css/layui.css" media="all">
-    <link rel="stylesheet" href="//css/public.css" media="all">
+    <meta name="_csrf" content="${_csrf.token}"/>
+    <meta name="_csrf_header" content="${_csrf.headerName}"/>
+    <link rel="stylesheet" href="/static/layui/css/layui.css" media="all">
     <link rel="stylesheet" href="/lib/font-awesome-6.6/css/all.min.css" media="all">
-    <script src="//lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
-    <script src="//js/lay-config.js?v=2.0.4" charset="utf-8"></script>
-    <script src="//lib/jquery-3.4.1/jquery-3.4.1.min.js" charset="utf-8"></script>
+    <script src="/static/layui/layui.js" charset="utf-8"></script>
+    <script src="/static/layui/config.js" charset="utf-8"></script>
+    <script src="/static/jquery/jquery-3.7.1.min.js"></script>
+    <script>
+        $.ajaxSetup({
+            beforeSend: function (xhr) {
+                var header = $('meta[name="_csrf_header"]').attr('content');
+                var token  = $('meta[name="_csrf"]').attr('content');
+                xhr.setRequestHeader(header, token);
+            }
+        });
+    </script>
 </head>
 <body>
 <div class="layuimini-container">

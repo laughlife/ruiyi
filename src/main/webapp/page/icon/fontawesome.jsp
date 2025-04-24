@@ -5,8 +5,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" content="${_csrf.token}"/>
+    <meta name="_csrf_header" content="${_csrf.headerName}"/>
     <title>Font Awesome 图标展示</title>
     <link rel="stylesheet" href="/static/fontawesome6/css/all.min.css">
+    <script src="/static/jquery/jquery-3.7.1.min.js"></script>
+    <script>
+        $.ajaxSetup({
+            beforeSend: function (xhr) {
+                var header = $('meta[name="_csrf_header"]').attr('content');
+                var token  = $('meta[name="_csrf"]').attr('content');
+                xhr.setRequestHeader(header, token);
+            }
+        });
+    </script>
     <style>
         .icon-container {
             display: flex;

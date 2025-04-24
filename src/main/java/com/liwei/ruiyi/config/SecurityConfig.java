@@ -78,7 +78,12 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         addUrlNormalizationFilter(http);
 
-        http.authorizeHttpRequests(auth -> auth
+        http.csrf(csrf -> csrf
+                        .ignoringRequestMatchers(
+                                "/login/userLogin",
+                                "/user/queryUser"
+                        )
+                ).authorizeHttpRequests(auth -> auth
                         .requestMatchers("/index.jsp", "/static/**", "/login/userLogin").permitAll()
                         .anyRequest().authenticated()
                 )

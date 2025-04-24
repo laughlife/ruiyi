@@ -29,7 +29,6 @@ public class HomeController {
         TUser user = (TUser) request.getSession().getAttribute("user");
         JSONObject json = permissionService.getPermissionsByDepartmentId(user.getDepartmentId());
         request.setAttribute("menuList", json.getJSONArray("data"));
-
         return "home";
     }
 

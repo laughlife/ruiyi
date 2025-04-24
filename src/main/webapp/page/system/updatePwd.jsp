@@ -10,10 +10,22 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="_csrf" content="${_csrf.token}"/>
+    <meta name="_csrf_header" content="${_csrf.headerName}"/>
+
     <link rel="stylesheet" href="/static/layui/css/layui.css" media="all">
     <script src="/static/layui/layui.js"></script>
     <script src="/static/jquery/jquery-3.7.1.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="/static/js/crypto-js.min.js" type="text/javascript" charset="utf-8"></script>
+    <script>
+        $.ajaxSetup({
+            beforeSend: function (xhr) {
+                var header = $('meta[name="_csrf_header"]').attr('content');
+                var token  = $('meta[name="_csrf"]').attr('content');
+                xhr.setRequestHeader(header, token);
+            }
+        });
+    </script>
 </head>
 <body>
 <div class="layui-fluid">
