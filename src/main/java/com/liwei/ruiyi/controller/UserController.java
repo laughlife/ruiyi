@@ -36,12 +36,7 @@ public class UserController {
         return rj.toString();
     }
 
-    @RequestMapping("/loginout")
-    public String loginout() {
-        // 清理会话
-        request.getSession().invalidate();
-        return "index";
-    }
+
 
     @RequestMapping("/userManager")
     public String userManager() {

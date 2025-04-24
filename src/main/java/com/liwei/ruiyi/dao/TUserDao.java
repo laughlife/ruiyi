@@ -12,7 +12,7 @@ import java.util.List;
 
 @Service
 public interface TUserDao {
-    TUser queryUserMessage(String username, String password);
+    TUser queryUserMessage(String username);
 
     boolean updatePwd(Integer id, String oldPassword,String password);
 

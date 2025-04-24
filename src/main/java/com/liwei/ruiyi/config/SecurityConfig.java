@@ -1,15 +1,19 @@
 package com.liwei.ruiyi.config;
 import javax.sql.DataSource;
+
+import com.liwei.ruiyi.filter.UrlNormalizationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
@@ -35,8 +39,6 @@ public class SecurityConfig {
         return repo;
     }
 
-
-    // 在 SecurityConfig 中暴露 AuthenticationManager：
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration authConfig) throws Exception {
@@ -66,17 +68,24 @@ public class SecurityConfig {
         return NoOpPasswordEncoder.getInstance();
     }
 
+    // 添加自定义过滤器
+    public void addUrlNormalizationFilter(HttpSecurity http) throws Exception {
+        http.addFilterBefore(new UrlNormalizationFilter(), UsernamePasswordAuthenticationFilter.class);
+    }
+
     /** 3. 安全过滤链配置 */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        addUrlNormalizationFilter(http);
+
         http.authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login.jsp", "/static/**", "/login/userLogin").permitAll()
+                        .requestMatchers("/index.jsp", "/static/**", "/login/userLogin").permitAll()
                         .anyRequest().authenticated()
                 )
                 // —— 表单登录
                 .formLogin(form -> form
-                        .loginPage("/login.jsp")
-                        .loginProcessingUrl("/login/userLogin")   // 表单 action
+                        .loginPage("/index.jsp")
+                        .loginProcessingUrl("/doLogin")   // 表单 action
                         .defaultSuccessUrl("/home.jsp")
                         .permitAll()
                 )
@@ -91,9 +100,12 @@ public class SecurityConfig {
                 // —— 注销
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login.jsp?logout")
+                        .logoutSuccessUrl("/index.jsp?logout=1")
                         .deleteCookies("JSESSIONID", "remember-me")
                         .invalidateHttpSession(true)
+                )
+                .headers(headers -> headers
+                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
                 )
         // —— CSRF、Session 固定防护等都是开箱即用
         ;

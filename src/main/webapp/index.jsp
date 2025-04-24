@@ -10,6 +10,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
+    <meta name="_csrf" content="${_csrf.token}"/>
+    <meta name="_csrf_header" content="${_csrf.headerName}"/>
     <link rel="icon" href="/static/image/favicon.ico" type="image/x-icon"/>
     <link rel="stylesheet" type="text/css" href="/static/layui/css/layui.css"/>
     <link rel="stylesheet" type="text/css" href="/static/admin/css/login.css"/>
@@ -44,17 +46,14 @@
                     <input type="password" name="password" required lay-verify="required|password" placeholder="密码"
                            class="layui-input" lay-affix="eye">
                 </div>
-                <div class="layui-form-item">
-                    <input type="checkbox" name="remember-me" id="rememberMe" />
-                    <label for="rememberMe">一周内免登录</label>
-                </div>
                 <div class="layui-form-item m-login-btn">
+                    <div class="layui-inline">
+                        <input type="checkbox" name="remember-me" id="rememberMe" />
+                        <div lay-checkbox>一周内免登录</div>
+                    </div>
                     <div class="layui-inline">
                         <button class="layui-btn layui-btn-normal" lay-submit lay-filter="login" type="button">登录
                         </button>
-                    </div>
-                    <div class="layui-inline">
-                        <button type="reset" class="layui-btn layui-btn-primary">取消</button>
                     </div>
                 </div>
             </form>
@@ -96,6 +95,10 @@
             var submitData = data.field;
             var username = submitData.username;
             var pwd = md5WithCryptoJS(submitData.password);
+
+            var token  = $('meta[name="_csrf"]').attr('content');
+            var header = $('meta[name="_csrf_header"]').attr('content');
+
             $.ajax({
                 url: "/login/userLogin",
                 type: "post",
@@ -104,9 +107,11 @@
                     password: pwd,
                     'remember-me': $('#rememberMe').prop('checked') ? 'on' : ''
                 },
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader(header, token);
+                },
                 dataType: "json",
                 success: function (data) {
-
                     if (data.status) {
                         window.location = '/home/goHomePage';
                         layer.msg(data.msg, {icon: data.icon, time: 500});

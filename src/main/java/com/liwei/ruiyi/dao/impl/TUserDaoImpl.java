@@ -27,14 +27,13 @@ public class TUserDaoImpl implements TUserDao {
     private JdbcTemplate jdbc;
 
     @Override
-    public TUser queryUserMessage(String username, String password) {
-        String sql = "select * from t_user where username = ? and password = ?";
-        Object[] params = {username, password};
-        List<TUser> adminList = jdbc.query(sql, new TUserMapper(), params);
-        TUser admin = null;
-        if (adminList.size() > 0) {
-            admin = adminList.get(0);
-            return admin;
+    public TUser queryUserMessage(String username) {
+        String sql = "select * from t_user where username = ?";
+        List<TUser> userList = jdbc.query(sql, new TUserMapper(), username);
+        TUser user = null;
+        if (userList.size() > 0) {
+            user = userList.get(0);
+            return user;
         }
         return null;
     }

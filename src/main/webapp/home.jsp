@@ -9,6 +9,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="_csrf"       content="${_csrf.token}"      />
+    <meta name="_csrf_header" content="${_csrf.headerName}" />
     <link rel="icon" href="/static/image/favicon.ico" type="image/x-icon"/>
     <link rel="stylesheet" href="/static/layui/css/layui.css" media="all">
     <link rel="stylesheet" href="/static/fontawesome6/css/all.min.css" media="all">
@@ -18,6 +20,15 @@
         cite{margin-left:10px;}
         .ml20{margin-left:20px;}
     </style>
+    <script>
+        $.ajaxSetup({
+            beforeSend: function (xhr) {
+                var header = $('meta[name="_csrf_header"]').attr('content');
+                var token  = $('meta[name="_csrf"]').attr('content');
+                xhr.setRequestHeader(header, token);
+            }
+        });
+    </script>
 </head>
 <body class="layui-layout-body">
 <div id="LAY_app">

@@ -22,8 +22,8 @@ public class TUserServiceImpl implements TUserService {
     @Autowired
     TDepartmentDao departmentDao;
     @Override
-    public TUser queryUserMessage(String username, String password) {
-        return userDao.queryUserMessage(username, password);
+    public TUser queryUserMessage(String username) {
+        return userDao.queryUserMessage(username);
     }
 
     @Override

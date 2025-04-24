@@ -9,7 +9,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -37,8 +36,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .username(user.getUsername())
                 .password(user.getPassword()) // 已经是 BCrypt 加密后的
                 .authorities(auths)
-//                .accountLocked(!user.isEnabled())
-                .accountLocked(!(user.getIsBan() == 1))
+                .accountLocked(user.getIsBan() == 1)
                 .build();
     }
 }

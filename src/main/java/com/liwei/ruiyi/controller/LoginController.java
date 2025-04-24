@@ -25,10 +25,7 @@ import java.util.*;
 public class LoginController {
 
     @Autowired
-    public TUserService userService;
-
-    @Autowired
-    private HttpSession session;
+    HttpServletRequest request;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -36,26 +33,28 @@ public class LoginController {
     @Autowired
     private PersistentTokenBasedRememberMeServices rememberMeServices;
 
+    @Autowired
+    TUserService userService;
+
     @RequestMapping("/userLogin")
     @ResponseBody
     public String userLogin(String username, String password,
                             HttpServletRequest request,
                             HttpServletResponse response) {
         JSONObject rj = new JSONObject();
-
         try {
             // 1. 尝试认证
-            UsernamePasswordAuthenticationToken authReq =
-                    new UsernamePasswordAuthenticationToken(username, password);
+            UsernamePasswordAuthenticationToken authReq = new UsernamePasswordAuthenticationToken(username, password);
             Authentication auth = authenticationManager.authenticate(authReq);
-
             // 2. 保存安全上下文
             SecurityContextHolder.getContext().setAuthentication(auth);
-
             // 3. 记住我（如果勾选）
             if ("on".equals(request.getParameter("remember-me"))) {
                 rememberMeServices.loginSuccess(request, response, auth);
             }
+
+            TUser user = userService.queryUserMessage(username);
+            request.getSession().setAttribute("user", user);
 
             // 4. 返回前端 JSON
             rj.put("status", true);
@@ -67,6 +66,13 @@ public class LoginController {
             rj.put("msg", "登录失败");
         }
         return rj.toJSONString();
+    }
+
+    @RequestMapping("/loginout")
+    public String loginout() {
+        // 清理会话
+        request.getSession().invalidate();
+        return "index";
     }
 
     @RequestMapping("/home")

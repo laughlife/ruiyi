@@ -10,7 +10,7 @@ import java.util.List;
 
 @Service
 public interface TUserService {
-    TUser queryUserMessage(String username, String password);
+    TUser queryUserMessage(String username);
 
     boolean updatePwd(Integer id, String oldPassword,String password);
 
