@@ -43,8 +43,8 @@
                     lay-event="search">
                 <i class="fa-solid fa-magnifying-glass"></i> 搜索
             </button>
-            <button class="layui-btn layui-btn-sm" lay-event="getCheckData">
-                <i class="fa-solid fa-link"></i>绑定选定店铺
+            <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="getCheckData">
+                <i class="fa-solid fa-link"></i>同步绑定状态
             </button>
         </div>
     </div>
@@ -55,8 +55,9 @@
         var layer = layui.layer;
         var $ = layui.jquery;
 
-        var shopTable = table.render({
+        table.render({
             elem: '#shopTable',
+            id: 'shopTableId',
             url: '/seller/queryShopToBind',
             where: {'userId': '${queryUser.id}'},
             toolbar: '#shopToolbar',
@@ -68,8 +69,13 @@
                 {title: '店铺', width: 150, field: 'name'},
                 {title: '国家', width: 150, field: 'country'},
                 {title: '绑定关系', field: 'bind'},
-                {field: 'status', title: '授权状态', templet: function(d) {
-                        return d.status === '正常' ? '<span style="color:green">'+d.status+'</span>' : '<span style="color:red">'+d.status+'</span>';
+                {
+                    field: 'status',
+                    title: '授权状态',
+                    templet: function(d) {
+                        return d.status === '正常'
+                            ? '<span style="color:green">'+d.status+'</span>'
+                            : '<span style="color:red">'+d.status+'</span>';
                     }
                 }
             ]]
@@ -77,15 +83,23 @@
 
 
         table.on('toolbar(shopTableFilter)', function(obj){
-            var id = obj.config.id;
-            var checkStatus = table.checkStatus(id);
-            var othis = lay(this);
+            var checkStatus = table.checkStatus('shopTableId');
+            var data = checkStatus.data;
             switch(obj.event){
                 case 'getCheckData':
-                    var data = checkStatus.data;
+                    // 获取当前页所有数据
+                    var allData = table.cache['shopTableId'];
+                    // 提取已选中的ID
+                    var checkedIds = data.map(item => item.id);
+                    // 过滤未选中的ID
+                    var notCheckedIds = allData.filter(item =>
+                        !checkedIds.includes(item.id)
+                    ).map(item => item.id);
+
                     var requestData = {
                         userId:"${queryUser.id}",
-                        sellers: JSON.stringify(data.map(item => ({ id: item.id })))
+                        sellers: JSON.stringify(checkedIds),
+                        notCheck: JSON.stringify(notCheckedIds)
                     };
                     $.ajax({
                         url: '/seller/bindSeller',
@@ -94,12 +108,9 @@
                         dataType: 'json',
                         success: function (res) {
                             if(res.status){
-                                layer.msg(res.msg, {icon: 1, time: 1000}, function () {
-                                    var index = parent.layer.getFrameIndex(window.name);
-                                    parent.layer.close(index);
-                                });
+                                layer.msg(res.msg, {icon: 1, time: 1500});
                             }else{
-                                layer.msg(res.msg, {icon: 2, time: 1000});
+                                layer.msg(res.msg, {icon: 2, time: 1500});
                             }
                         }
                     });
@@ -110,7 +121,7 @@
                         key: key,
                         'userId': '${queryUser.id}'
                     };
-                    shopTable.reload({
+                    shopTable.reload('shopTableId', {
                         where: searchParams,
                         page: {
                             curr: 1

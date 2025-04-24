@@ -1,5 +1,6 @@
 package com.liwei.ruiyi.dao.impl;
 
+import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.liwei.ruiyi.bo.TSeller;
 import com.liwei.ruiyi.bo.mapper.TSellerMapper;
@@ -11,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository("sellerDao")
 public class TSellerDaoImpl implements TSellerDao {
@@ -75,16 +78,80 @@ public class TSellerDaoImpl implements TSellerDao {
         return result;
     }
 
-    @Override
-    public void clearUserSellers(String userId) {
-        String sql = "delete from t_user_seller where user_id = ?";
-        jdbc.update(sql, userId);
-    }
 
     @Override
-    public boolean saveNewUserSeller(String userId, String sellerId) {
-        String sql = "insert into t_user_seller(user_id, seller_id) values(?, ?)";
-        return jdbc.update(sql, userId, sellerId) > 0;
+    public boolean refreshUserSeller(String userId, JSONArray array, JSONArray notCheckArray) {
+        try {
+            // 1. 处理新增绑定关系（array 非空时执行）
+            if (array != null && !array.isEmpty()) {
+                // 将 JSONArray 转换为 List<String>
+                List<String> sellerIds = array.toJavaList(String.class);
+                // 查询已存在的关联关系（避免重复插入）
+                String selectSql = buildInClauseSql(
+                        "SELECT seller_id FROM t_user_seller WHERE user_id = ? AND seller_id IN ",
+                        sellerIds.size()
+                );
+                List<String> existingSellerIds = jdbc.queryForList(
+                        selectSql,
+                        String.class,
+                        buildParams(userId, sellerIds)
+                );
+
+                // 过滤需要插入的 sellerId
+                List<String> toInsert = sellerIds.stream()
+                        .filter(id -> !existingSellerIds.contains(id))
+                        .collect(Collectors.toList());
+
+                // 执行批量插入
+                if (!toInsert.isEmpty()) {
+                    String insertSql = "INSERT INTO t_user_seller(user_id, seller_id) VALUES (?, ?)";
+                    for (String sellerId : toInsert) {
+                        int rows = jdbc.update(insertSql, userId, sellerId);
+                        if (rows <= 0) {
+                            return false; // 插入失败
+                        }
+                    }
+                }
+            }
+
+            // 2. 处理解除绑定关系（notCheckArray 非空时执行）
+            if (notCheckArray != null && !notCheckArray.isEmpty()) {
+                // 将 JSONArray 转换为 List<String>
+                List<String> notCheckIds = notCheckArray.toJavaList(String.class);
+
+                // 构建删除 SQL
+                String deleteSql = buildInClauseSql(
+                        "DELETE FROM t_user_seller WHERE user_id = ? AND seller_id IN ",
+                        notCheckIds.size()
+                );
+
+                // 执行删除
+                int rows = jdbc.update(
+                        deleteSql,
+                        buildParams(userId, notCheckIds)
+                );
+                // 无需检查删除行数（即使没有匹配数据也视为成功）
+            }
+
+            return true;
+        } catch (Exception e) {
+            // 日志记录异常（实际项目需替换为日志框架）
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // 辅助方法：构建 IN 子句的 SQL（防止 SQL 注入）
+    private String buildInClauseSql(String baseSql, int paramCount) {
+        return baseSql + "(" + String.join(",", Collections.nCopies(paramCount, "?")) + ")";
+    }
+
+    // 辅助方法：构建参数数组（userId + 列表参数）
+    private Object[] buildParams(String userId, List<String> ids) {
+        List<Object> params = new ArrayList<>();
+        params.add(userId);
+        params.addAll(ids);
+        return params.toArray();
     }
 
     @Override

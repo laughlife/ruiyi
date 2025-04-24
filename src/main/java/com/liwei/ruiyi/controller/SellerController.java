@@ -115,13 +115,14 @@ public class SellerController {
 
     @PostMapping("/bindSeller")
     @ResponseBody
-    public String bindSeller(String userId, String sellers) {
+    public String bindSeller(String userId, String sellers,String notCheck) {
         //用户绑定店铺
-        JSONArray array = JSONArray.parseArray(sellers);
+        JSONArray checkArray = JSONArray.parseArray(sellers);
+        JSONArray notCheckArray = JSONArray.parseArray(notCheck);
         JSONObject rj = new JSONObject();
-        boolean status = sellerService.bindSeller(userId, array);
+        boolean status = sellerService.bindSeller(userId, checkArray,notCheckArray);
         rj.put("status", status);
-        rj.put("msg", status ? "店铺绑定成功" : "店铺绑定失败");
+        rj.put("msg", status ? "店铺绑定状态同步成功" : "店铺绑定状态同步失败");
         return rj.toJSONString();
     }
     @PostMapping("/unbindShop")

@@ -1,5 +1,6 @@
 package com.liwei.ruiyi.dao;
 
+import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.liwei.ruiyi.bo.TSeller;
 import java.util.List;
@@ -17,9 +18,7 @@ public interface TSellerDao {
 
     List<JSONObject> getAllUserSellersTies();
 
-    void clearUserSellers(String userId);
-
-    boolean saveNewUserSeller(String userId, String sellerId);
+    boolean refreshUserSeller(String userId, JSONArray array, JSONArray notCheckArray);
 
     boolean unbindShop(String userId, String sellerId);
 

@@ -189,15 +189,8 @@ public class SellerServiceImpl implements SellerService {
     }
 
     @Override
-    public boolean bindSeller(String userId, JSONArray array) {
-        boolean rs = true;
-        sellerDao.clearUserSellers(userId);
-        for (int i = 0; i < array.size(); i++) {
-            String sellerId = array.getJSONObject(i).getString("id");
-            if (!sellerDao.saveNewUserSeller(userId, sellerId)) {
-                rs = false;
-            }
-        }
+    public boolean bindSeller(String userId, JSONArray array,JSONArray notCheckArray) {
+        boolean rs = sellerDao.refreshUserSeller(userId, array, notCheckArray);
         return rs;
     }
 

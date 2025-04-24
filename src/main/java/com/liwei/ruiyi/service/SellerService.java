@@ -21,7 +21,7 @@ public interface SellerService {
 
     PageUtils queryShopByPageToBind(PageUtils page);
 
-    boolean bindSeller(String userId, JSONArray array);
+    boolean bindSeller(String userId, JSONArray array,JSONArray notCheckArray);
 
     boolean unbindShop(String userId, String sellerId);
 
