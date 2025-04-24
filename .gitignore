@@ -3,7 +3,8 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-
+# 忽略掉resources下的properties配置文件
+/resources/*.properties
 ### STS ###
 .apt_generated
 .classpath
@@ -32,5 +33,4 @@ build/
 ### VS Code ###
 .vscode/
 
-### deepseek ###
-src/main/resources/deepseek.properties
+src/main/resources/*.properties
