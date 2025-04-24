@@ -12,6 +12,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
 import org.springframework.stereotype.Controller;
@@ -66,6 +67,24 @@ public class LoginController {
             rj.put("msg", "登录失败");
         }
         return rj.toJSONString();
+    }
+
+    @RequestMapping("/loginByToken")
+    public String loginByToken(String token, HttpServletRequest request) {
+        if (token != null) {
+            // 根据 token 从数据库中获取用户信息
+            TUser user = userService.findUserByToken(token);
+
+            if (user != null) {
+                // 手动登录成功
+                Authentication auth = new UsernamePasswordAuthenticationToken(user.getUsername(), null, AuthorityUtils.createAuthorityList("ROLE_USER"));
+                SecurityContextHolder.getContext().setAuthentication(auth);
+                request.getSession().setAttribute("user", user); // 如果需要存储到 Session
+                return "home"; // 跳转到主页
+            }
+        }
+
+        return "index"; // 如果没有找到 token 或 token 无效，跳转到登录页
     }
 
     @RequestMapping("/loginout")

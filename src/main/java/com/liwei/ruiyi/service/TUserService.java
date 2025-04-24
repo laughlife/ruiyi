@@ -39,4 +39,6 @@ public interface TUserService {
     boolean updateBan(String id);
 
     List<TDepartment> getDepartmentsByCode(String departmentCode);
+
+    TUser findUserByToken(String token);
 }

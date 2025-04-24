@@ -132,4 +132,9 @@ public class TUserServiceImpl implements TUserService {
     public List<TDepartment> getDepartmentsByCode(String departmentCode) {
         return departmentDao.getDepartmentsByCode(departmentCode);
     }
+
+    @Override
+    public TUser findUserByToken(String token) {
+        return userDao.findUserByToken(token);
+    }
 }

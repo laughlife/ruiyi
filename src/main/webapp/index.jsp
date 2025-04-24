@@ -48,7 +48,7 @@
                 </div>
                 <div class="layui-form-item m-login-btn">
                     <div class="layui-inline">
-                        <input type="checkbox" name="remember-me" id="rememberMe" />
+                        <input type="checkbox" name="remember-me" id="rememberMe" checked/>
                         <div lay-checkbox>一周内免登录</div>
                     </div>
                     <div class="layui-inline">

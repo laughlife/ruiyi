@@ -2,6 +2,7 @@ package com.liwei.ruiyi.config;
 import javax.sql.DataSource;
 
 import com.liwei.ruiyi.filter.UrlNormalizationFilter;
+import com.liwei.ruiyi.utils.ReadProUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,6 +18,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+
+import java.util.UUID;
 
 @Configuration
 @EnableWebSecurity
@@ -50,9 +53,10 @@ public class SecurityConfig {
     public PersistentTokenBasedRememberMeServices rememberMeServices(
             UserDetailsService uds,
             PersistentTokenRepository tokenRepo) {
+        String tokenKey = ReadProUtils.ReadProperties("token_key");
         PersistentTokenBasedRememberMeServices service =
                 new PersistentTokenBasedRememberMeServices(
-                        "你的随机key",
+                        tokenKey,
                         uds,
                         tokenRepo
                 );
@@ -61,6 +65,7 @@ public class SecurityConfig {
         service.setTokenValiditySeconds(7 * 24 * 3600);
         return service;
     }
+
 
     // 密码策略：由于前端已 MD5，加 DB 存 MD5，则可用 NoOp
     @Bean
@@ -77,7 +82,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         addUrlNormalizationFilter(http);
-
+        String tokenKey = ReadProUtils.ReadProperties("token_key");
         http.csrf(csrf -> csrf
                         .ignoringRequestMatchers(
                                 "/login/userLogin",
@@ -100,12 +105,12 @@ public class SecurityConfig {
                         .tokenRepository(tokenRepository())
                         .rememberMeCookieName("remember-me")
                         .tokenValiditySeconds(7 * 24 * 3600)  // 7 天
-                        .key("CHANGE_THIS_TO_A_RANDOM_SECRET")
+                        .key(tokenKey)
                 )
                 // —— 注销
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/index.jsp?logout=1")
+                        .logoutSuccessUrl("/index")
                         .deleteCookies("JSESSIONID", "remember-me")
                         .invalidateHttpSession(true)
                 )

@@ -47,4 +47,6 @@ public interface TUserDao {
     TUser findByUsername(String username);
 
     List<String> findDepartmentsByUsername(String username);
+
+    TUser findUserByToken(String token);
 }

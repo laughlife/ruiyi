@@ -1,10 +1,8 @@
 package com.liwei.ruiyi.dao.impl;
 
 import com.alibaba.fastjson2.JSONObject;
-import com.liwei.ruiyi.bo.TDepartment;
-import com.liwei.ruiyi.bo.TSeller;
-import com.liwei.ruiyi.bo.TUser;
-import com.liwei.ruiyi.bo.TUserSeller;
+import com.liwei.ruiyi.bo.*;
+import com.liwei.ruiyi.bo.mapper.PersistentLoginsMapper;
 import com.liwei.ruiyi.bo.mapper.TDepartmentMapper;
 import com.liwei.ruiyi.bo.mapper.TSellerMapper;
 import com.liwei.ruiyi.bo.mapper.TUserMapper;
@@ -229,5 +227,19 @@ public class TUserDaoImpl implements TUserDao {
             return Arrays.asList(departmentCode.split(";"));
         }
         return List.of();
+    }
+
+    @Override
+    public TUser findUserByToken(String token) {
+        String sql = "select * from t_user where token = ?";
+        PersistentLogins persistentLogins = jdbc.queryForObject(sql, new PersistentLoginsMapper(), token);
+        if (persistentLogins != null) {
+            sql = "select * from t_user where id = ?";
+            List<TUser> userList = jdbc.query(sql, new TUserMapper(), persistentLogins.getSeries());
+            if (userList.size() > 0) {
+                return userList.get(0);
+            }
+        }
+        return null;
     }
 }
