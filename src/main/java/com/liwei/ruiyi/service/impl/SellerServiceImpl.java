@@ -15,13 +15,15 @@ import com.liwei.ruiyi.utils.PageUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Repository("sellerService")
+//@Repository("sellerService")
+@Service
 public class SellerServiceImpl implements SellerService {
 
     @Autowired
@@ -100,6 +102,8 @@ public class SellerServiceImpl implements SellerService {
         List<TUser> users = userDao.queryUserByDepartmentCode(departmentCode);
         return formatUserShop(users);
     }
+
+
 
     @Override
     public List<JSONObject> queryShopByUserId(String id) {

@@ -43,4 +43,8 @@ public interface TUserDao {
     List<TUser> queryAllUser();
 
     List<TUser> queryUserByDepartmentCode(String departmentCode);
+
+    TUser findByUsername(String username);
+
+    List<String> findDepartmentsByUsername(String username);
 }

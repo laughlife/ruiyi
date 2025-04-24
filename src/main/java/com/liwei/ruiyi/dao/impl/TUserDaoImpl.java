@@ -17,6 +17,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Repository("userDao")
@@ -205,11 +206,29 @@ public class TUserDaoImpl implements TUserDao {
     }
 
     @Override
+    public TUser findByUsername(String username) {
+        String sql = "select * from t_user where username = ?";
+        List<TUser> userList = jdbc.query(sql, new TUserMapper(), username);
+        if (userList.size() > 0) {
+            return userList.get(0);
+        }
+        return null;
+    }
+
+    @Override
     public List<TUser> queryUserByDepartmentCode(String departmentCode) {
         String sql = "select * from t_user where department_code like ?";
         List<TUser> userList = jdbc.query(sql, new TUserMapper(), departmentCode + "%");
         return userList;
     }
 
-
+    @Override
+    public List<String> findDepartmentsByUsername(String username) {
+        String sql = "select department_code from t_user where username = ?";
+        String departmentCode = jdbc.queryForObject(sql, String.class, username);
+        if (departmentCode != null) {
+            return Arrays.asList(departmentCode.split(";"));
+        }
+        return List.of();
+    }
 }

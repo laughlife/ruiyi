@@ -35,8 +35,7 @@
                     <div class="layui-input-prefix">
                         <i class="layui-icon layui-icon-username"></i>
                     </div>
-                    <input type="text" name="username" lay-verify="required|username" placeholder="用户名"
-                           class="layui-input" lay-affix="clear">
+                    <input type="text" name="username" lay-verify="required|username" placeholder="用户名" class="layui-input" lay-affix="clear">
                 </div>
                 <div class="layui-form-item">
                     <div class="layui-input-prefix">
@@ -45,7 +44,10 @@
                     <input type="password" name="password" required lay-verify="required|password" placeholder="密码"
                            class="layui-input" lay-affix="eye">
                 </div>
-
+                <div class="layui-form-item">
+                    <input type="checkbox" name="remember-me" id="rememberMe" />
+                    <label for="rememberMe">一周内免登录</label>
+                </div>
                 <div class="layui-form-item m-login-btn">
                     <div class="layui-inline">
                         <button class="layui-btn layui-btn-normal" lay-submit lay-filter="login" type="button">登录
@@ -97,7 +99,11 @@
             $.ajax({
                 url: "/login/userLogin",
                 type: "post",
-                data: {username: username, password: pwd},
+                data: {
+                    username: username,
+                    password: pwd,
+                    'remember-me': $('#rememberMe').prop('checked') ? 'on' : ''
+                },
                 dataType: "json",
                 success: function (data) {
 
